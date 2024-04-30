@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="en" dir="ltr" class="docs-wrapper plugin-docs plugin-id-default docs-version-current docs-doc-page docs-doc-id-tutorial/installation" data-has-hydrated="false">
+<head>
+<meta charset="UTF-8">
+<meta name="generator" content="Docusaurus v3.2.1">
+<title data-rh="true">Installation | APPLIED CYBER-PHYSICAL SYSTEM</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:image" content="https://SOLVE-NITK.github.io/img/docusaurus-social-card.jpg"><meta data-rh="true" name="twitter:image" content="https://SOLVE-NITK.github.io/img/docusaurus-social-card.jpg"><meta data-rh="true" property="og:url" content="https://SOLVE-NITK.github.io/docs/tutorial/installation"><meta data-rh="true" property="og:locale" content="en"><meta data-rh="true" name="docusaurus_locale" content="en"><meta data-rh="true" name="docsearch:language" content="en"><meta data-rh="true" name="docusaurus_version" content="current"><meta data-rh="true" name="docusaurus_tag" content="docs-default-current"><meta data-rh="true" name="docsearch:version" content="current"><meta data-rh="true" name="docsearch:docusaurus_tag" content="docs-default-current"><meta data-rh="true" property="og:title" content="Installation | APPLIED CYBER-PHYSICAL SYSTEM"><meta data-rh="true" name="description" content="Automates secure entry management by authorizing or denying access based on RFID scans."><meta data-rh="true" property="og:description" content="Automates secure entry management by authorizing or denying access based on RFID scans."><link data-rh="true" rel="icon" href="/img/favicon.ico"><link data-rh="true" rel="canonical" href="https://SOLVE-NITK.github.io/docs/tutorial/installation"><link data-rh="true" rel="alternate" href="https://SOLVE-NITK.github.io/docs/tutorial/installation" hreflang="en"><link data-rh="true" rel="alternate" href="https://SOLVE-NITK.github.io/docs/tutorial/installation" hreflang="x-default"><link rel="alternate" type="application/rss+xml" href="/blog/rss.xml" title="APPLIED CYBER-PHYSICAL SYSTEM RSS Feed">
+<link rel="alternate" type="application/atom+xml" href="/blog/atom.xml" title="APPLIED CYBER-PHYSICAL SYSTEM Atom Feed"><link rel="stylesheet" href="/assets/css/styles.bb9300be.css">
+<script src="/assets/js/runtime~main.74f762c4.js" defer="defer"></script>
+<script src="/assets/js/main.92dcfebf.js" defer="defer"></script>
+</head>
+<body class="navigation-with-keyboard">
+<script>!function(){function t(t){document.documentElement.setAttribute("data-theme",t)}var e=function(){try{return new URLSearchParams(window.location.search).get("docusaurus-theme")}catch(t){}}()||function(){try{return localStorage.getItem("theme")}catch(t){}}();t(null!==e?e:"light")}(),function(){try{const c=new URLSearchParams(window.location.search).entries();for(var[t,e]of c)if(t.startsWith("docusaurus-data-")){var a=t.replace("docusaurus-data-","data-");document.documentElement.setAttribute(a,e)}}catch(t){}}()</script><div id="__docusaurus"><div role="region" aria-label="Skip to main content"><a class="skipToContent_fXgn" href="#__docusaurus_skipToContent_fallback">Skip to main content</a></div><nav aria-label="Main" class="navbar navbar--fixed-top navbarHideable_m1mJ"><div class="navbar__inner"><div class="navbar__items"><button aria-label="Toggle navigation bar" aria-expanded="false" class="navbar__toggle clean-btn" type="button"><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><path stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2" d="M4 7h22M4 15h22M4 23h22"></path></svg></button><a class="navbar__brand" href="/"><div class="navbar__logo"><img src="/img/ACPS_icon.png" alt="My Site Logo" class="themedComponent_mlkZ themedComponent--light_NVdE"><img src="/img/ACPS_icon.png" alt="My Site Logo" class="themedComponent_mlkZ themedComponent--dark_xIcU"></div><b class="navbar__title text--truncate">Home</b></a><a class="navbar__item navbar__link" href="/overview">Overview</a><a class="navbar__item navbar__link" href="/docs/introduction">Docs</a><a aria-current="page" class="navbar__item navbar__link navbar__link--active" href="/docs/tutorial/installation">Tutorial</a><a class="navbar__item navbar__link" href="/about">About</a></div><div class="navbar__items navbar__items--right"><a href="https://github.com/facebook/docusaurus" target="_blank" rel="noopener noreferrer" class="navbar__item navbar__link">GitHub<svg width="13.5" height="13.5" aria-hidden="true" viewBox="0 0 24 24" class="iconExternalLink_nPIU"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"></path></svg></a><div class="toggle_vylO colorModeToggle_DEke"><button class="clean-btn toggleButton_gllP toggleButtonDisabled_aARS" type="button" disabled="" title="Switch between dark and light mode (currently light mode)" aria-label="Switch between dark and light mode (currently light mode)" aria-live="polite"><svg viewBox="0 0 24 24" width="24" height="24" class="lightToggleIcon_pyhR"><path fill="currentColor" d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"></path></svg><svg viewBox="0 0 24 24" width="24" height="24" class="darkToggleIcon_wfgR"><path fill="currentColor" d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"></path></svg></button></div><div class="navbarSearchContainer_Bca1"></div></div></div><div role="presentation" class="navbar-sidebar__backdrop"></div></nav><div id="__docusaurus_skipToContent_fallback" class="main-wrapper mainWrapper_z2l0"><div class="docsWrapper_hBAB"><button aria-label="Scroll back to top" class="clean-btn theme-back-to-top-button backToTopButton_sjWU" type="button"></button><div class="docRoot_UBD9"><aside class="theme-doc-sidebar-container docSidebarContainer_YfHR"><div class="sidebarViewport_aRkj"><div class="sidebar_njMd sidebarWithHideableNavbar_wUlq"><a tabindex="-1" class="sidebarLogo_isFc" href="/"><img src="/img/ACPS_icon.png" alt="My Site Logo" class="themedComponent_mlkZ themedComponent--light_NVdE"><img src="/img/ACPS_icon.png" alt="My Site Logo" class="themedComponent_mlkZ themedComponent--dark_xIcU"><b>Home</b></a><nav aria-label="Docs sidebar" class="menu thin-scrollbar menu_SIkG"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link menu__link--active" aria-current="page" href="/docs/tutorial/installation">Installation</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/docs/tutorial/node_code_explained">Node Code Explained</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/docs/tutorial/thingsboard">ThingsBoard</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/docs/tutorial/experimental_setups">Experimentations and Demonstartions</a></li></ul></nav></div></div></aside><main class="docMainContainer_TBSr"><div class="container padding-top--md padding-bottom--lg"><div class="row"><div class="col docItemCol_VOVn"><div class="docItemContainer_Djhp"><article><nav class="theme-doc-breadcrumbs breadcrumbsContainer_Z_bl" aria-label="Breadcrumbs"><ul class="breadcrumbs" itemscope="" itemtype="https://schema.org/BreadcrumbList"><li class="breadcrumbs__item"><a aria-label="Home page" class="breadcrumbs__link" href="/"><svg viewBox="0 0 24 24" class="breadcrumbHomeIcon_YNFT"><path d="M10 19v-5h4v5c0 .55.45 1 1 1h3c.55 0 1-.45 1-1v-7h1.7c.46 0 .68-.57.33-.87L12.67 3.6c-.38-.34-.96-.34-1.34 0l-8.36 7.53c-.34.3-.13.87.33.87H5v7c0 .55.45 1 1 1h3c.55 0 1-.45 1-1z" fill="currentColor"></path></svg></a></li><li itemscope="" itemprop="itemListElement" itemtype="https://schema.org/ListItem" class="breadcrumbs__item breadcrumbs__item--active"><span class="breadcrumbs__link" itemprop="name">Installation</span><meta itemprop="position" content="1"></li></ul></nav><div class="tocCollapsible_ETCw theme-doc-toc-mobile tocMobile_ITEo"><button type="button" class="clean-btn tocCollapsibleButton_TO0P">On this page</button></div><div class="theme-doc-markdown markdown"><h1>Installation</h1>
+<p>This section guides you through setting up the Arduino Integrated Development Environment (IDE), which is used for programming the nodes in our Applied Cyber-Physical Systems (ACPS). Arduino IDE is renowned for its simplicity and effectiveness in programming microcontrollers commonly used in cyber-physical systems.</p>
+<h2 class="anchor anchorWithHideOnScrollNavbar_WYt5" id="arduino-ide-features-and-specifications">Arduino IDE Features and Specifications<a href="#arduino-ide-features-and-specifications" class="hash-link" aria-label="Direct link to Arduino IDE Features and Specifications" title="Direct link to Arduino IDE Features and Specifications">​</a></h2>
+<ul>
+<li><strong>Cross-Platform</strong>: Available for Windows, macOS, and Linux.</li>
+<li><strong>User-Friendly Interface</strong>: Easy-to-use interface ideal for beginners and professionals alike.</li>
+<li><strong>Extensive Library Support</strong>: Provides a vast collection of libraries for various sensors and actuators.</li>
+<li><strong>Open Source</strong>: Freely available for modification and distribution.</li>
+<li><strong>Language</strong>: Uses a simplified version of C++, making it accessible to those new to programming.</li>
+</ul>
+<h2 class="anchor anchorWithHideOnScrollNavbar_WYt5" id="arduino-ide-installation">Arduino IDE Installation<a href="#arduino-ide-installation" class="hash-link" aria-label="Direct link to Arduino IDE Installation" title="Direct link to Arduino IDE Installation">​</a></h2>
+<div class="tabs-container tabList__CuJ"><ul role="tablist" aria-orientation="horizontal" class="tabs"><li role="tab" tabindex="0" aria-selected="true" class="tabs__item tabItem_LNqP tabs__item--active">Windows</li><li role="tab" tabindex="-1" aria-selected="false" class="tabs__item tabItem_LNqP">macOS</li><li role="tab" tabindex="-1" aria-selected="false" class="tabs__item tabItem_LNqP">Linux</li></ul><div class="margin-top--md"><div role="tabpanel" class="tabItem_Ymn6"><ol>
+<li><strong>Download the Installer</strong>: Visit <a href="https://www.arduino.cc/en/software" target="_blank" rel="noopener noreferrer">Arduino Software Page</a> and download the Windows Installer.</li>
+<li><strong>Run the Installer</strong>: Open the downloaded <code>.exe</code> file and follow the on-screen instructions. Choose whether to install USB drivers and other optional components.</li>
+<li><strong>Launch Arduino IDE</strong>: Complete the installation and open the Arduino IDE to begin programming.</li>
+</ol></div><div role="tabpanel" class="tabItem_Ymn6" hidden=""><ol>
+<li><strong>Download the Installer</strong>: Go to the <a href="https://www.arduino.cc/en/software" target="_blank" rel="noopener noreferrer">Arduino Software Page</a> and download the macOS Installer.</li>
+<li><strong>Install the Software</strong>: Open the <code>.zip</code> file and drag the Arduino application into your Applications folder.</li>
+<li><strong>Verify Installation</strong>: Open Arduino from your Applications folder to ensure it&#x27;s properly installed.</li>
+</ol></div><div role="tabpanel" class="tabItem_Ymn6" hidden=""><ol>
+<li><strong>Download the Tarball</strong>: Download the appropriate version for your Linux distribution from <a href="https://www.arduino.cc/en/software" target="_blank" rel="noopener noreferrer">Arduino Software Page</a>.</li>
+<li><strong>Extract and Install</strong>: Extract the tarball and run the <code>install.sh</code> script from the terminal to install the IDE.</li>
+<li><strong>Permissions</strong>: You may need to set serial port permissions. Use <code>sudo usermod -a -G dialout $USER</code> and restart your computer.</li>
+</ol></div></div></div>
+<h2 class="anchor anchorWithHideOnScrollNavbar_WYt5" id="installing-microcontroller-board-managers-and-testing-with-blink">Installing Microcontroller Board Managers and Testing with Blink<a href="#installing-microcontroller-board-managers-and-testing-with-blink" class="hash-link" aria-label="Direct link to Installing Microcontroller Board Managers and Testing with Blink" title="Direct link to Installing Microcontroller Board Managers and Testing with Blink">​</a></h2>
+<p>This section provides detailed instructions for setting up each of the six microcontrollers used in our project, including installing the board manager for each and testing connectivity and configuration by uploading the Blink sketch.</p>
+<h2 class="anchor anchorWithHideOnScrollNavbar_WYt5" id="arduino-nano-33-iot-setup">Arduino Nano 33 IoT Setup<a href="#arduino-nano-33-iot-setup" class="hash-link" aria-label="Direct link to Arduino Nano 33 IoT Setup" title="Direct link to Arduino Nano 33 IoT Setup">​</a></h2>
+<h4 class="anchor anchorWithHideOnScrollNavbar_WYt5" id="installing-arduino-nano-33-iot-in-board-manager">Installing Arduino Nano 33 IoT in Board Manager<a href="#installing-arduino-nano-33-iot-in-board-manager" class="hash-link" aria-label="Direct link to Installing Arduino Nano 33 IoT in Board Manager" title="Direct link to Installing Arduino Nano 33 IoT in Board Manager">​</a></h4>
+<p>Arduino provides official support for the Nano 33 IoT through the Arduino Boards Manager.</p>
+<h4 class="anchor anchorWithHideOnScrollNavbar_WYt5" id="step-by-step-installation">Step-by-Step Installation<a href="#step-by-step-installation" class="hash-link" aria-label="Direct link to Step-by-Step Installation" title="Direct link to Step-by-Step Installation">​</a></h4>
+<ol>
+<li>
+<p><strong>Open Boards Manager</strong>:</p>
+<ul>
+<li>Navigate to <code>Tools &gt; Board &gt; Boards Manager</code> in the Arduino IDE.</li>
+</ul>
+</li>
+<li>
+<p><strong>Search and Install</strong>:</p>
+<ul>
+<li>Type &quot;Arduino Nano 33 IoT&quot; in the search bar, select it, and click &quot;Install&quot;.</li>
+</ul>
+</li>
+</ol>
+<h4 class="anchor anchorWithHideOnScrollNavbar_WYt5" id="testing-with-blink">Testing with Blink<a href="#testing-with-blink" class="hash-link" aria-label="Direct link to Testing with Blink" title="Direct link to Testing with Blink">​</a></h4>
+<ol>
+<li>
+<p><strong>Load the Blink Sketch</strong>:</p>
+<ul>
+<li>Go to <code>File &gt; Examples &gt; 01.Basics &gt; Blink</code>.</li>
+</ul>
+</li>
+<li>
+<p><strong>Select Arduino Nano 33 IoT</strong>:</p>
+<ul>
+<li>Choose <code>Arduino Nano 33 IoT</code> from <code>Tools &gt; Board</code>.</li>
+</ul>
+</li>
+<li>
+<p><strong>Select the Port</strong>:</p>
+<ul>
+<li>Connect your Nano 33 IoT to the computer and choose the appropriate port under <code>Tools &gt; Port</code>.</li>
+</ul>
+</li>
+<li>
+<p><strong>Upload the Program</strong>:</p>
+<ul>
+<li>Click the upload button and ensure the LED blinks to check functionality.</li>
+</ul>
+</li>
+</ol>
+<h2 class="anchor anchorWithHideOnScrollNavbar_WYt5" id="arduino-mkr-wifi-1010-setup">Arduino MKR WiFi 1010 Setup<a href="#arduino-mkr-wifi-1010-setup" class="hash-link" aria-label="Direct link to Arduino MKR WiFi 1010 Setup" title="Direct link to Arduino MKR WiFi 1010 Setup">​</a></h2>
+<p>The Arduino MKR WiFi 1010 board is supported directly by Arduino through its board manager.</p>
+<h4 class="anchor anchorWithHideOnScrollNavbar_WYt5" id="step-by-step-installation-1">Step-by-Step Installation<a href="#step-by-step-installation-1" class="hash-link" aria-label="Direct link to Step-by-Step Installation" title="Direct link to Step-by-Step Installation">​</a></h4>
+<ol>
+<li>
+<p><strong>Access Boards Manager</strong>:</p>
+<ul>
+<li>Go to <code>Tools &gt; Board &gt; Boards Manager</code> and enter &quot;Arduino MKR WiFi 1010&quot; in the search box.</li>
+</ul>
+</li>
+<li>
+<p><strong>Install the Board</strong>:</p>
+<ul>
+<li>Find the Arduino MKR WiFi 1010 entry, select it, and click &quot;Install&quot;.</li>
+</ul>
+</li>
+</ol>
+<h4 class="anchor anchorWithHideOnScrollNavbar_WYt5" id="testing-with-blink-1">Testing with Blink<a href="#testing-with-blink-1" class="hash-link" aria-label="Direct link to Testing with Blink" title="Direct link to Testing with Blink">​</a></h4>
+<ol>
+<li>
+<p><strong>Load the Blink Sketch</strong>:</p>
+<ul>
+<li>Select <code>File &gt; Examples &gt; 01.Basics &gt; Blink</code>.</li>
+</ul>
+</li>
+<li>
+<p><strong>Choose MKR WiFi 1010</strong>:</p>
+<ul>
+<li>Set <code>Arduino MKR WiFi 1010</code> as the board under <code>Tools &gt; Board</code>.</li>
+</ul>
+</li>
+<li>
+<p><strong>Select the Port</strong>:</p>
+<ul>
+<li>Plug in your Arduino MKR WiFi 1010 and select the corresponding port under <code>Tools &gt; Port</code>.</li>
+</ul>
+</li>
+<li>
+<p><strong>Upload the Program</strong>:</p>
+<ul>
+<li>Hit the upload button and verify that the onboard LED starts to blink.</li>
+</ul>
+</li>
+</ol>
+<h2 class="anchor anchorWithHideOnScrollNavbar_WYt5" id="esp8266-setup">ESP8266 Setup<a href="#esp8266-setup" class="hash-link" aria-label="Direct link to ESP8266 Setup" title="Direct link to ESP8266 Setup">​</a></h2>
+<h4 class="anchor anchorWithHideOnScrollNavbar_WYt5" id="installing-esp8266-board-manager">Installing ESP8266 Board Manager<a href="#installing-esp8266-board-manager" class="hash-link" aria-label="Direct link to Installing ESP8266 Board Manager" title="Direct link to Installing ESP8266 Board Manager">​</a></h4>
+<p>The ESP8266 community maintains an Arduino core that can be installed through the Boards Manager.</p>
+<h4 class="anchor anchorWithHideOnScrollNavbar_WYt5" id="step-by-step-installation-2">Step-by-Step Installation<a href="#step-by-step-installation-2" class="hash-link" aria-label="Direct link to Step-by-Step Installation" title="Direct link to Step-by-Step Installation">​</a></h4>
+<ol>
+<li>
+<p><strong>Add Board Manager URL</strong>:</p>
+<ul>
+<li>Go to <code>File &gt; Preferences</code> in the Arduino IDE and add the following URL to the &quot;Additional Boards Manager URLs&quot;:<!-- -->
+<div class="codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_biex"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">http://arduino.esp8266.com/stable/package_esp8266com_index.json</span><br></span></code></pre><div class="buttonGroup__atx"><button type="button" aria-label="Copy code to clipboard" title="Copy" class="clean-btn"><span class="copyButtonIcons_eSgA" aria-hidden="true"><svg viewBox="0 0 24 24" class="copyButtonIcon_y97N"><path fill="currentColor" d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z"></path></svg><svg viewBox="0 0 24 24" class="copyButtonSuccessIcon_LjdS"><path fill="currentColor" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"></path></svg></span></button></div></div></div>
+</li>
+<li>If there are already URLs present, click on the icon on the right of the box to open a text window that allows you to add multiple URLs, one per line.</li>
+</ul>
+</li>
+<li>
+<p><strong>Open Boards Manager</strong>:</p>
+<ul>
+<li>Navigate to <code>Tools &gt; Board &gt; Boards Manager...</code>, search for &quot;ESP8266&quot;, and click &quot;Install&quot;.</li>
+</ul>
+</li>
+</ol>
+<h4 class="anchor anchorWithHideOnScrollNavbar_WYt5" id="testing-with-blink-2">Testing with Blink<a href="#testing-with-blink-2" class="hash-link" aria-label="Direct link to Testing with Blink" title="Direct link to Testing with Blink">​</a></h4>
+<ol>
+<li>
+<p><strong>Load the Blink Sketch</strong>:</p>
+<ul>
+<li>Open <code>File &gt; Examples &gt; 01.Basics &gt; Blink</code>.</li>
+</ul>
+</li>
+<li>
+<p><strong>Select Your ESP8266 Board</strong>:</p>
+<ul>
+<li>Choose your specific ESP8266 model from <code>Tools &gt; Board</code>.</li>
+</ul>
+</li>
+<li>
+<p><strong>Select the Port</strong>:</p>
+<ul>
+<li>Connect your ESP8266 to the computer and select the port it&#x27;s connected to under <code>Tools &gt; Port</code>.</li>
+</ul>
+</li>
+<li>
+<p><strong>Upload the Program</strong>:</p>
+<ul>
+<li>Click the upload button and watch for the LED to blink, confirming that the board is working correctly.</li>
+</ul>
+</li>
+</ol>
+<h2 class="anchor anchorWithHideOnScrollNavbar_WYt5" id="esp32-setup">ESP32 Setup<a href="#esp32-setup" class="hash-link" aria-label="Direct link to ESP32 Setup" title="Direct link to ESP32 Setup">​</a></h2>
+<h4 class="anchor anchorWithHideOnScrollNavbar_WYt5" id="installing-esp32-board-manager">Installing ESP32 Board Manager<a href="#installing-esp32-board-manager" class="hash-link" aria-label="Direct link to Installing ESP32 Board Manager" title="Direct link to Installing ESP32 Board Manager">​</a></h4>
+<p>The ESP32 Arduino core is supported by its community and requires adding a custom board manager URL.</p>
+<h4 class="anchor anchorWithHideOnScrollNavbar_WYt5" id="step-by-step-installation-3">Step-by-Step Installation<a href="#step-by-step-installation-3" class="hash-link" aria-label="Direct link to Step-by-Step Installation" title="Direct link to Step-by-Step Installation">​</a></h4>
+<ol>
+<li>
+<p><strong>Add Board Manager URL</strong>:</p>
+<ul>
+<li>In the Arduino IDE, go to <code>File &gt; Preferences</code> and insert this URL into &quot;Additional Boards Manager URLs&quot;:<!-- -->
+<div class="codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_biex"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">https://dl.espressif.com/dl/package_esp32_index.json</span><br></span></code></pre><div class="buttonGroup__atx"><button type="button" aria-label="Copy code to clipboard" title="Copy" class="clean-btn"><span class="copyButtonIcons_eSgA" aria-hidden="true"><svg viewBox="0 0 24 24" class="copyButtonIcon_y97N"><path fill="currentColor" d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z"></path></svg><svg viewBox="0 0 24 24" class="copyButtonSuccessIcon_LjdS"><path fill="currentColor" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"></path></svg></span></button></div></div></div>
+</li>
+<li>If there are already URLs present, click on the icon on the right of the box to open a text window that allows you to add multiple URLs, one per line.</li>
+</ul>
+</li>
+<li>
+<p><strong>Install the ESP32 Board</strong>:</p>
+<ul>
+<li>Open <code>Tools &gt; Board &gt; Boards Manager</code>, type &quot;ESP32&quot; in the search bar, select it, and click &quot;Install&quot;.</li>
+</ul>
+</li>
+</ol>
+<h4 class="anchor anchorWithHideOnScrollNavbar_WYt5" id="testing-with-blink-3">Testing with Blink<a href="#testing-with-blink-3" class="hash-link" aria-label="Direct link to Testing with Blink" title="Direct link to Testing with Blink">​</a></h4>
+<ol>
+<li>
+<p><strong>Load the Blink Sketch</strong>:</p>
+<ul>
+<li>Navigate to <code>File &gt; Examples &gt; 01.Basics &gt; Blink</code>.</li>
+</ul>
+</li>
+<li>
+<p><strong>Select the ESP32 Board</strong>:</p>
+<ul>
+<li>From <code>Tools &gt; Board</code>, select &quot;ESP32 Dev Module&quot;.</li>
+</ul>
+</li>
+<li>
+<p><strong>Select the Port</strong>:</p>
+<ul>
+<li>Connect your ESP32 to your computer and choose the correct port under <code>Tools &gt; Port</code>.</li>
+</ul>
+</li>
+<li>
+<p><strong>Upload the Program</strong>:</p>
+<ul>
+<li>Press the upload button. Ensure that the onboard LED blinks to indicate it&#x27;s working correctly.</li>
+</ul>
+</li>
+</ol>
+<div class="theme-admonition theme-admonition-info admonition_xJq3 alert alert--info"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 14 16"><path fill-rule="evenodd" d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"></path></svg></span>Windows Port Detection Issue</div><div class="admonitionContent_BuS1"><p>If you are using Windows and cannot find the ESP32 port, the driver may not be installed. To install the driver:</p><ol>
+<li>Connect your ESP32 to your PC.</li>
+<li>Open <strong>Windows Update</strong> settings.</li>
+<li>Click on <strong>Advanced options</strong>.</li>
+<li>Navigate to <strong>Optional updates</strong>.</li>
+<li>Look for the ESP32 driver in the list and select it for installation.
+This should resolve any port detection issues with the ESP32 on Windows.</li>
+</ol></div></div>
+<h2 class="anchor anchorWithHideOnScrollNavbar_WYt5" id="raspberry-pi-pico-w-setup">Raspberry Pi Pico W Setup<a href="#raspberry-pi-pico-w-setup" class="hash-link" aria-label="Direct link to Raspberry Pi Pico W Setup" title="Direct link to Raspberry Pi Pico W Setup">​</a></h2>
+<h4 class="anchor anchorWithHideOnScrollNavbar_WYt5" id="adding-the-raspberry-pi-pico-arduino-core">Adding the Raspberry Pi Pico Arduino Core<a href="#adding-the-raspberry-pi-pico-arduino-core" class="hash-link" aria-label="Direct link to Adding the Raspberry Pi Pico Arduino Core" title="Direct link to Adding the Raspberry Pi Pico Arduino Core">​</a></h4>
+<p>The Raspberry Pi Pico Arduino core is actively maintained by Earle F. Philhower and supports not only the original Pico and the Pico W but also nearly all RP2040-based boards. This core is frequently updated, ensuring compatibility and enhanced features for your development.</p>
+<h4 class="anchor anchorWithHideOnScrollNavbar_WYt5" id="step-by-step-installation-4">Step-by-Step Installation<a href="#step-by-step-installation-4" class="hash-link" aria-label="Direct link to Step-by-Step Installation" title="Direct link to Step-by-Step Installation">​</a></h4>
+<ol>
+<li>
+<p><strong>Open Arduino IDE</strong>:</p>
+<ul>
+<li>Launch your Arduino IDE to start the setup process.</li>
+</ul>
+</li>
+<li>
+<p><strong>Access Preferences</strong>:</p>
+<ul>
+<li>Click on the <code>File</code> menu at the top of the IDE and select <code>Preferences</code>. This will open the Preferences dialog box.</li>
+</ul>
+</li>
+<li>
+<p><strong>Add Board Manager URL</strong>:</p>
+<ul>
+<li>Within the Preferences dialog box, locate the &quot;Additional Boards Manager URLs&quot; text box.</li>
+<li>If there are already URLs present, click on the icon on the right of the box to open a text window that allows you to add multiple URLs, one per line.</li>
+<li>Add the following URL for the Raspberry Pi Pico core:<!-- -->
+<div class="codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_biex"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">https://github.com/earlephilhower/arduino-pico/releases/download/global/package_rp2040_index.json</span><br></span></code></pre><div class="buttonGroup__atx"><button type="button" aria-label="Copy code to clipboard" title="Copy" class="clean-btn"><span class="copyButtonIcons_eSgA" aria-hidden="true"><svg viewBox="0 0 24 24" class="copyButtonIcon_y97N"><path fill="currentColor" d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z"></path></svg><svg viewBox="0 0 24 24" class="copyButtonSuccessIcon_LjdS"><path fill="currentColor" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"></path></svg></span></button></div></div></div>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Save Preferences</strong>:</p>
+<ul>
+<li>Click <code>OK</code> to save your changes and close the Preferences dialog.</li>
+</ul>
+</li>
+</ol>
+<h4 class="anchor anchorWithHideOnScrollNavbar_WYt5" id="installing-the-board-from-boards-manager">Installing the Board from Boards Manager<a href="#installing-the-board-from-boards-manager" class="hash-link" aria-label="Direct link to Installing the Board from Boards Manager" title="Direct link to Installing the Board from Boards Manager">​</a></h4>
+<ol>
+<li>
+<p><strong>Open Boards Manager</strong>:</p>
+<ul>
+<li>Navigate to <code>Tools &gt; Board &gt; Boards Manager...</code> from the Arduino IDE menu. This opens the Boards Manager window.</li>
+</ul>
+</li>
+<li>
+<p><strong>Search for Pico Boards</strong>:</p>
+<ul>
+<li>In the Boards Manager, type <code>Pico</code> into the search bar. You will see several entries for RP2040 boards.</li>
+</ul>
+</li>
+<li>
+<p><strong>Install the Raspberry Pi Pico/RP2040 Board</strong>:</p>
+<ul>
+<li>Find the entry labeled <code>Raspberry Pi Pico/RP2040</code> by Earle Philhower.</li>
+<li>Click <code>Install</code> to add this board to your Arduino IDE. The installation may take a minute as it downloads and installs the files.</li>
+</ul>
+</li>
+<li>
+<p><strong>Completion</strong>:</p>
+<ul>
+<li>Once the installation is complete, you are ready to start using the Raspberry Pi Pico or Pico W with your Arduino IDE.</li>
+</ul>
+</li>
+</ol>
+<div class="theme-admonition theme-admonition-info admonition_xJq3 alert alert--info"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 14 16"><path fill-rule="evenodd" d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"></path></svg></span>info</div><div class="admonitionContent_BuS1"><p><strong>Note:</strong> Installing the board this way ensures that you have the latest support for the Raspberry Pi Pico and other RP2040-based boards, allowing you to leverage the full capabilities of the microcontroller.</p></div></div>
+<h2 class="anchor anchorWithHideOnScrollNavbar_WYt5" id="teensy-41-setup">Teensy 4.1 Setup<a href="#teensy-41-setup" class="hash-link" aria-label="Direct link to Teensy 4.1 Setup" title="Direct link to Teensy 4.1 Setup">​</a></h2>
+<h4 class="anchor anchorWithHideOnScrollNavbar_WYt5" id="install-teensyduino">Install Teensyduino<a href="#install-teensyduino" class="hash-link" aria-label="Direct link to Install Teensyduino" title="Direct link to Install Teensyduino">​</a></h4>
+<ol>
+<li><strong>Download and install Teensyduino</strong>: Visit the <a href="https://www.pjrc.com/teensy/td_download.html" target="_blank" rel="noopener noreferrer">Teensyduino Software page</a>, which adds support for Teensy boards to the Arduino IDE.<!-- -->
+<ul>
+<li>If there are already URLs present, click on the icon on the right of the box to open a text window that allows you to add multiple URLs, one per line.</li>
+</ul>
+</li>
+</ol>
+<h4 class="anchor anchorWithHideOnScrollNavbar_WYt5" id="testing-with-blink-4">Testing with Blink<a href="#testing-with-blink-4" class="hash-link" aria-label="Direct link to Testing with Blink" title="Direct link to Testing with Blink">​</a></h4>
+<ol start="2">
+<li><strong>Load the Blink Sketch</strong>: Navigate to <code>File &gt; Examples &gt; 01.Basics &gt; Blink</code>.</li>
+<li><strong>Select Teensy 4.1</strong>: From <code>Tools &gt; Board</code>, select <code>Teensy 4.1</code>.</li>
+<li><strong>Select the Port</strong>: Choose the COM port connected to your Teensy 4.1 from <code>Tools &gt; Port</code>.</li>
+<li><strong>Upload the Program</strong>: Press the upload button. Ensure the onboard LED starts blinking.</li>
+</ol>
+<h2 class="anchor anchorWithHideOnScrollNavbar_WYt5" id="troubleshooting">Troubleshooting<a href="#troubleshooting" class="hash-link" aria-label="Direct link to Troubleshooting" title="Direct link to Troubleshooting">​</a></h2>
+<p>If you encounter issues during installation or testing:</p>
+<ul>
+<li><strong>Ensure the correct board and port are selected</strong>: Always double-check the board and port settings under the <code>Tools</code> menu.</li>
+<li><strong>Check connections</strong>: Verify that your microcontroller is properly connected to your computer and the board is powered on.</li>
+<li><strong>Reinstall drivers if needed</strong>: Especially for Windows, ensure that all necessary drivers are installed and up to date.</li>
+<li><strong>Refer to official docs</strong>: Consult the official documentation for each board for specific troubleshooting steps.</li>
+</ul>
+<p>This comprehensive guide should help you successfully set up each microcontroller with the Arduino IDE, prepare them for programming, and verify their functionality through a simple Blink test.</p></div></article><nav class="pagination-nav docusaurus-mt-lg" aria-label="Docs pages"><a class="pagination-nav__link pagination-nav__link--next" href="/docs/tutorial/node_code_explained"><div class="pagination-nav__sublabel">Next</div><div class="pagination-nav__label">Node Code Explained</div></a></nav></div></div><div class="col col--3"><div class="tableOfContents_bqdL thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#arduino-ide-features-and-specifications" class="table-of-contents__link toc-highlight">Arduino IDE Features and Specifications</a></li><li><a href="#arduino-ide-installation" class="table-of-contents__link toc-highlight">Arduino IDE Installation</a></li><li><a href="#installing-microcontroller-board-managers-and-testing-with-blink" class="table-of-contents__link toc-highlight">Installing Microcontroller Board Managers and Testing with Blink</a></li><li><a href="#arduino-nano-33-iot-setup" class="table-of-contents__link toc-highlight">Arduino Nano 33 IoT Setup</a></li><li><a href="#arduino-mkr-wifi-1010-setup" class="table-of-contents__link toc-highlight">Arduino MKR WiFi 1010 Setup</a></li><li><a href="#esp8266-setup" class="table-of-contents__link toc-highlight">ESP8266 Setup</a></li><li><a href="#esp32-setup" class="table-of-contents__link toc-highlight">ESP32 Setup</a></li><li><a href="#raspberry-pi-pico-w-setup" class="table-of-contents__link toc-highlight">Raspberry Pi Pico W Setup</a></li><li><a href="#teensy-41-setup" class="table-of-contents__link toc-highlight">Teensy 4.1 Setup</a></li><li><a href="#troubleshooting" class="table-of-contents__link toc-highlight">Troubleshooting</a></li></ul></div></div></div></div></main></div></div></div><footer class="footer footer--dark"><div class="container container-fluid"><div class="row footer__links"><div class="col footer__col"><div class="footer__title">Resources.</div><ul class="footer__items clean-list"><li class="footer__item"><a class="footer__link-item" href="/overview">Overview</a></li><li class="footer__item"><a class="footer__link-item" href="/docs/introduction">Docs</a></li><li class="footer__item"><a class="footer__link-item" href="/docs/tutorial/installation">Tutorial</a></li></ul></div><div class="col footer__col"><div class="footer__title">More</div><ul class="footer__items clean-list"><li class="footer__item"><a class="footer__link-item" href="/about">About</a></li><li class="footer__item"><a href="https://github.com/facebook/docusaurus" target="_blank" rel="noopener noreferrer" class="footer__link-item">GitHub<svg width="13.5" height="13.5" aria-hidden="true" viewBox="0 0 24 24" class="iconExternalLink_nPIU"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"></path></svg></a></li></ul></div></div><div class="footer__bottom text--center"><div class="footer__copyright">Copyright © 2024 CSD, NITK</div></div></div></footer></div>
+</body>
+</html>

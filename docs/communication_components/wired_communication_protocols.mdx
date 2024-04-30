@@ -1,0 +1,174 @@
+---
+title: Wired Communication Protocols
+description: Details the specific wired communication protocols used, such as I2C, SPI, and UART, explaining their implementation and benefits within node-level communications
+---
+
+import LiteYouTubeEmbed from 'react-lite-youtube-embed';
+import 'react-lite-youtube-embed/dist/LiteYouTubeEmbed.css'
+
+# Wired Communication Protocols
+
+Wired communication protocols play a crucial role in the stability and reliability of data transmission within Applied Cyber-Physical Systems (ACPS). This section delves into the specifics of UART, I2C, and SPI, providing detailed insights based on authoritative sources.
+
+## UART (Universal Asynchronous Receiver/Transmitter)
+
+#### Overview
+UART protocol facilitates asynchronous serial communication where the data format and transmission speeds are configurable, making it ideal for basic communication needs between devices.
+
+#### Detailed Operation
+- **Lines Used**: Utilizes two primary lines, TX (Transmit) and RX (Receive), which are used for sending and receiving data, respectively.
+- **Data Frame**: A typical UART data frame consists of a start bit, data bits, optional parity, and stop bits.
+- **No Clock Signal**: Unlike SPI and I2C, UART does not require a clock signal as it is asynchronous; each device independently configures its baud rate, provided it matches on both ends.
+
+For an in-depth exploration of UART, refer to the [UART Guide](@site/static/datasheets/uart.pdf).
+
+<div style={{ position: 'relative', width: '100%', display: 'inline-block' }}>
+  <div className="video-container">
+    <LiteYouTubeEmbed
+      id="sTHckUyxwp8"
+      title="Understanding UART"
+    />
+  </div>
+  <div style={{ 
+    fontSize: '14px',
+    position: 'absolute', 
+    bottom: -55, 
+    right: 0, 
+    padding: '5px'
+  }}>
+    Source: <a href="https://www.youtube.com/@RohdeundSchwarz" target="_blank">Rohde Schwarz YouTube Channel</a>
+  </div>
+</div>
+
+## I2C (Inter-Integrated Circuit)
+
+#### Overview
+I2C is a highly efficient protocol designed for multi-master, multi-slave, packet-switched communication, commonly used for interfacing low-speed peripherals.
+
+#### Detailed Operation
+- **Lines Used**: Two wires, SCL (clock) and SDA (data), are utilized, allowing multiple devices to communicate using just these lines.
+- **Multi-Master Configuration**: Allows multiple master devices to connect without additional wiring, where each device can initiate communication.
+- **Addressing**: Devices are addressed through unique addresses configured in the hardware, facilitating direct communication within the network.
+
+Explore the comprehensive details of I2C in the [I2C Guide](@site/static/datasheets/i2c.pdf).
+
+<div style={{ position: 'relative', width: '100%', display: 'inline-block' }}>
+  <div className="video-container">
+    <LiteYouTubeEmbed
+      id="CAvawEcxoPU"
+      title="Understanding I2C"
+    />
+  </div>
+  <div style={{ 
+    fontSize: '14px',
+    position: 'absolute', 
+    bottom: -55, 
+    right: 0, 
+    padding: '5px'
+  }}>
+    Source: <a href="https://www.youtube.com/@RohdeundSchwarz" target="_blank">Rohde Schwarz YouTube Channel</a>
+  </div>
+</div>
+
+## SPI (Serial Peripheral Interface)
+
+#### Overview
+SPI is favored for its high-speed synchronous communication capabilities, suited for scenarios where speed and data integrity are critical.
+
+#### Detailed Operation
+- **Lines Used**: Consists of four main lines—MISO (Master In Slave Out), MOSI (Master Out Slave In), SCK (Serial Clock), and SS (Slave Select).
+- **Full Duplex Communication**: Enables simultaneous data transmission and reception, enhancing data throughput.
+- **Master-Slave Architecture**: Ensures a controlled environment where the master device controls all communications and clock signal distribution to the slaves.
+
+Further details on SPI can be found in the [SPI Guide](@site/static/datasheets/spi.pdf).
+
+<div style={{ position: 'relative', width: '100%', display: 'inline-block' }}>
+  <div className="video-container">
+    <LiteYouTubeEmbed
+      id="0nVNwozXsIc"
+      title="Understanding SPI"
+    />
+  </div>
+  <div style={{ 
+    fontSize: '14px',
+    position: 'absolute', 
+    bottom: -55, 
+    right: 0, 
+    padding: '5px'
+  }}>
+    Source: <a href="https://www.youtube.com/@RohdeundSchwarz" target="_blank">Rohde Schwarz YouTube Channel</a>
+  </div>
+</div>
+
+## Protocol Comparison
+
+<div style={{ display: 'flex', justifyContent: 'center', margin: '20px' }}>
+  <table style={{ width: '90%', borderCollapse: 'collapse' }}>
+    <thead>
+      <tr>
+        <th style={{ padding: '8px', width: '30%', textAlign: 'center' }}>Feature</th>
+        <th style={{ padding: '8px', width: '23%', textAlign: 'center' }}>UART</th>
+        <th style={{ padding: '8px', width: '23%', textAlign: 'center' }}>I2C</th>
+        <th style={{ padding: '8px', width: '24%', textAlign: 'center' }}>SPI</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style={{ padding: '8px', textAlign: 'Right' }}>Speed</td>
+        <td style={{ padding: '8px', textAlign: 'Center' }}>Up to 1 Mbps</td>
+        <td style={{ padding: '8px', textAlign: 'Center' }}>Up to 3.4 Mbps</td>
+        <td style={{ padding: '8px', textAlign: 'Center' }}>Up to 10 Mbps</td>
+      </tr>
+      <tr>
+        <td style={{ padding: '8px', textAlign: 'Right' }}>Complexity</td>
+        <td style={{ padding: '8px', textAlign: 'Center' }}>Low</td>
+        <td style={{ padding: '8px', textAlign: 'Center' }}>Medium</td>
+        <td style={{ padding: '8px', textAlign: 'Center' }}>High</td>
+      </tr>
+      <tr>
+        <td style={{ padding: '8px', textAlign: 'Right' }}>Wiring</td>
+        <td style={{ padding: '8px', textAlign: 'Center' }}>2 wires</td>
+        <td style={{ padding: '8px', textAlign: 'Center' }}>2 wires</td>
+        <td style={{ padding: '8px', textAlign: 'Center' }}>At least 4 wires</td>
+      </tr>
+      <tr>
+        <td style={{ padding: '8px', textAlign: 'Right' }}>Hardware Needed</td>
+        <td style={{ padding: '8px', textAlign: 'Center' }}>Minimal hardware</td>
+        <td style={{ padding: '8px', textAlign: 'Center' }}>Addressable</td>
+        <td style={{ padding: '8px', textAlign: 'Center' }}>Requires more pins</td>
+      </tr>
+      <tr>
+        <td style={{ padding: '8px', textAlign: 'Right' }}>Use Case</td>
+        <td style={{ padding: '8px', textAlign: 'Center' }}>Simple, low-speed, point-to-point communication</td>
+        <td style={{ padding: '8px', textAlign: 'Center' }}>Sensor networks, multiple slave configurations</td>
+        <td style={{ padding: '8px', textAlign: 'Center' }}>Short-distance, high-speed applications</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+## Future Scope for Integrating Other Wired Communication Protocols
+
+As ACPS technologies evolve, integrating advanced communication protocols beyond I2C, SPI, and UART will be crucial to meet the increasing demands for reliability, efficiency, and scalability. Protocols such as CAN, Modbus, and others offer distinct advantages that could enhance system performance and functionality.
+
+### CAN (Controller Area Network)
+
+- **Overview**: Originally developed for automotive applications, CAN is a robust vehicle bus standard designed to allow microcontrollers and devices to communicate with each other without a host computer.
+- **Significance**: CAN is well-suited for environments where reliability and fault tolerance are critical. Its ability to function effectively over longer distances and in noisy environments makes it ideal for industrial applications, extending ACPS capabilities in manufacturing, automation, and vehicle systems.
+
+### Modbus
+
+- **Overview**: Modbus is a serial communication protocol developed for industrial applications, used to transmit signals between electronic devices over various types of networks.
+- **Significance**: It is one of the de facto standards in the industry, known for its simplicity and ease of deployment, making it suitable for connecting industrial electronic devices.
+
+### Potential Protocols to Explore
+
+- **LIN (Local Interconnect Network)**: A simpler, cost-effective alternative to CAN used in automotive networks to control lights, windows, and other simple devices.
+- **EtherCAT (Ethernet for Control Automation Technology)**: An Ethernet-based fieldbus system, EtherCAT is distinguished by its speed and efficiency, making it suitable for real-time industrial control applications.
+
+#### Benefits of Expanding Protocol Options
+
+Incorporating these protocols can offer:
+- **Enhanced Scalability**: Support larger networks of sensors and actuators with higher data integrity and fault tolerance.
+- **Increased Flexibility**: Provide more options for system architects to choose the optimal communication strategy based on specific project requirements.
+- **Improved Interoperability**: Facilitate easier integration with legacy systems and other technologies, enhancing the system's ability to function in diverse environments.

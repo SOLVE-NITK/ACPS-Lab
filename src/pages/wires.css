@@ -1,0 +1,133 @@
+.tabler {
+    font-size: 1.03rem;
+    border-top: 1px solid #d2d3d7;
+    text-align: center;
+    border-collapse: collapse;
+    border-spacing: 0;
+    margin: 0 auto;
+    caption-side: bottom;
+    overflow: hidden;
+    min-width: 450px;
+}
+
+.tabler td {
+    border-width: 0;
+    text-align: center;
+    padding: 8px;
+}
+
+.tabler .tabler-smalltext {
+    font-size: 11px;
+}
+
+.tabler tr.tabler-header {
+    font-weight: 500;
+    border-bottom: 2px solid #d2d3d7;
+}
+
+.tabler tr {
+    border-bottom: 1px solid #d2d3d7;
+}
+
+.parametertabler tr td {
+    text-align: left;
+    padding-left: 30px;
+}
+
+.parametertabler td:first-child {
+    font-weight: 500;
+    padding-left: 40px;
+}
+
+span.wire {
+    width: 225px;
+    display: block;
+    position: relative;
+    margin: 0 auto;
+}
+
+span.wire:after,
+span.wire:before {
+    content: "";
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' xml:space='preserve' viewBox='0 0 46 7.3'%3E%3Cpath fill='%23535657' d='M13.7 0H46v7.3H13.7z'/%3E%3Cpath fill='%23C3C4C6' d='M0 2.7h13.7v1.8H0z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    display: block;
+    height: 8px;
+    top: 0;
+    position: absolute;
+    width: 50px;
+    z-index: 1;
+}
+
+span.wire:before {
+    left: 0;
+}
+
+span.wire:after {
+    right: 0;
+    transform: rotate(180deg);
+}
+
+span.wire span {
+    display: block;
+    height: 4px;
+    margin: auto 15px;
+    position: relative;
+    top: 2px;
+}
+
+span.wire-red {
+    background: #cb2b2b;
+}
+
+span.wire-black {
+    background: #333739;
+}
+
+span.wire-blue {
+    background: #3498db;
+}
+
+span.wire-green {
+    background: #2ecc71;
+}
+
+span.wire-yellow {
+    background: #f1c40f;
+}
+
+span.wire-orange {
+    background: #e67e22;
+}
+
+span.wire-purple {
+    background: #8d4ba3;
+}
+
+span.wire-gray {
+    background: #95a5a6;
+}
+
+span.wire-brown {
+    background: #a14403;
+}
+
+.tabler.connections {
+    width: 80%;
+}
+
+.tabler.connections tr:not(:first-child) {
+    border-width: 0;
+}
+
+.tabler.connections tr.tabler-header {
+    border-bottom: 1px solid #d2d3d7;
+}
+
+.tabler.connections td {
+    padding: 6px;
+}
+
+.tabler.connections td:not(:nth-child(2)) {
+    width: 50%;
+}

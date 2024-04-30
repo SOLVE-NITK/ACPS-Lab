@@ -1,0 +1,232 @@
+---
+title: 'Node 9: Orientation Visualizer, Free Fall, and Crash Detector'
+description: Tracks device orientation and detects falls or crashes, important for automotive and mobile device safety.
+---
+
+import nodeImage from '@site/static/img/node9/Orientation.jpg';
+import esp32 from '@site/static/img/components_images/ESP32.png';
+import mpu9250 from '@site/static/img/components_images/MPU9250.png';
+import redLED from '@site/static/img/components_images/Red_LED.webp';
+import buzzer from '@site/static/img/components_images/Buzzer.png';
+import PinConnectionsTable from '@site/src/pages/PinConnectionsTable.js';
+import circuitDiagram from '@site/static/img/node9/Orientation-Visualizer-and-Free-Fall-Detector_Circuit_Diagram_bb.png';
+
+# Node 9: Orientation Visualizer, Free Fall, and Crash Detector
+
+This node  incorporates an ESP32 and the MPU9250 IMU to detect orientation changes, falls, and collisions, vital for automotive safety systems and mobile devices. This node enhances user safety by providing critical data that triggers preventive actions in potentially hazardous situations, demonstrating the impactful convergence of sensor technology and dynamic system response.
+
+<img src={nodeImage} 
+alt="Orientation Visualizer, Free Fall, and Crash Detector" 
+style={{ 
+    width: '75%', 
+    display: 'block', 
+    margin: '20px auto' }} />
+
+## Components Summary
+
+<div style={{ display: 'flex', justifyContent: 'center', margin: '20px' }}>
+  <table style={{ width: '75%', borderCollapse: 'collapse' }}>
+    <thead>
+      <tr>
+        <th style={{ padding: '8px', width: '30%', textAlign: 'center' }}>Component Type</th>
+        <th style={{ padding: '8px', width: '70%', textAlign: 'center' }}>Component Name</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style={{ padding: '8px', textAlign: 'right' }}>Controller</td>
+        <td style={{ padding: '8px' }}>
+          <a href="#controller-esp32-dev-board">ESP32 Dev Board</a>
+        </td>
+      </tr>
+      <tr>
+        <td style={{ padding: '8px', textAlign: 'right' }}>Sensor</td>
+        <td style={{ padding: '8px' }}>
+          <a href="#sensor-mpu9250-9dof-imu-module">MPU9250 9DoF IMU Sensor</a>
+        </td>
+      </tr>
+      <tr>
+        <td style={{ padding: '8px', textAlign: 'right' }}>Actuator</td>
+        <td style={{ padding: '8px' }}>
+          <a href="#actuator-buzzer">Buzzer</a>
+        </td>
+      </tr>
+      <tr>
+        <td></td>
+        <td style={{ padding: '8px' }}>
+          <a href="#actuator-led">Red LED</a>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+## Components Overview
+
+### Controller: ESP32 Dev Board
+
+The ESP32 Dev Board is a powerhouse of functionality equipped for the Internet of Things (IoT). It houses a dual-core processor that provides ample computational capability for a vast array of applications, ranging from simple to complex multitasking environments. The board's connectivity suite, with Wi-Fi and Bluetooth capabilities, allows for easy integration into wireless networks and communication with other devices, making it a perfect fit for smart home applications, IoT devices, and advanced robotics.
+
+<img src={esp32} 
+alt="ESP32 Dev Board" 
+style={{ 
+    width: '75%', 
+    display: 'block', 
+    margin: '20px auto' 
+}} />
+
+#### Technical Specifications and Features
+- **Processor**: Dual-Core 32-bit LX6 microprocessor, up to 240 MHz clock frequency.
+- **Memory**: 520 KB of SRAM, 448 KB of ROM.
+- **Connectivity**: Wi-Fi 802.11 b/g/n, Bluetooth v4.2 with BLE.
+- **I/O Pins**: 34 programmable GPIOs.
+- **Analog**: 18-channel 12-bit SAR ADC, 2 channels of 8-bit DAC.
+- **Communication Protocols**: 4 x SPI, 2 x I2C, 2 x I2S, 3 x UART.
+- **Additional Peripherals**: Ethernet MAC, SD/SDIO/MMC host, LED PWM, Motor PWM.
+- **Security**: Secure boot and flash encryption.
+- **Cryptographic Hardware Acceleration**: AES, SHA-2, RSA, ECC, Random Number Generator.
+
+#### Key Features
+- **High Integration**: A single chip for both CPU and wireless functionalities.
+- **Energy Efficient**: Advanced power management for battery operation.
+- **Extensive GPIOs**: Offers flexibility for various use cases.
+- **Robust IO Capabilities**: Multiple serial interfaces for peripherals.
+- **Rich Community Support**: Extensive libraries and forums for development support.
+
+#### References
+- [ESP32 Datasheet](@site/static/datasheets/ESP32.pdf)
+- [ESP32 Development Board Pinout](@site/static/datasheets/ESP32_DevBoard_Pinout.pdf)
+
+### Sensor: MPU9250 9DOF IMU Module
+
+The MPU9250 is a versatile motion-tracking sensor module that combines a three-axis accelerometer, a three-axis gyroscope, and a three-axis magnetometer in a single compact package. This module is designed to provide precise motion and orientation data for a wide range of applications, including robotics, drones, virtual reality, and motion-sensing devices. The accelerometer measures linear acceleration, the gyroscope detects angular velocity, and the magnetometer provides information about the Earth's magnetic field, enabling accurate tracking of orientation and movement in three-dimensional space. The MPU9250 is known for its accuracy and sensitivity, making it a popular choice for projects requiring motion sensing and orientation tracking.
+
+<img src={mpu9250} 
+alt="MPU9250 9DOF IMU Module" 
+style={{ 
+    width: '60%', 
+    display: 'block', 
+    margin: '20px auto' 
+}} />
+
+#### Technical Specifications and Features:
+- **Sensor Integration**: The MPU-9250 integrates a three-axis accelerometer, a three-axis gyroscope, and a three-axis magnetometer.
+- **Gyroscope Range**: It provides a selectable full-scale gyroscope range of ±250, ±500, ±1000, or ±2000 degrees per second (dps).
+- **Accelerometer Range**: The accelerometer has a selectable full-scale range of ±2g, ±4g, ±8g, or ±16g.
+- **Magnetometer Range**: The magnetometer operates within a range of ±4800μT.
+- **Communication Interface**: It supports I2C and SPI communication interfaces for data exchange with microcontrollers.
+- **Operating Voltage**: The module typically operates at a voltage range of 2.4V to 3.6V.
+- **Low Power**: The MPU-9250 offers low power consumption, making it suitable for battery-powered applications.
+- **Temperature Range**: It functions within a temperature range of -40°C to +85°C.
+
+#### References:
+- [MPU9250 Datasheet](@site/static/datasheets/MPU9250.pdf)
+
+### Actuator: LED
+
+LEDs, or Light Emitting Diodes, are semiconductor devices that emit light when an electric current is applied. Known for their energy efficiency, compact size, and long life, LEDs are extensively used across various applications including electronic devices, display panels, indicators, and general lighting. Their ability to be manufactured in various colors and sizes makes LEDs exceptionally versatile for design and functional purposes in numerous projects.
+
+<img src={redLED} 
+      alt="Red LED" 
+      style={{ 
+        width: '25%', 
+        display: 'block', 
+        margin: '20px auto'  }} />
+
+#### Technical Specifications and Features
+- **Dice Material**: Gallium Arsenide Phosphide on Gallium Phosphide (GaAsP on GaP/GaP).
+- **Emitted Colors**: Available in Green and Red.
+- **Lens Color**: Green Diffused and Red Diffused.
+- **Peak Wavelength**:
+  - Green: 568 nm
+  - Red: 587 nm
+- **Viewing Angle**: 45 degrees, offering focused illumination.
+- **Luminous Intensity (IV)**:
+  - Green: 15 mcd
+  - Red: 14 mcd
+
+#### References
+- [Red LED Datasheet](@site/static/datasheets/Red_LED.pdf)
+
+### Actuator: Buzzer
+
+A passive piezoelectric buzzer utilizes a piezoelectric crystal or ceramic element to create sound. When alternating voltage is applied, the piezoelectric element undergoes rapid expansion and contraction, which generates vibrations. These vibrations produce sound waves, creating audible noise. This type of buzzer is commonly used in alarms, timers, and user interface feedback due to its simplicity and effectiveness.
+
+<img src={buzzer} 
+alt="Buzzer" 
+style={{ 
+    width: '60%', 
+    display: 'block', 
+    margin: '20px auto'  }} />
+
+#### Technical Specifications and Features
+- **Input Voltage (Max.)**: 5V
+- **Resistance**: 42 Ω
+- **Resonance Frequency**: 2048 Hz
+- **Body Size**: 12mm x 8mm
+- **Pin Pitch**: 6mm
+- **External Material**: Plastic
+- **Color**: Black
+
+#### References
+- [5V Passive Buzzer Datasheet](@site/static/datasheets/Passive_Buzzer.pdf)
+
+## Communication Protocols
+
+### Controller Communication
+
+The communication between the ESP32 controller and the ThingsBoard server involves two key protocols: Wi-Fi and MQTT.
+
+#### Wi-Fi Connection:
+The ESP32 connects to a local Wi-Fi network, enabling it to access the internet. This connection provides the foundation for communication with external services like the ThingsBoard server.
+
+#### MQTT Protocol:
+The Message Queuing Telemetry Transport (MQTT) protocol is employed for transmitting data between the controller and the ThingsBoard server. MQTT is a lightweight and efficient protocol designed for remote devices with limited resources. It facilitates the publication of data (such as access events) from the controller to the server, as well as the subscription to commands or acknowledgements from the server. MQTT ensures secure and reliable communication, making it ideal for real-time data visualization and monitoring on the ThingsBoard dashboard. The controller publishes messages related to access events, which are then visualized on the dashboard, offering insights into the system's performance and access patterns.
+
+### Sensor Communication
+
+The communication between the MPU9250 and the ESP32 controller involves the Inter-Integrated Circuit (I2C) protocol.
+
+#### I2C Protocol:
+The MPU9250 9DoF Inertial Measurement Unit (IMU) sensor communicates with the ESP32 controller using the Inter-Integrated Circuit (I2C) protocol. I2C is a serial communication protocol that allows bidirectional data transfer between devices, in this case, the sensor and the controller. This protocol enables the ESP32 controller to retrieve precise orientation and acceleration data from the MPU9250 sensor, facilitating real-time monitoring and processing of this critical information.
+
+## Pin Connections
+This section provides details about the pin connections between the components used in the node and the ESP32 controller.
+
+### MPU9250 Module Pin Connections
+
+<PinConnectionsTable
+  data={[
+    ["MPU9250", "", "ESP32 Dev Board"],
+    ["VCC", <span className="wire"><span className="wire-red"></span></span>, "3.3V"],
+    ["GND", <span className="wire"><span className="wire-black"></span></span>, "GND"],
+    ["SCL", <span className="wire"><span className="wire-purple"></span></span>, "SCL"],
+    ["SDA", <span className="wire"><span className="wire-orange"></span></span>, "SDA"]
+  ]}
+/>
+
+### Red LED Pin Connections
+
+<PinConnectionsTable
+  data={[
+    ["Red LED", "", "ESP32 Dev Board"],
+    ["Anode (+)", <span className="wire"><span className="wire-blue"></span></span>, "19"],
+    ["Cathode (-)", <span className="wire"><span className="wire-black"></span></span>, "GND"]
+  ]}
+/>
+
+### Buzzer Pin Connections
+
+<PinConnectionsTable
+  data={[
+    ["Buzzer", "", "ESP32 Dev Board"],
+    ["Positive (+)", <span className="wire"><span className="wire-blue"></span></span>, "18"],
+    ["Negative (-)", <span className="wire"><span className="wire-black"></span></span>, "GND"]
+  ]}
+/>
+
+## Link to Code Explanation and Tutorial
+
+For a comprehensive guide on programming this node, including detailed code explanations and step-by-step tutorials, please refer to the following link. This resource provides all necessary information to understand the functioning of the node, enabling users to effectively program and customize it according to their specific requirements.
+
+[Visit the Node Programming Guide and Code Explanation](/docs/tutorial/node_code_explained.mdx)

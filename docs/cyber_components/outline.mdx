@@ -1,0 +1,54 @@
+---
+title: Outline
+description: Provides a quick overview of the cyber component's function and the goals of the documentation.
+---
+
+import ThemedImage from '@theme/ThemedImage';
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
+# Outline
+
+This section provides a comprehensive overview of the completed integration and functionality of ThingsBoard within our cyber-physical system. It highlights the crucial roles and successful implementations of the cyber component, detailing its achievements and the effective deployment on Raspberry Pi.
+
+## System Integration
+The cyber component, powered by ThingsBoard, served as the central nervous system of our IoT environment, seamlessly integrating physical sensors, devices, and computational elements. It facilitated real-time complex event processing, device management, and data analytics, ensuring cohesive and efficient operations.
+
+<a href="thingsboard_platform">
+<ThemedImage
+  alt="Docusaurus themed image"
+  sources={{
+    light: useBaseUrl('/img/thingsboard_blue.svg'),
+    dark: useBaseUrl('/img/thingsboard_white.svg'),
+  }}
+  style={{ 
+    width: '50%', 
+    display: 'block', 
+    margin: '20px auto' }}
+/>
+</a>
+
+## Achievements with ThingsBoard
+
+### Edge, Fog, and Cloud Computation Implementation
+
+We enabled decentralized data processing across the system’s architecture by supporting edge, fog, and cloud layers. This approach minimized latency, maximized efficiency, and enhanced the scalability of data handling. Decentralized computation reduced bandwidth costs, improved response times, and enhanced data privacy. It ensured system reliability, even during intermittent cloud connectivity.
+
+### Inter-node and Intra-node Integrations (Mesh Configurations)
+
+We supported advanced mesh network configurations that enabled dynamic and flexible inter-node and intra-node communications, crucial for systems requiring high resilience and scalability. Mesh configurations improved system efficiency by enhancing data flow across nodes and reducing points of failure, supporting seamless scalability and adaptability to changes in the network topology.
+
+### OTA (Over-The-Air Updates) Implementation
+
+We implemented OTA updates, allowing for the remote upgrade of firmware and software on devices within the network, which was essential for maintaining the security and efficiency of the system. OTA updates facilitated the rapid deployment of critical updates and new features remotely, reducing system vulnerabilities and operational risks.
+
+### Mobile App Implementation
+
+We developed a mobile application that integrated with ThingsBoard to provide users with real-time access and control over the system, enhancing user interaction capabilities. The mobile app featured a user-friendly interface that allowed for monitoring system status, customizing dashboards, managing devices, and viewing analytics.
+
+## Local Deployment of ThingsBoard on Raspberry Pi
+
+We deployed ThingsBoard on Raspberry Pi, using this single-board computer (SBC) as the primary hardware platform to establish a local server and part of edge, fog, and cloud computing layer. This strategy leveraged the Raspberry Pi’s capabilities to perform all the earlier mentioned activities, including decentralized data processing, OTA updates, and mobile app integration, which were essential for localized data handling and enhanced data privacy. Local deployment on Raspberry Pi provided numerous advantages. It offered full control over data, reduced operational costs by minimizing reliance on cloud services, and increased data processing speed. This setup ensured enhanced system reliability and responsiveness by allowing local data processing and immediate action based on data insights.
+
+### Technical Setup
+
+The technical setup involved installing and configuring ThingsBoard on Raspberry Pi, which included setting up the operating system, configuring network connections, and ensuring optimal security measures were in place. We ensured that Raspberry Pi was adequately configured to handle the demands of ThingsBoard, making it a robust platform for running our IoT applications efficiently.

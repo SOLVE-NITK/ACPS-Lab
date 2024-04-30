@@ -1,0 +1,242 @@
+---
+title: 'Node 7: Motion Detector'
+description: Enhances security by detecting and alerting to motion within its vicinity, suitable for homes and commercial spaces.
+---
+
+import nodeImage from '@site/static/img/node7/Motion.jpg';
+import esp8266 from '@site/static/img/components_images/ESP8266.png';
+import pir from '@site/static/img/components_images/PIR.jpg';
+import greenLED from '@site/static/img/components_images/Green_LED.png';
+import servo from '@site/static/img/components_images/TOWER_PRO_9g_Servo.webp';
+import PinConnectionsTable from '@site/src/pages/PinConnectionsTable.js';
+import circuitDiagram from '@site/static/img/node7/Motion-Detector_Circuit_Diagram_bb.png';
+
+# Node 7: Motion Detector
+
+The Motion Detector, equipped with an ESP8266, detects movement using a PIR sensor, making it an essential component for security systems in homes and businesses. This node's functionality highlights its role in automated security setups, where real-time motion detection triggers alerts and recordings, enhancing the safety and surveillance capabilities of the system.
+
+<img src={nodeImage} 
+alt="Motion Detector" 
+style={{ 
+    width: '75%', 
+    display: 'block', 
+    margin: '20px auto' }} />
+
+## Components Summary
+
+<div style={{ display: 'flex', justifyContent: 'center', margin: '20px' }}>
+  <table style={{ width: '75%', borderCollapse: 'collapse' }}>
+    <thead>
+      <tr>
+        <th style={{ padding: '8px', width: '30%', textAlign: 'center' }}>Component Type</th>
+        <th style={{ padding: '8px', width: '70%', textAlign: 'center' }}>Component Name</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style={{ padding: '8px', textAlign: 'right' }}>Controller</td>
+        <td style={{ padding: '8px' }}>
+          <a href="#controller-esp8266-development-board-nodemcu">ESP8266 Dev Board (NodeMCU)</a>
+        </td>
+      </tr>
+      <tr>
+        <td style={{ padding: '8px', textAlign: 'right' }}>Sensor</td>
+        <td style={{ padding: '8px' }}>
+          <a href="#sensor-pir-motion-sensor">PIR Motion Sensor</a>
+        </td>
+      </tr>
+      <tr>
+        <td style={{ padding: '8px', textAlign: 'right' }}>Actuator</td>
+        <td style={{ padding: '8px' }}>
+          <a href="#actuator-servo-motor---tower-pro-sg90">Servo Motor</a>
+        </td>
+      </tr>
+      <tr>
+        <td></td>
+        <td style={{ padding: '8px' }}>
+          <a href="#actuator-led">Green LED</a>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+## Components Overview
+
+### Controller: ESP8266 Development Board (NodeMCU)
+
+The ESP8266 NodeMCU is a popular and cost-effective development board that excels in a wide range of IoT and embedded applications. Its standout feature is the built-in Wi-Fi connectivity, enabling seamless wireless communication for IoT devices. With a compact form factor and compatibility with the Arduino IDE, it simplifies the development process for IoT projects, including home automation, smart appliances, sensor networks, and remote monitoring systems. The NodeMCU is known for its low power consumption, making it suitable for battery-operated devices. Additionally, it supports secure connections, making it ideal for applications where data privacy is paramount, such as in smart locks, surveillance cameras, and IoT-based security systems. Its affordability, community support, and extensive capabilities continue to make it a top choice for IoT enthusiasts and professionals alike.
+
+<img src={esp8266} 
+alt="ESP8266" 
+style={{ 
+    width: '75%', 
+    display: 'block', 
+    margin: '20px auto' }} />
+
+#### Technical Specifications and Features:
+- **Wi-Fi Certification**: Certified by Wi-Fi Alliance.
+- **Protocols**: Supports 802.11 b/g/n (HT20) Wi-Fi protocols.
+- **Frequency Range**: Operates in the 2.4 GHz to 2.5 GHz frequency range (2400 MHz to 2483.5 MHz).
+- **Transmission Power**:
+  - 802.11 b: +20 dBm
+  - 802.11 g: +17 dBm
+  - 802.11 n: +14 dBm
+- **Receiver Sensitivity**:
+  - 802.11 b: -91 dBm (11 Mbps)
+  - 802.11 g: -75 dBm (54 Mbps)
+  - 802.11 n: -72 dBm (MCS7)
+- **Antenna**: Supports various antenna options, including PCB Trace, External, IPEX Connector, and Ceramic Chip.
+- **Hardware**:
+  - CPU: Tensilica L106 32-bit processor
+  - Peripheral Interface: UART/SDIO/SPI/I2C/I2S/IR Remote Control
+  - GPIO/ADC/PWM/LED Light & Button
+- **Operating Voltage**: 2.5V to 3.6V.
+- **Operating Current**: Average current consumption is approximately 80 mA.
+- **Operating Temperature Range**: Operates reliably in the temperature range from -40°C to 125°C.
+- **Package Size**: Comes in a compact QFN32-pin package measuring 5mm x 5mm.
+- **Firmware Upgrade**: Supports firmware upgrades via UART download or OTA (over-the-air) using network connections.
+
+#### References:
+- [ESP8266 Datasheet](@site/static/datasheets/ESP8266.pdf)
+- [ESP8266 Development Board Pinout](@site/static/datasheets/ESP8266_NodeMCU_Pinout.pdf)
+
+### Sensor: PIR Motion Sensor
+
+A Passive Infrared (PIR) sensor is an electronic sensor that measures infrared light radiating from objects in its field of view. They are most often used in PIR-based motion detectors. PIR sensors are commonly used in security alarms and automatic lighting applications.
+
+<img src={pir} 
+alt="PIR Motion Sensor" 
+style={{ 
+    width: '75%', 
+    display: 'block', 
+    margin: '20px auto' }} />
+
+#### Technical Specifications and Features:
+- **Operating Voltage**: 3V–5V
+- **Operating Current (VCC = 3V)**: 100uA
+- **Operating Current (VCC = 5V)**: 150uA
+- **Measuring Range**: 0.1 - 6m
+- **Default Detecting Distance**: 3m
+- **Holding Time**: 1 - 25s
+- **Working Wave Length**: 7 - 14um
+- **Detecting Angle**: 120 degrees
+
+#### References:
+- [PIR Motion Sensor Datasheet](@site/static/datasheets/PIR.pdf)
+
+### Actuator: LED
+
+LEDs, or Light Emitting Diodes, are semiconductor devices that emit light when an electric current is applied. Known for their energy efficiency, compact size, and long life, LEDs are extensively used across various applications including electronic devices, display panels, indicators, and general lighting. Their ability to be manufactured in various colors and sizes makes LEDs exceptionally versatile for design and functional purposes in numerous projects.
+
+<img src={greenLED} 
+      alt="Green LED" 
+      style={{ 
+        width: '25%', 
+        display: 'block', 
+        margin: '20px auto',
+        transform: 'scaleX(-1)'  }} />
+
+#### Technical Specifications and Features
+- **Dice Material**: Gallium Arsenide Phosphide on Gallium Phosphide (GaAsP on GaP/GaP).
+- **Emitted Colors**: Available in Green and Red.
+- **Lens Color**: Green Diffused and Red Diffused.
+- **Peak Wavelength**:
+  - Green: 568 nm
+  - Red: 587 nm
+- **Viewing Angle**: 45 degrees, offering focused illumination.
+- **Luminous Intensity (IV)**:
+  - Green: 15 mcd
+  - Red: 14 mcd
+
+#### References
+- [Green LED Datasheet](@site/static/datasheets/Yellow_Green_LED.pdf)
+
+### Actuator: Servo Motor - Tower Pro SG90
+
+The Tower Pro SG90 9g mini servo motor is a compact and reliable actuator widely used in radio-controlled (RC) applications and projects that require precise movement control. Ideal for robotics, CNC machines, and RC car steering systems, this servo allows for detailed angular position control over a 180° range using Pulse Width Modulation (PWM). Its lightweight design and high torque capability make it suitable for a wide range of applications that demand precise positioning.
+
+<img src={servo} 
+alt="Servo" 
+style={{ 
+    width: '50%', 
+    display: 'block', 
+    margin: '20px auto'  }} />
+
+#### Technical Specifications and Features
+- **Operating Voltage**: Typically +5V
+- **Torque**: 2.5 kg/cm
+- **Operating Speed**: 0.1 seconds per 60°
+- **Gear Type**: Plastic
+- **Rotation**: 0° to 180°
+- **Weight**: 9 grams
+- **Included Accessories**: Gear horns and screws
+- **Cable Length**: 15 cm
+
+#### References
+- [Tower Pro SG90 Mini Servo Motor Datasheet](@site/static/datasheets/Servo_SG90.pdf)
+
+## Communication Protocols
+
+### Controller Communication
+
+The communication between the ESP8266 controller and the ThingsBoard server involves two key protocols: Wi-Fi and MQTT.
+
+#### Wi-Fi Connection:
+The ESP8266 connects to a local Wi-Fi network, enabling it to access the internet. This connection provides the foundation for communication with external services like the ThingsBoard server.
+
+#### MQTT Protocol:
+The Message Queuing Telemetry Transport (MQTT) protocol is employed for transmitting data between the controller and the ThingsBoard server. MQTT is a lightweight and efficient protocol designed for remote devices with limited resources. It facilitates the publication of data (such as access events) from the controller to the server, as well as the subscription to commands or acknowledgements from the server. MQTT ensures secure and reliable communication, making it ideal for real-time data visualization and monitoring on the ThingsBoard dashboard. The controller publishes messages related to access events, which are then visualized on the dashboard, offering insights into the system's performance and access patterns.
+
+### Sensor Communication
+
+In the node, the PIR sensor communicates with the ESP8266 development board controller through digital signal pathways. When motion is detected, the PIR sensor sends a digital signal to the controller, indicating the presence of motion.
+
+## Pin Connections
+This section provides details about the pin connections between the components used in the node and the ESP8266 controller.
+
+### PIR Sensor Module Pin Connections
+
+<PinConnectionsTable
+  data={[
+    ["PIR Sensor", "", "ESP8266 Dev Board"],
+    ["VCC", <span className="wire"><span className="wire-red"></span></span>, "3.3V"],
+    ["GND", <span className="wire"><span className="wire-black"></span></span>, "GND"],
+    ["Signal Out", <span className="wire"><span className="wire-blue"></span></span>, "14"]
+  ]}
+/>
+
+### Green LED Pin Connections
+
+<PinConnectionsTable
+  data={[
+    ["Green LED", "", "ESP8266 Dev Board"],
+    ["Anode (+)", <span className="wire"><span className="wire-blue"></span></span>, "12"],
+    ["Cathode (-)", <span className="wire"><span className="wire-black"></span></span>, "GND"]
+  ]}
+/>
+
+### Servo Motor Pin Connections
+
+<PinConnectionsTable
+  data={[
+    ["Servo Motor", "", "ESP8266 Dev Board"],
+    ["VCC", <span className="wire"><span className="wire-red"></span></span>, "3.3V"],
+    ["GND", <span className="wire"><span className="wire-black"></span></span>, "GND"],
+    ["PWM", <span className="wire"><span className="wire-blue"></span></span>, "13"]
+  ]}
+/>
+
+## Circuit Diagram
+<img src={circuitDiagram} 
+alt="Circuit Diagram" 
+style={{ 
+    //maxWidth: '700px', 
+    display: 'block', 
+    margin: '20px auto' }} />
+
+## Link to Code Explanation and Tutorial
+
+For a comprehensive guide on programming this node, including detailed code explanations and step-by-step tutorials, please refer to the following link. This resource provides all necessary information to understand the functioning of the node, enabling users to effectively program and customize it according to their specific requirements.
+
+[Visit the Node Programming Guide and Code Explanation](/docs/tutorial/node_code_explained.mdx)

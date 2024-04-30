@@ -1,0 +1,250 @@
+---
+title: Installation
+description: Automates secure entry management by authorizing or denying access based on RFID scans.
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Installation
+
+This section guides you through setting up the Arduino Integrated Development Environment (IDE), which is used for programming the nodes in our Applied Cyber-Physical Systems (ACPS). Arduino IDE is renowned for its simplicity and effectiveness in programming microcontrollers commonly used in cyber-physical systems.
+
+## Arduino IDE Features and Specifications
+
+- **Cross-Platform**: Available for Windows, macOS, and Linux.
+- **User-Friendly Interface**: Easy-to-use interface ideal for beginners and professionals alike.
+- **Extensive Library Support**: Provides a vast collection of libraries for various sensors and actuators.
+- **Open Source**: Freely available for modification and distribution.
+- **Language**: Uses a simplified version of C++, making it accessible to those new to programming.
+
+## Arduino IDE Installation
+
+<Tabs
+  defaultValue="windows"
+  values={[
+    { label: 'Windows', value: 'windows'},
+    { label: 'macOS', value: 'macos'},
+    { label: 'Linux', value: 'linux'},
+  ]}>
+
+<TabItem value="windows">
+1. **Download the Installer**: Visit [Arduino Software Page](https://www.arduino.cc/en/software) and download the Windows Installer.
+2. **Run the Installer**: Open the downloaded `.exe` file and follow the on-screen instructions. Choose whether to install USB drivers and other optional components.
+3. **Launch Arduino IDE**: Complete the installation and open the Arduino IDE to begin programming.
+
+</TabItem>
+
+<TabItem value="macos">
+1. **Download the Installer**: Go to the [Arduino Software Page](https://www.arduino.cc/en/software) and download the macOS Installer.
+2. **Install the Software**: Open the `.zip` file and drag the Arduino application into your Applications folder.
+3. **Verify Installation**: Open Arduino from your Applications folder to ensure it's properly installed.
+
+</TabItem>
+
+<TabItem value="linux">
+1. **Download the Tarball**: Download the appropriate version for your Linux distribution from [Arduino Software Page](https://www.arduino.cc/en/software).
+2. **Extract and Install**: Extract the tarball and run the `install.sh` script from the terminal to install the IDE.
+3. **Permissions**: You may need to set serial port permissions. Use `sudo usermod -a -G dialout $USER` and restart your computer.
+
+</TabItem>
+
+</Tabs>
+
+## Installing Microcontroller Board Managers and Testing with Blink
+
+This section provides detailed instructions for setting up each of the six microcontrollers used in our project, including installing the board manager for each and testing connectivity and configuration by uploading the Blink sketch.
+
+## Arduino Nano 33 IoT Setup
+
+#### Installing Arduino Nano 33 IoT in Board Manager
+
+Arduino provides official support for the Nano 33 IoT through the Arduino Boards Manager.
+
+#### Step-by-Step Installation
+
+1. **Open Boards Manager**:
+   - Navigate to `Tools > Board > Boards Manager` in the Arduino IDE.
+
+2. **Search and Install**:
+   - Type "Arduino Nano 33 IoT" in the search bar, select it, and click "Install".
+
+#### Testing with Blink
+
+1. **Load the Blink Sketch**:
+   - Go to `File > Examples > 01.Basics > Blink`.
+
+2. **Select Arduino Nano 33 IoT**:
+   - Choose `Arduino Nano 33 IoT` from `Tools > Board`.
+
+3. **Select the Port**:
+   - Connect your Nano 33 IoT to the computer and choose the appropriate port under `Tools > Port`.
+
+4. **Upload the Program**:
+   - Click the upload button and ensure the LED blinks to check functionality.
+
+## Arduino MKR WiFi 1010 Setup
+
+The Arduino MKR WiFi 1010 board is supported directly by Arduino through its board manager.
+
+#### Step-by-Step Installation
+
+1. **Access Boards Manager**:
+   - Go to `Tools > Board > Boards Manager` and enter "Arduino MKR WiFi 1010" in the search box.
+
+2. **Install the Board**:
+   - Find the Arduino MKR WiFi 1010 entry, select it, and click "Install".
+
+#### Testing with Blink
+
+1. **Load the Blink Sketch**:
+   - Select `File > Examples > 01.Basics > Blink`.
+
+2. **Choose MKR WiFi 1010**:
+   - Set `Arduino MKR WiFi 1010` as the board under `Tools > Board`.
+
+3. **Select the Port**:
+   - Plug in your Arduino MKR WiFi 1010 and select the corresponding port under `Tools > Port`.
+
+4. **Upload the Program**:
+   - Hit the upload button and verify that the onboard LED starts to blink.
+
+## ESP8266 Setup
+
+#### Installing ESP8266 Board Manager
+
+The ESP8266 community maintains an Arduino core that can be installed through the Boards Manager.
+
+#### Step-by-Step Installation
+
+1. **Add Board Manager URL**:
+   - Go to `File > Preferences` in the Arduino IDE and add the following URL to the "Additional Boards Manager URLs":
+     ```
+     http://arduino.esp8266.com/stable/package_esp8266com_index.json
+     ```
+   - If there are already URLs present, click on the icon on the right of the box to open a text window that allows you to add multiple URLs, one per line.
+
+2. **Open Boards Manager**:
+   - Navigate to `Tools > Board > Boards Manager...`, search for "ESP8266", and click "Install".
+
+#### Testing with Blink
+
+1. **Load the Blink Sketch**:
+   - Open `File > Examples > 01.Basics > Blink`.
+
+2. **Select Your ESP8266 Board**:
+   - Choose your specific ESP8266 model from `Tools > Board`.
+
+3. **Select the Port**:
+   - Connect your ESP8266 to the computer and select the port it's connected to under `Tools > Port`.
+
+4. **Upload the Program**:
+   - Click the upload button and watch for the LED to blink, confirming that the board is working correctly.
+
+## ESP32 Setup
+
+#### Installing ESP32 Board Manager
+
+The ESP32 Arduino core is supported by its community and requires adding a custom board manager URL.
+
+#### Step-by-Step Installation
+
+1. **Add Board Manager URL**:
+   - In the Arduino IDE, go to `File > Preferences` and insert this URL into "Additional Boards Manager URLs":
+     ```
+     https://dl.espressif.com/dl/package_esp32_index.json
+     ```
+    - If there are already URLs present, click on the icon on the right of the box to open a text window that allows you to add multiple URLs, one per line.
+
+2. **Install the ESP32 Board**:
+   - Open `Tools > Board > Boards Manager`, type "ESP32" in the search bar, select it, and click "Install".
+
+#### Testing with Blink
+
+1. **Load the Blink Sketch**:
+   - Navigate to `File > Examples > 01.Basics > Blink`.
+
+2. **Select the ESP32 Board**:
+   - From `Tools > Board`, select "ESP32 Dev Module".
+
+3. **Select the Port**:
+   - Connect your ESP32 to your computer and choose the correct port under `Tools > Port`.
+
+4. **Upload the Program**:
+   - Press the upload button. Ensure that the onboard LED blinks to indicate it's working correctly.
+
+:::info Windows Port Detection Issue
+If you are using Windows and cannot find the ESP32 port, the driver may not be installed. To install the driver:
+1. Connect your ESP32 to your PC.
+2. Open **Windows Update** settings.
+3. Click on **Advanced options**.
+4. Navigate to **Optional updates**.
+5. Look for the ESP32 driver in the list and select it for installation.
+This should resolve any port detection issues with the ESP32 on Windows.
+:::
+
+## Raspberry Pi Pico W Setup
+
+#### Adding the Raspberry Pi Pico Arduino Core
+
+The Raspberry Pi Pico Arduino core is actively maintained by Earle F. Philhower and supports not only the original Pico and the Pico W but also nearly all RP2040-based boards. This core is frequently updated, ensuring compatibility and enhanced features for your development.
+
+#### Step-by-Step Installation
+
+1. **Open Arduino IDE**:
+   - Launch your Arduino IDE to start the setup process.
+
+2. **Access Preferences**:
+   - Click on the `File` menu at the top of the IDE and select `Preferences`. This will open the Preferences dialog box.
+
+3. **Add Board Manager URL**:
+   - Within the Preferences dialog box, locate the "Additional Boards Manager URLs" text box.
+   - If there are already URLs present, click on the icon on the right of the box to open a text window that allows you to add multiple URLs, one per line.
+   - Add the following URL for the Raspberry Pi Pico core:
+     ```
+     https://github.com/earlephilhower/arduino-pico/releases/download/global/package_rp2040_index.json
+     ```
+
+4. **Save Preferences**:
+   - Click `OK` to save your changes and close the Preferences dialog.
+
+#### Installing the Board from Boards Manager
+
+1. **Open Boards Manager**:
+   - Navigate to `Tools > Board > Boards Manager...` from the Arduino IDE menu. This opens the Boards Manager window.
+
+2. **Search for Pico Boards**:
+   - In the Boards Manager, type `Pico` into the search bar. You will see several entries for RP2040 boards.
+
+3. **Install the Raspberry Pi Pico/RP2040 Board**:
+   - Find the entry labeled `Raspberry Pi Pico/RP2040` by Earle Philhower.
+   - Click `Install` to add this board to your Arduino IDE. The installation may take a minute as it downloads and installs the files.
+
+4. **Completion**:
+   - Once the installation is complete, you are ready to start using the Raspberry Pi Pico or Pico W with your Arduino IDE.
+
+:::info
+**Note:** Installing the board this way ensures that you have the latest support for the Raspberry Pi Pico and other RP2040-based boards, allowing you to leverage the full capabilities of the microcontroller.
+:::
+
+## Teensy 4.1 Setup
+
+#### Install Teensyduino
+1. **Download and install Teensyduino**: Visit the [Teensyduino Software page](https://www.pjrc.com/teensy/td_download.html), which adds support for Teensy boards to the Arduino IDE.
+   - If there are already URLs present, click on the icon on the right of the box to open a text window that allows you to add multiple URLs, one per line.
+
+#### Testing with Blink
+2. **Load the Blink Sketch**: Navigate to `File > Examples > 01.Basics > Blink`.
+3. **Select Teensy 4.1**: From `Tools > Board`, select `Teensy 4.1`.
+4. **Select the Port**: Choose the COM port connected to your Teensy 4.1 from `Tools > Port`.
+5. **Upload the Program**: Press the upload button. Ensure the onboard LED starts blinking.
+
+## Troubleshooting
+
+If you encounter issues during installation or testing:
+- **Ensure the correct board and port are selected**: Always double-check the board and port settings under the `Tools` menu.
+- **Check connections**: Verify that your microcontroller is properly connected to your computer and the board is powered on.
+- **Reinstall drivers if needed**: Especially for Windows, ensure that all necessary drivers are installed and up to date.
+- **Refer to official docs**: Consult the official documentation for each board for specific troubleshooting steps.
+
+This comprehensive guide should help you successfully set up each microcontroller with the Arduino IDE, prepare them for programming, and verify their functionality through a simple Blink test.

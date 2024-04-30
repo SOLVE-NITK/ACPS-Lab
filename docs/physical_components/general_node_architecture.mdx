@@ -1,0 +1,34 @@
+---
+title: General Node Arcitecture
+description: Each ACPS node features sensors, actuators, and a microcontroller to execute specific tasks and communicate data through IoT for effective monitoring and control.
+---
+
+import NodeImage from '@site/static/img/Node.png'; // adjust path as needed
+
+# General Node Architecture
+
+The ACPS project's physical layer is composed of various nodes, each serving as a fundamental unit within the cyber-physical ecosystem. These nodes are equipped with sensors and actuators, orchestrated by microcontrollers that act as the brain of each node. The general node architecture represents the convergence of hardware and communication protocols, laying the groundwork for the system's interactive capabilities.
+
+<img src={NodeImage} alt="General Node Architecture" style={{ maxWidth: '80%', display: 'block', margin: '20px auto' }} />
+
+## Sensors
+
+Each node is outfitted with a collection of sensors designed to detect and measure environmental parameters. These can range from temperature and humidity to motion and light intensity. The data collected by these sensors is relayed back to the microcontroller for processing.
+
+## Microcontroller
+
+The microcontroller is the pivotal component of the node. It's responsible for data processing and decision-making. Depending on the application, different microcontrollers can be used, such as the Teensy 4.1, Raspberry Pi Pico W, ESP8266, ESP32, Arduino Nano 33 IoT, or Arduino MKR 1010. These microcontrollers support various communication protocols, such as UART, I2C, and SPI, facilitating interaction with sensors and actuators.
+
+## Actuators
+
+Actuators receive commands from the microcontroller and carry out actions in the physical world, such as turning on a light, activating a motor, or opening a valve. They are crucial for the node to interact and affect the environment based on the sensor data and microcontroller logic.
+
+## Power Supply
+
+Each node is powered by a dedicated power supply, which is typically a 12V source. The power supply must be reliable and capable of delivering consistent power to ensure the node's continuous and uninterrupted operation.
+
+## Communication with Edge Devices
+
+Nodes communicate with edge devices, which can process the data further or send it to fog layers or the cloud. This communication can happen over various wireless technologies like Wi-Fi, Bluetooth, or LoRa, depending on the application's requirements for range, bandwidth, and power consumption.
+
+The general node architecture provides a versatile platform for creating a diverse array of applications within the ACPS project. By understanding this architecture, one can appreciate how each component contributes to the node's functionality and how these nodes form the building blocks of larger, more complex systems.

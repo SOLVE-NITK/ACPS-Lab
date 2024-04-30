@@ -1,0 +1,380 @@
+{
+  "title": "Access Control System",
+  "image": null,
+  "mobileHide": false,
+  "mobileOrder": null,
+  "configuration": {
+    "description": "",
+    "widgets": {
+      "57100ae1-8e4c-d3e9-b322-97eac6c53006": {
+        "isSystemType": true,
+        "bundleAlias": "control_widgets",
+        "typeAlias": "led_indicator",
+        "type": "rpc",
+        "title": "New widget",
+        "image": null,
+        "description": null,
+        "sizeX": 2.5,
+        "sizeY": 2.5,
+        "config": {
+          "targetDeviceAliases": [],
+          "showTitle": false,
+          "backgroundColor": "#e6e7e8",
+          "color": "rgba(0, 0, 0, 0.87)",
+          "padding": "0px",
+          "settings": {
+            "ledColor": "#FF0000",
+            "initialValue": false,
+            "performCheckStatus": false,
+            "retrieveValueMethod": "attribute",
+            "valueAttribute": "red",
+            "parseValueFunction": "return data ? true : false;"
+          },
+          "title": "Red Led",
+          "dropShadow": true,
+          "enableFullscreen": false,
+          "widgetStyle": {},
+          "titleStyle": {
+            "fontSize": "16px",
+            "fontWeight": 400
+          },
+          "useDashboardTimewindow": true,
+          "showLegend": false,
+          "actions": {},
+          "decimals": 0,
+          "datasources": [],
+          "targetDeviceAliasIds": [
+            "83f8c26b-7686-1866-f669-a8f421a31f25"
+          ],
+          "widgetCss": "",
+          "pageSize": 1024,
+          "noDataDisplayMessage": ""
+        },
+        "row": 0,
+        "col": 0,
+        "id": "57100ae1-8e4c-d3e9-b322-97eac6c53006"
+      },
+      "98c37628-468c-61f5-c2cb-db0dfd948fa8": {
+        "isSystemType": true,
+        "bundleAlias": "control_widgets",
+        "typeAlias": "led_indicator",
+        "type": "rpc",
+        "title": "New widget",
+        "image": null,
+        "description": null,
+        "sizeX": 2.5,
+        "sizeY": 2.5,
+        "config": {
+          "targetDeviceAliases": [],
+          "showTitle": false,
+          "backgroundColor": "#e6e7e8",
+          "color": "rgba(0, 0, 0, 0.87)",
+          "padding": "0px",
+          "settings": {
+            "ledColor": "#19FF00",
+            "initialValue": false,
+            "performCheckStatus": false,
+            "retrieveValueMethod": "attribute",
+            "valueAttribute": "green",
+            "parseValueFunction": "return data ? true : false;"
+          },
+          "title": "Green Led",
+          "dropShadow": true,
+          "enableFullscreen": false,
+          "widgetStyle": {},
+          "titleStyle": {
+            "fontSize": "16px",
+            "fontWeight": 400
+          },
+          "useDashboardTimewindow": true,
+          "showLegend": false,
+          "actions": {},
+          "decimals": 0,
+          "datasources": [],
+          "targetDeviceAliasIds": [
+            "83f8c26b-7686-1866-f669-a8f421a31f25"
+          ],
+          "widgetCss": "",
+          "pageSize": 1024,
+          "noDataDisplayMessage": ""
+        },
+        "row": 0,
+        "col": 0,
+        "id": "98c37628-468c-61f5-c2cb-db0dfd948fa8"
+      },
+      "50b656d4-a7c4-6fe5-459a-1f77d34063c1": {
+        "isSystemType": true,
+        "bundleAlias": "cards",
+        "typeAlias": "simple_card",
+        "type": "latest",
+        "title": "New widget",
+        "image": null,
+        "description": null,
+        "sizeX": 5,
+        "sizeY": 3,
+        "config": {
+          "datasources": [
+            {
+              "type": "entity",
+              "name": null,
+              "entityAliasId": "83f8c26b-7686-1866-f669-a8f421a31f25",
+              "filterId": null,
+              "dataKeys": [
+                {
+                  "name": "rfid",
+                  "type": "timeseries",
+                  "label": "DOOR STATUS",
+                  "color": "#2196f3",
+                  "settings": {},
+                  "_hash": 0.19920886665105697,
+                  "aggregationType": "NONE",
+                  "units": null,
+                  "decimals": null,
+                  "funcBody": null,
+                  "usePostProcessing": null,
+                  "postFuncBody": null
+                }
+              ],
+              "alarmFilterConfig": {
+                "statusList": [
+                  "ACTIVE"
+                ]
+              }
+            }
+          ],
+          "timewindow": {
+            "displayValue": "",
+            "selectedTab": 0,
+            "realtime": {
+              "realtimeType": 1,
+              "interval": 1000,
+              "timewindowMs": 60000,
+              "quickInterval": "CURRENT_DAY"
+            },
+            "history": {
+              "historyType": 0,
+              "interval": 1000,
+              "timewindowMs": 60000,
+              "fixedTimewindow": {
+                "startTimeMs": 1690146907034,
+                "endTimeMs": 1690233307034
+              },
+              "quickInterval": "CURRENT_DAY"
+            },
+            "aggregation": {
+              "type": "AVG",
+              "limit": 25000
+            }
+          },
+          "showTitle": false,
+          "backgroundColor": "#ff5722",
+          "color": "rgba(255, 255, 255, 0.87)",
+          "padding": "16px",
+          "settings": {
+            "labelPosition": "top"
+          },
+          "title": "RFID",
+          "dropShadow": true,
+          "enableFullscreen": false,
+          "titleStyle": {
+            "fontSize": "16px",
+            "fontWeight": 400
+          },
+          "units": "",
+          "decimals": 0,
+          "useDashboardTimewindow": true,
+          "showLegend": false,
+          "widgetStyle": {},
+          "actions": {},
+          "widgetCss": "",
+          "pageSize": 1024,
+          "noDataDisplayMessage": ""
+        },
+        "row": 0,
+        "col": 0,
+        "id": "50b656d4-a7c4-6fe5-459a-1f77d34063c1"
+      },
+      "29ff6706-baab-6f98-2e92-01e59c0549f3": {
+        "isSystemType": true,
+        "bundleAlias": "cards",
+        "typeAlias": "html_card",
+        "type": "static",
+        "title": "New widget",
+        "image": null,
+        "description": null,
+        "sizeX": 7.5,
+        "sizeY": 3,
+        "config": {
+          "datasources": [],
+          "timewindow": {
+            "realtime": {
+              "timewindowMs": 60000
+            }
+          },
+          "showTitle": false,
+          "backgroundColor": "rgb(255, 255, 255)",
+          "color": "rgba(0, 0, 0, 0.87)",
+          "padding": "8px",
+          "settings": {
+            "cardHtml": "<div class='card'>ACCESS CONTROL SYSTEM</div>",
+            "cardCss": ".card {\n    font-weight: bold;\n    font-size: 32px;\n    color: #999;\n    width: 100%;\n    height: 100%;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n}"
+          },
+          "title": "TITLE",
+          "dropShadow": true,
+          "enableFullscreen": false,
+          "widgetStyle": {},
+          "widgetCss": "",
+          "pageSize": 1024,
+          "noDataDisplayMessage": "",
+          "showLegend": false
+        },
+        "row": 0,
+        "col": 0,
+        "id": "29ff6706-baab-6f98-2e92-01e59c0549f3"
+      },
+      "bf110025-b47c-4e25-71a0-1e5eba98898c": {
+        "isSystemType": true,
+        "bundleAlias": "cards",
+        "typeAlias": "html_card",
+        "type": "static",
+        "title": "New widget",
+        "image": null,
+        "description": null,
+        "sizeX": 7.5,
+        "sizeY": 3,
+        "config": {
+          "datasources": [],
+          "timewindow": {
+            "realtime": {
+              "timewindowMs": 60000
+            }
+          },
+          "showTitle": false,
+          "backgroundColor": "rgb(255, 255, 255)",
+          "color": "rgba(0, 0, 0, 0.87)",
+          "padding": "8px",
+          "settings": {
+            "cardHtml": "<div class='card'>ACCESS STATUS</div>",
+            "cardCss": ".card {\n    font-weight: bold;\n    font-size: 32px;\n    color: #999;\n    width: 100%;\n    height: 100%;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n}"
+          },
+          "title": "ACCESS STATUS",
+          "dropShadow": true,
+          "enableFullscreen": false,
+          "widgetStyle": {},
+          "widgetCss": "",
+          "pageSize": 1024,
+          "noDataDisplayMessage": "",
+          "showLegend": false
+        },
+        "row": 0,
+        "col": 0,
+        "id": "bf110025-b47c-4e25-71a0-1e5eba98898c"
+      }
+    },
+    "states": {
+      "default": {
+        "name": "Access Control System",
+        "root": true,
+        "layouts": {
+          "main": {
+            "widgets": {
+              "57100ae1-8e4c-d3e9-b322-97eac6c53006": {
+                "sizeX": 5,
+                "sizeY": 5,
+                "row": 4,
+                "col": 1
+              },
+              "98c37628-468c-61f5-c2cb-db0dfd948fa8": {
+                "sizeX": 5,
+                "sizeY": 5,
+                "row": 4,
+                "col": 6
+              },
+              "50b656d4-a7c4-6fe5-459a-1f77d34063c1": {
+                "sizeX": 11,
+                "sizeY": 7,
+                "row": 2,
+                "col": 12
+              },
+              "29ff6706-baab-6f98-2e92-01e59c0549f3": {
+                "sizeX": 24,
+                "sizeY": 2,
+                "row": 0,
+                "col": 0
+              },
+              "bf110025-b47c-4e25-71a0-1e5eba98898c": {
+                "sizeX": 10,
+                "sizeY": 2,
+                "row": 2,
+                "col": 1
+              }
+            },
+            "gridSettings": {
+              "backgroundColor": "#eeeeee",
+              "columns": 24,
+              "margin": 10,
+              "outerMargin": true,
+              "backgroundSizeMode": "100%"
+            }
+          }
+        }
+      }
+    },
+    "entityAliases": {
+      "83f8c26b-7686-1866-f669-a8f421a31f25": {
+        "id": "83f8c26b-7686-1866-f669-a8f421a31f25",
+        "alias": "Access Control",
+        "filter": {
+          "type": "singleEntity",
+          "resolveMultiple": false,
+          "singleEntity": {
+            "entityType": "DEVICE",
+            "id": "cfe21d90-270b-11ee-b17b-53a53ee4bca8"
+          }
+        }
+      }
+    },
+    "filters": {},
+    "timewindow": {
+      "displayValue": "",
+      "hideInterval": false,
+      "hideLastInterval": false,
+      "hideQuickInterval": false,
+      "hideAggregation": false,
+      "hideAggInterval": false,
+      "hideTimezone": false,
+      "selectedTab": 0,
+      "realtime": {
+        "realtimeType": 0,
+        "interval": 1000,
+        "timewindowMs": 60000,
+        "quickInterval": "CURRENT_DAY"
+      },
+      "history": {
+        "historyType": 0,
+        "interval": 1000,
+        "timewindowMs": 60000,
+        "fixedTimewindow": {
+          "startTimeMs": 1690146749440,
+          "endTimeMs": 1690233149440
+        },
+        "quickInterval": "CURRENT_DAY"
+      },
+      "aggregation": {
+        "type": "AVG",
+        "limit": 25000
+      }
+    },
+    "settings": {
+      "stateControllerId": "entity",
+      "showTitle": false,
+      "showDashboardsSelect": true,
+      "showEntitiesSelect": true,
+      "showDashboardTimewindow": true,
+      "showDashboardExport": true,
+      "toolbarAlwaysOpen": true
+    }
+  },
+  "externalId": null,
+  "name": "Access Control System"
+}

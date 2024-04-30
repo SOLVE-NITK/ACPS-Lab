@@ -1,0 +1,240 @@
+{
+  "title": "Voice Based Assistant",
+  "image": null,
+  "mobileHide": false,
+  "mobileOrder": null,
+  "configuration": {
+    "description": "",
+    "widgets": {
+      "4c5bcf36-9802-d733-097d-2f9504653d85": {
+        "isSystemType": true,
+        "bundleAlias": "cards",
+        "typeAlias": "html_card",
+        "type": "static",
+        "title": "New widget",
+        "image": null,
+        "description": null,
+        "sizeX": 7.5,
+        "sizeY": 3,
+        "config": {
+          "datasources": [],
+          "timewindow": {
+            "realtime": {
+              "timewindowMs": 60000
+            }
+          },
+          "showTitle": false,
+          "backgroundColor": "rgb(255, 255, 255)",
+          "color": "rgba(0, 0, 0, 0.87)",
+          "padding": "8px",
+          "settings": {
+            "cardHtml": "<div class='card'>VOICE BASEB ASSISTANT</div>",
+            "cardCss": ".card {\n    font-weight: bold;\n    font-size: 32px;\n    color: #999;\n    width: 100%;\n    height: 100%;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n}"
+          },
+          "title": "Title",
+          "dropShadow": true,
+          "enableFullscreen": true,
+          "widgetStyle": {},
+          "widgetCss": "",
+          "pageSize": 1024,
+          "noDataDisplayMessage": "",
+          "showLegend": false
+        },
+        "row": 0,
+        "col": 0,
+        "id": "4c5bcf36-9802-d733-097d-2f9504653d85"
+      },
+      "c4f3a02a-ebad-f2c6-6bd8-73c43ced4211": {
+        "isSystemType": true,
+        "bundleAlias": "control_widgets",
+        "typeAlias": "led_indicator",
+        "type": "rpc",
+        "title": "New widget",
+        "image": null,
+        "description": null,
+        "sizeX": 2.5,
+        "sizeY": 2.5,
+        "config": {
+          "targetDeviceAliases": [],
+          "showTitle": false,
+          "backgroundColor": "#e6e7e8",
+          "color": "rgba(0, 0, 0, 0.87)",
+          "padding": "0px",
+          "settings": {
+            "title": "LIGHT STATE",
+            "ledColor": "#4caf50",
+            "initialValue": false,
+            "performCheckStatus": false,
+            "retrieveValueMethod": "attribute",
+            "valueAttribute": "light",
+            "parseValueFunction": "return data ? true : false;"
+          },
+          "title": "Light",
+          "dropShadow": true,
+          "enableFullscreen": false,
+          "widgetStyle": {},
+          "titleStyle": {
+            "fontSize": "16px",
+            "fontWeight": 400
+          },
+          "useDashboardTimewindow": true,
+          "showLegend": false,
+          "actions": {},
+          "decimals": 0,
+          "datasources": [],
+          "targetDeviceAliasIds": [
+            "010d80ba-ae75-59e4-86bf-f0afc037ed0a"
+          ],
+          "widgetCss": "",
+          "pageSize": 1024,
+          "noDataDisplayMessage": ""
+        },
+        "row": 0,
+        "col": 0,
+        "id": "c4f3a02a-ebad-f2c6-6bd8-73c43ced4211"
+      },
+      "c5c239a4-84d9-2a6a-d55a-f2956a80c29b": {
+        "isSystemType": true,
+        "bundleAlias": "control_widgets",
+        "typeAlias": "led_indicator",
+        "type": "rpc",
+        "title": "New widget",
+        "image": null,
+        "description": null,
+        "sizeX": 2.5,
+        "sizeY": 2.5,
+        "config": {
+          "targetDeviceAliases": [],
+          "showTitle": false,
+          "backgroundColor": "#e6e7e8",
+          "color": "rgba(0, 0, 0, 0.87)",
+          "padding": "0px",
+          "settings": {
+            "title": "FAN STATE",
+            "ledColor": "#4caf50",
+            "initialValue": false,
+            "performCheckStatus": false,
+            "retrieveValueMethod": "attribute",
+            "valueAttribute": "fan",
+            "parseValueFunction": "return data ? true : false;"
+          },
+          "title": "Fan",
+          "dropShadow": true,
+          "enableFullscreen": false,
+          "widgetStyle": {},
+          "titleStyle": {
+            "fontSize": "16px",
+            "fontWeight": 400
+          },
+          "useDashboardTimewindow": true,
+          "showLegend": false,
+          "actions": {},
+          "decimals": 0,
+          "datasources": [],
+          "targetDeviceAliasIds": [
+            "010d80ba-ae75-59e4-86bf-f0afc037ed0a"
+          ],
+          "widgetCss": "",
+          "pageSize": 1024,
+          "noDataDisplayMessage": ""
+        },
+        "row": 0,
+        "col": 0,
+        "id": "c5c239a4-84d9-2a6a-d55a-f2956a80c29b"
+      }
+    },
+    "states": {
+      "default": {
+        "name": "Voice Based Assistant",
+        "root": true,
+        "layouts": {
+          "main": {
+            "widgets": {
+              "4c5bcf36-9802-d733-097d-2f9504653d85": {
+                "sizeX": 24,
+                "sizeY": 2,
+                "row": 0,
+                "col": 0
+              },
+              "c4f3a02a-ebad-f2c6-6bd8-73c43ced4211": {
+                "sizeX": 4,
+                "sizeY": 4,
+                "row": 2,
+                "col": 14
+              },
+              "c5c239a4-84d9-2a6a-d55a-f2956a80c29b": {
+                "sizeX": 4,
+                "sizeY": 4,
+                "row": 2,
+                "col": 18
+              }
+            },
+            "gridSettings": {
+              "backgroundColor": "#eeeeee",
+              "columns": 24,
+              "margin": 10,
+              "outerMargin": true,
+              "backgroundSizeMode": "100%"
+            }
+          }
+        }
+      }
+    },
+    "entityAliases": {
+      "010d80ba-ae75-59e4-86bf-f0afc037ed0a": {
+        "id": "010d80ba-ae75-59e4-86bf-f0afc037ed0a",
+        "alias": "Voice",
+        "filter": {
+          "type": "singleEntity",
+          "resolveMultiple": false,
+          "singleEntity": {
+            "entityType": "DEVICE",
+            "id": "e2c9a5b0-27f9-11ee-a185-c3a689b0fdc1"
+          }
+        }
+      }
+    },
+    "filters": {},
+    "timewindow": {
+      "displayValue": "",
+      "hideInterval": false,
+      "hideLastInterval": false,
+      "hideQuickInterval": false,
+      "hideAggregation": false,
+      "hideAggInterval": false,
+      "hideTimezone": false,
+      "selectedTab": 0,
+      "realtime": {
+        "realtimeType": 0,
+        "interval": 1000,
+        "timewindowMs": 60000,
+        "quickInterval": "CURRENT_DAY"
+      },
+      "history": {
+        "historyType": 0,
+        "interval": 1000,
+        "timewindowMs": 60000,
+        "fixedTimewindow": {
+          "startTimeMs": 1692195011250,
+          "endTimeMs": 1692281411250
+        },
+        "quickInterval": "CURRENT_DAY"
+      },
+      "aggregation": {
+        "type": "AVG",
+        "limit": 25000
+      }
+    },
+    "settings": {
+      "stateControllerId": "entity",
+      "showTitle": false,
+      "showDashboardsSelect": true,
+      "showEntitiesSelect": true,
+      "showDashboardTimewindow": true,
+      "showDashboardExport": true,
+      "toolbarAlwaysOpen": true
+    }
+  },
+  "externalId": null,
+  "name": "Voice Based Assistant"
+}

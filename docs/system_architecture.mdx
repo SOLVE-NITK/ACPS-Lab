@@ -1,0 +1,42 @@
+---
+id: system_architecture
+title: System Architecture
+slug: /system_architecture
+---
+
+import ArchitectureImage from '@site/static/img/Architecture.png'; // adjust path as needed
+import ImplementedArchitectureImage from '@site/static/img/implemented architecture.png'; // adjust path as needed
+
+# System Architecture
+
+## Schematic Overview
+
+The architecture of the Applied Cyber-Physical Systems (ACPS) project is a blueprint for a new generation of interconnected systems that seamlessly integrate computation, communication, and control. This section details the complex structure that constitutes the backbone of the ACPS.
+
+<img src={ArchitectureImage} alt="CPS System Architecture" style={{ Width: '60%', display: 'block', margin: '20px auto' }} />
+
+The ACPS architecture is built upon a foundation of cyber systems, where computation processes are designed to make intelligent decisions. Networked communication protocols bridge the cyber components with the physical world, allowing for robust data exchange and system responsiveness.
+
+### Physical System
+
+Grounded in the physical layer, a myriad of sensors (S1 to Sn) and actuators (A1 to Am) interact with the environment. Sensors collect data points from various sources, which actuators use to effect changes in the physical world based on computational commands.
+
+### Cyber System
+
+At the top of the system architecture is the cyber system. It consists of computational resources that process data, run analytics, and employ algorithms to direct the behavior of connected devices. This layer is crucial for intelligent decision-making and orchestrates the system's overall function.
+
+### Communication System
+
+Connecting the cyber system to the physical world is a network layer that leverages advanced communication protocols. This framework ensures reliable and secure data transfer between computational units and physical components.
+
+## Practical Implementation
+
+The ACPS framework transitions from conceptual design to a tangible system where nodes, edge computers, and fog layers interconnect to form a robust network. This network, as visualized in Figure below, comprises various nodes each with designated functions such as environmental monitoring or motion detection. These nodes operate autonomously or collaboratively to perform complex tasks.
+
+<img src={ImplementedArchitectureImage} alt="Implemented CPS Architecture" style={{ Width: '100%', display: 'block', margin: '20px auto' }} />
+
+The edge layers, labeled from EDGE 1 to EDGE 4, represent computational units that process data locally, directly interfacing with the connected nodes. Above them, the Fog layers, FOG 1 and FOG 2, offer distributed computing capabilities, serving as intermediaries between edge devices and the cloud. This arrangement enables a hierarchical yet distributed processing structure.
+
+At the apex is the cloud layer, which functions as a repository and high-level processing unit. It is responsible for extensive data analytics, storage solutions, and the administration of global control mechanisms. Communication across these layers is bidirectional, showcasing the dynamic nature of data and control signal flow throughout the system, embodying feedback and adaptive responses.
+
+This layered architecture enables a sophisticated system that exceeds the capabilities of its individual components. It facilitates advanced data processing, the execution of intricate control algorithms, and the adaptability to evolving conditions. As the ACPS framework grows in complexity with technological advances, the system architecture is designed to accommodate and support new functionalities that emerge.

@@ -1,0 +1,314 @@
+---
+title: 'Node 6: Local Weather Station'
+description: Collects and displays local weather data, aiding in community weather tracking and environmental education.
+---
+
+import nodeImage from '@site/static/img/node6/weather.jpg';
+import nano33 from '@site/static/img/components_images/Arduino_Nano_33_IoT.png';
+import nano33_2 from '@site/static/img/components_images/Arduino_Nano_33_IoT_2.png';
+import bmp280 from '@site/static/img/components_images/BMP_280.png';
+import am2301 from '@site/static/img/components_images/AM2301.jpg';
+import ds3231 from '@site/static/img/components_images/DS3231.jpg';
+import oled96 from '@site/static/img/components_images/OLED_0.96.png';
+import PinConnectionsTable from '@site/src/pages/PinConnectionsTable.js';
+import circuitDiagram from '@site/static/img/node6/Local-Weather-Monitoring-System__Circuit_Diagram_bb.png';
+
+# Node 6: Local Weather Station
+
+The Local Weather Station,  features an Arduino Nano 33 IoT that collects comprehensive meteorological data including temperature, humidity, and atmospheric pressure. Positioned as a Local Weather Station, this node is integral for community weather tracking, agricultural planning, and educational purposes, providing valuable real-time weather information through a user-friendly IoT interface.
+
+<img src={nodeImage} 
+alt="Local Weather Station" 
+style={{ 
+    width: '75%', 
+    display: 'block', 
+    margin: '20px auto' }} />
+
+## Components Summary
+
+<div style={{ display: 'flex', justifyContent: 'center', margin: '20px' }}>
+  <table style={{ width: '75%', borderCollapse: 'collapse' }}>
+    <thead>
+      <tr>
+        <th style={{ padding: '8px', width: '30%', textAlign: 'center' }}>Component Type</th>
+        <th style={{ padding: '8px', width: '70%', textAlign: 'center' }}>Component Name</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style={{ padding: '8px', textAlign: 'right' }}>Controller</td>
+        <td style={{ padding: '8px' }}>
+          <a href="#controller-arduino-nano-33-iot">Arduino Nano 33 IoT</a>
+        </td>
+      </tr>
+      <tr>
+        <td style={{ padding: '8px', textAlign: 'right' }}>Sensor</td>
+        <td style={{ padding: '8px' }}>
+          <a href="#sensor-bmp280-pressure-and-altitude-sensor">Pressure and Altitude Sensor, BMP280</a>
+        </td>
+      </tr>
+      <tr>
+        <td style={{ padding: '8px', textAlign: 'right' }}></td>
+        <td style={{ padding: '8px' }}>
+          <a href="#sensor-am2301-capacitive-digital-temperature--humidity-sensor">Capacitive Digital Temperature & Humidity Sensor, AM2301</a>
+        </td>
+      </tr>
+      <tr>
+        <td style={{ padding: '8px', textAlign: 'right' }}></td>
+        <td style={{ padding: '8px' }}>
+          <a href="#sensor-ds3231-precision-rtc-module">DS3231 Precision RTC Module</a>
+        </td>
+      </tr>
+      <tr>
+        <td style={{ padding: '8px', textAlign: 'right' }}>Actuator</td>
+        <td style={{ padding: '8px' }}>
+          <a href="#actuator-096-12864-oled-display-module">0.96" 128x64 OLED Display Module</a>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+## Components Overview
+
+### Controller: Arduino Nano 33 IoT
+
+The Arduino Nano 33 IoT is a compact and versatile development board designed for Internet of Things (IoT) applications. It features built-in Wi-Fi and Bluetooth connectivity, making it easy to create IoT devices that can communicate wirelessly. The board is power-efficient, making it suitable for battery-powered applications. With compatibility with the Arduino IDE, it simplifies the development process for IoT projects like remote monitoring, home automation, and sensor networks. Additionally, it supports secure communication with hardware-based encryption, making it suitable for applications requiring data security. Its small size and extensive capabilities make it a popular choice for IoT enthusiasts and developers looking to create connected and innovative devices.
+
+<img src={nano33} 
+alt="Arduino Nano 33 IoT" 
+style={{ 
+    width: '75%', 
+    display: 'block', 
+    margin: '20px auto' }} />
+    
+<img src={nano33_2} 
+alt="Arduino Nano 33 IoT" 
+style={{ 
+    width: '75%', 
+    display: 'block', 
+    margin: '20px auto' }} />
+
+#### Technical Specifications and Features
+- **Microcontroller**: The Arduino Nano 33 IoT is equipped with the Microchip ATSAMW25, featuring a 32-bit ARM Cortex-M0+ processor.
+- **Operating Voltage**: 3.3V
+- **Input Voltage (Recommended)**: 5V via USB or an external Li-Po battery.
+- **Digital I/O Pins**: 8, including PWM support.
+- **Analog Input Pins**: 8
+- **UART Ports**: 1 for serial communication.
+- **SPI Interface**: 1 for communication with other devices.
+- **I2C Interface**: 1 for inter-device communication.
+- **Flash Memory**: 256KB, with 6KB used by the bootloader.
+- **SRAM**: 32KB
+- **Clock Speed**: 48MHz
+- **Wireless Connectivity**: Wi-Fi via the u-blox NINAW102 module.
+- **Crypto chip**: Included for secure communication.
+- **USB Port**: Micro USB for programming and power.
+- **Li-Po Battery Connector**: JST-PH2 connector for connecting a Li-Po battery.
+- **Charging Current**: 450mA
+- **Operating Temperature**: -40°C to +85°C
+- **Dimensions**: Approximately 45mm x 18.5mm
+
+#### References
+- [Arduino Nano 33 IoT Datasheet](@site/static/datasheets/Arduino_Nano_33_IoT.pdf)
+- [Arduino Nano 33 IoT Pinout](@site/static/datasheets/Arduino_Nano_33_IoT_Pinout.pdf)
+
+### Sensor: BMP280 Pressure and Altitude Sensor
+
+The BMP280 is a versatile Pressure and Altitude Sensor commonly used in various applications, including weather stations, drones, and altitude tracking devices. This sensor is designed to precisely measure atmospheric pressure and temperature, allowing for accurate altitude calculations. Its ability to provide both pressure and temperature data with high resolution and low power consumption makes it a popular choice for battery-powered and portable projects. The BMP280 employs advanced MEMS (Micro-Electro-Mechanical Systems) technology, ensuring excellent precision and stability over a wide range of environmental conditions.
+
+<img src={bmp280} 
+alt="BMP280 Pressure and Altitude Sensor" 
+style={{ 
+    width: '75%', 
+    display: 'block', 
+    margin: '20px auto' }} />
+
+#### Technical Specifications and Features
+- **Operating Voltage**: The BMP280 operates at a supply voltage between 1.71V and 3.6V.
+- **Pressure Sensor**: It measures atmospheric pressure with a range from 300 hPa to 1100 hPa (hectopascals).
+- **Temperature Sensor**: The sensor provides temperature measurement with a range from -40°C to +85°C.
+- **Pressure Resolution**: It offers high-resolution pressure data with an accuracy of ±1 hPa (or ±8 Pa).
+- **Temperature Resolution**: The temperature accuracy is ±0.5°C.
+- **Interface**: The sensor communicates via I2C and SPI interfaces, providing flexibility for integration with various microcontrollers and devices.
+- **Low Power**: It features low power consumption, making it suitable for battery-powered applications.
+- **Calibration Coefficients**: The BMP280 includes built-in calibration coefficients for accurate readings.
+- **Sampling Rate**: It can provide measurements at different data rates, ranging from ultra-low power to high performance.
+- **Altitude Calculation**: With its pressure and temperature data, the BMP280 can calculate altitude accurately.
+- **Tiny Package**: The sensor comes in a small 8-pin LGA package, measuring 2.5mm x 2.5mm x 0.93mm.
+- **Digital Filtering**: It includes internal digital filtering to improve measurement accuracy.
+- **Operating Modes**: The sensor offers different power modes, including sleep mode for minimal power consumption.
+
+#### References
+- [BMP280 Datasheet](@site/static/datasheets/BMP280.pdf)
+
+### Sensor: AM2301 Capacitive Digital Temperature & Humidity Sensor
+
+The AM2301, also known as the DHT21, is a versatile humidity and temperature sensor module. It incorporates a capacitive humidity sensor and a high-precision temperature sensor, allowing it to provide accurate and simultaneous readings of relative humidity and temperature. With a digital output signal, it is easy to interface with microcontrollers and data-logging systems.
+
+<img src={am2301} 
+alt="AM2301 Module" 
+style={{ 
+    width: '75%', 
+    display: 'block', 
+    margin: '20px auto' }} />
+
+#### Technical Specifications and Features
+- **Input Voltage**: 3.5-5.5V
+- **Measuring Current**: 1-1.5mA
+- **Humidity Range**: 0-100% RH
+- **Temperature Range**: -40°C to 80°C
+- **Humidity Accuracy**: ±3% RH
+- **Temperature Accuracy**: ±0.5°C
+- **Wire Length**: 25cm
+- **Dimensions**: 59mm x 27mm x 13mm
+
+#### References
+- [AM2301 Datasheet](@site/static/datasheets/AM2301.pdf)
+
+### Sensor: DS3231 Precision RTC Module
+
+The DS3231 is a highly accurate real-time clock (RTC) module commonly used in electronic devices and microcontroller-based projects. It features a built-in temperature-compensated crystal oscillator (TCXO), which ensures precise timekeeping with minimal drift over extended periods. The DS3231 provides not only time and date information but also a range of alarm functions, making it versatile for various applications.
+
+<img src={ds3231} 
+alt="DS3231 Precision RTC Module" 
+style={{ 
+    width: '75%', 
+    display: 'block', 
+    margin: '20px auto' }} />
+
+#### Technical Specifications and Features:
+- **Highly Accurate RTC**: The DS3231 completely manages all timekeeping functions, offering high accuracy.
+- **Timekeeping Functions**: Tracks seconds, minutes, hours, date of the month, month, day of the week, and year, with leap-year compensation valid up to the year 2100.
+- **Temperature Accuracy**: ±2ppm from 0°C to +40°C and ±3.5ppm from -40°C to +85°C.
+- **Digital Temperature Sensor**: Includes a digital temperature sensor with ±3°C accuracy.
+- **Aging Trim Register**: Features a register for ageing trim to fine-tune timekeeping accuracy.
+- **RST Output/Pushbutton Reset Debounce Input**: Offers an RST (reset) output and debounce input for pushbutton reset functionality.
+- **Two Time-of-Day Alarms**: Supports two programmable time-of-day alarms.
+- **Programmable Square-Wave Output Signal**: Can generate a programmable square-wave output signal.
+- **Simple Serial Interface**: Connects easily to most microcontrollers through a fast (400kHz) I2C interface.
+- **Battery-Backup Input**: Ensures continuous timekeeping during power interruptions.
+- **Low Power Operation**: Operates at low power, extending battery backup run time.
+- **3.3V Operation**: The DS3231 operates at 3.3V.
+- **Operating Temperature Ranges**: Available in Commercial (0°C to +70°C) and Industrial (-40°C to +85°C) ranges.
+
+#### References:
+- [DS3231 Datasheet](@site/static/datasheets/DS3231.pdf)
+
+### Actuator: 0.96” 128×64 OLED Display Module
+
+The OLED (Organic Light-Emitting Diode) Display, measuring 0.96 inches with a resolution of 128x64 pixels, is a compact and versatile screen commonly used in electronics projects. OLED technology enables each pixel to emit its light, resulting in vibrant and high-contrast displays with deep black levels. This particular display offers excellent readability, even in low-light conditions.
+
+<img src={oled96} 
+alt="0.96” 128×64 OLED Display Module" 
+style={{ 
+    width: '75%', 
+    display: 'block', 
+    margin: '20px auto' }} />
+
+#### Technical Specifications and Features:
+- **OLED Driver IC**: SSD1306
+- **Resolution**: 128 x 64 pixels
+- **Visual Angle**: >160°
+- **Display Color**: Area Color (White)
+- **Input Voltage**: 3.3V - 6V
+- **Compatible I/O Level**: 3.3V, 5V
+- **Control Interface**: Only requires 2 I/O ports for control
+- **Working Temperature**: -30°C to 70°C
+- **Interface**: I2C
+
+#### References:
+- [0.96” 128×34 OLED Display Module Datasheet](@site/static/datasheets/OLED_128_64.pdf)
+- [OLED SSD1306 Advance Information](@site/static/datasheets/OLED_SSD1306.pdf)
+
+## Communication Protocols
+
+### Controller Communication
+
+The Arduino Nano 33 IoT controller communicates with the ThingsBoard server using two key protocols: Wi-Fi and MQTT.
+
+#### Wi-Fi Connection
+The Arduino Nano 33 IoT connects to a local Wi-Fi network, granting it access to the internet. This connection serves as the foundation for communication with external services like the ThingsBoard server.
+
+#### MQTT Protocol
+For transmitting data between the controller and the ThingsBoard server, the Message Queuing Telemetry Transport (MQTT) protocol is utilized. MQTT is chosen for its lightweight and efficient design, making it suitable for remote devices with limited resources. It enables the publication of data from the controller to the server and supports subscriptions to commands or acknowledgments from the server. MQTT ensures secure and reliable communication, essential for real-time data visualization and monitoring on the ThingsBoard dashboard. Access events generated by the controller are published to the server and visualized on the dashboard, providing insights into system performance and access patterns.
+
+### Sensor Communication
+
+The communication between the Arduino Nano 33 IoT controller and various sensors employed in the node—BMP280, AM2301, and DS3231—utilizes the Inter-Integrated Circuit (I2C) protocol.
+
+#### I2C Protocol (for Sensors)
+The I2C protocol facilitates communication between the controller and connected sensors. The BMP280 for pressure and altitude, AM2301 for temperature, relative humidity, and heat index, and DS3231 for real-time clock information all employ the I2C protocol. I2C allows the controller to read data from these sensors, ensuring synchronized and accurate measurements. Its efficiency is crucial for coordinating data collection from multiple sensors simultaneously, providing precise weather information.
+
+### Actuator Communication
+
+The 0.96" 128x64 OLED display, serving as both an actuator and visual output for presenting weather data, communicates with the Arduino Nano 33 IoT controller through the I2C protocol.
+
+#### I2C Protocol (for Actuator - OLED Display)
+The OLED display communicates with the controller via the I2C protocol, enabling the controller to send data for presenting weather-related information visually. The I2C protocol's efficiency ensures seamless data exchange between the controller and the OLED display, facilitating real-time weather updates for users.
+
+The integration of these communication protocols ensures efficient data collection, processing, and presentation of weather data while maintaining secure and reliable connectivity with the ThingsBoard platform for real-time data visualization and monitoring.
+
+## Pin Connections
+This section provides details about the pin connections between the components used in the node and the Arduino Nano 33 IoT controller.
+
+### BMP280 Module Pin Connections
+
+<PinConnectionsTable
+  data={[
+    ["BMP280", "", "Arduino Nano 33 IoT"],
+    ["VCC", <span className="wire"><span className="wire-red"></span></span>, "3.3V"],
+    ["GND", <span className="wire"><span className="wire-black"></span></span>, "GND"],
+    ["SCL", <span className="wire"><span className="wire-purple"></span></span>, "SCL"],
+    ["SDA", <span className="wire"><span className="wire-orange"></span></span>, "SDA"]
+  ]}
+/>
+
+### AM2301 Module Pin Connections
+
+<PinConnectionsTable
+  data={[
+    ["AM2301", "", "Arduino Nano 33 IoT"],
+    ["VCC", <span className="wire"><span className="wire-red"></span></span>, "3.3V"],
+    ["GND", <span className="wire"><span className="wire-black"></span></span>, "GND"],
+    ["SDA", <span className="wire"><span className="wire-blue"></span></span>, "2"]
+  ]}
+/>
+
+### DS3231 Module Pin Connections
+
+<PinConnectionsTable
+  data={[
+    ["DS3231", "", "Arduino Nano 33 IoT"],
+    ["VCC", <span className="wire"><span className="wire-red"></span></span>, "3.3V"],
+    ["GND", <span className="wire"><span className="wire-black"></span></span>, "GND"],
+    ["SCL", <span className="wire"><span className="wire-purple"></span></span>, "SCL"],
+    ["SDA", <span className="wire"><span className="wire-orange"></span></span>, "SDA"]
+  ]}
+/>
+
+### 0.96” 128×64 OLED Module Pin Connections
+
+<PinConnectionsTable
+  data={[
+    ["0.96” 128×64 OLED", "", "Arduino Nano 33 IoT"],
+    ["VCC", <span className="wire"><span className="wire-red"></span></span>, "3.3V"],
+    ["GND", <span className="wire"><span className="wire-black"></span></span>, "GND"],
+    ["SCL", <span className="wire"><span className="wire-purple"></span></span>, "SCL"],
+    ["SDA", <span className="wire"><span className="wire-orange"></span></span>, "SDA"]
+  ]}
+/>
+
+## Circuit Diagram
+<img src={circuitDiagram} 
+alt="Circuit Diagram" 
+style={{ 
+    //maxWidth: '700px', 
+    display: 'block', 
+    margin: '20px auto' }} />
+
+## Link to Code Explanation and Tutorial
+
+For a comprehensive guide on programming this node, including detailed code explanations and step-by-step tutorials, please refer to the following link. This resource provides all necessary information to understand the functioning of the node, enabling users to effectively program and customize it according to their specific requirements.
+
+[Visit the Node Programming Guide and Code Explanation](/docs/tutorial/node_code_explained.mdx)

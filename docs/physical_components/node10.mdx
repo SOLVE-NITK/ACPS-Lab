@@ -1,0 +1,284 @@
+---
+title: 'Node 10: Temperature Control System'
+description: Manages and regulates environmental temperatures to maintain specific conditions in sensitive areas.
+---
+
+import nodeImage from '@site/static/img/node10/Temp.jpg';
+import nano33 from '@site/static/img/components_images/Arduino_Nano_33_IoT.png';
+import nano33_2 from '@site/static/img/components_images/Arduino_Nano_33_IoT_2.png';
+import lm35 from '@site/static/img/components_images/LM35.png';
+import redLED from '@site/static/img/components_images/Red_LED.webp';
+import relay from '@site/static/img/components_images/Relay.jpg';
+import fan from '@site/static/img/components_images/Cooling-Fan.png';
+import PinConnectionsTable from '@site/src/pages/PinConnectionsTable.js';
+import circuitDiagram from '@site/static/img/node10/Temperature-Control-System_Circuit_Diagram_bb.png';
+
+# Node 10: Temperature Control System
+
+The Temperature Control System, employs the Arduino Nano 33 IoT alongside the LM35 temperature sensor to manage and regulate temperature in controlled environments such as greenhouses or server rooms. This node optimizes conditions through automated adjustments, ensuring environmental stability which is crucial for sensitive operations and processes.
+
+<img src={nodeImage} 
+alt="Temperature Control System" 
+style={{ 
+    width: '75%', 
+    display: 'block', 
+    margin: '20px auto' }} />
+
+## Components Summary
+
+<div style={{ display: 'flex', justifyContent: 'center', margin: '20px' }}>
+  <table style={{ width: '75%', borderCollapse: 'collapse' }}>
+    <thead>
+      <tr>
+        <th style={{ padding: '8px', width: '30%', textAlign: 'center' }}>Component Type</th>
+        <th style={{ padding: '8px', width: '70%', textAlign: 'center' }}>Component Name</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style={{ padding: '8px', textAlign: 'right' }}>Controller</td>
+        <td style={{ padding: '8px' }}>
+          <a href="#controller-arduino-nano-33-iot">Arduino Nano 33 IoT</a>
+        </td>
+      </tr>
+      <tr>
+        <td style={{ padding: '8px', textAlign: 'right' }}>Sensor</td>
+        <td style={{ padding: '8px' }}>
+          <a href="#sensor-lm35-temperature-sensor">LM35 Temperature Sensor</a>
+        </td>
+      </tr>
+      <tr>
+        <td style={{ padding: '8px', textAlign: 'right' }}>Actuator</td>
+        <td style={{ padding: '8px' }}>
+          <a href="#actuator-led">Red LED</a>
+        </td>
+      </tr>
+      <tr>
+        <td></td>
+        <td style={{ padding: '8px' }}>
+          <a href="#actuator-relay">Relay</a>
+        </td>
+      </tr>
+      <tr>
+        <td></td>
+        <td style={{ padding: '8px' }}>
+          <a href="#actuator-dc-fan">5V DC Fan</a>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+## Components Overview
+
+### Controller: Arduino Nano 33 IoT
+
+The Arduino Nano 33 IoT is a compact and versatile development board designed for Internet of Things (IoT) applications. It features built-in Wi-Fi and Bluetooth connectivity, making it easy to create IoT devices that can communicate wirelessly. The board is power-efficient, making it suitable for battery-powered applications. With compatibility with the Arduino IDE, it simplifies the development process for IoT projects like remote monitoring, home automation, and sensor networks. Additionally, it supports secure communication with hardware-based encryption, making it suitable for applications requiring data security. Its small size and extensive capabilities make it a popular choice for IoT enthusiasts and developers looking to create connected and innovative devices.
+
+<img src={nano33} 
+alt="Arduino Nano 33 IoT" 
+style={{ 
+    width: '75%', 
+    display: 'block', 
+    margin: '20px auto' }} />
+    
+<img src={nano33_2} 
+alt="Arduino Nano 33 IoT" 
+style={{ 
+    width: '75%', 
+    display: 'block', 
+    margin: '20px auto' }} />
+
+#### Technical Specifications and Features
+- **Microcontroller**: The Arduino Nano 33 IoT is equipped with the Microchip ATSAMW25, featuring a 32-bit ARM Cortex-M0+ processor.
+- **Operating Voltage**: 3.3V
+- **Input Voltage (Recommended)**: 5V via USB or an external Li-Po battery.
+- **Digital I/O Pins**: 8, including PWM support.
+- **Analog Input Pins**: 8
+- **UART Ports**: 1 for serial communication.
+- **SPI Interface**: 1 for communication with other devices.
+- **I2C Interface**: 1 for inter-device communication.
+- **Flash Memory**: 256KB, with 6KB used by the bootloader.
+- **SRAM**: 32KB
+- **Clock Speed**: 48MHz
+- **Wireless Connectivity**: Wi-Fi via the u-blox NINAW102 module.
+- **Crypto chip**: Included for secure communication.
+- **USB Port**: Micro USB for programming and power.
+- **Li-Po Battery Connector**: JST-PH2 connector for connecting a Li-Po battery.
+- **Charging Current**: 450mA
+- **Operating Temperature**: -40°C to +85°C
+- **Dimensions**: Approximately 45mm x 18.5mm
+
+#### References
+- [Arduino Nano 33 IoT Datasheet](@site/static/datasheets/Arduino_Nano_33_IoT.pdf)
+- [Arduino Nano 33 IoT Pinout](@site/static/datasheets/Arduino_Nano_33_IoT_Pinout.pdf)
+
+### Sensor: LM35 Temperature Sensor
+
+The LM35 is a widely used analog temperature sensor that provides a straightforward and accurate way to measure temperature in various electronic applications. It operates on the principle that its output voltage increases linearly with temperature, with a slope of 10 mV per degree Celsius. This means that by measuring the LM35's output voltage, you can directly determine the temperature it's exposed to. The LM35 is known for its simplicity, low cost, and high precision, making it a popular choice for temperature monitoring in devices like thermostats, weather stations, and temperature-controlled systems. Its ease of integration, wide temperature range, and minimal calibration requirements make it a go-to sensor for temperature sensing needs in both hobbyist and industrial projects.
+
+<img src={lm35} 
+alt="LM35 Temperature Sensor" 
+style={{ 
+    width: '60%', 
+    display: 'block', 
+    margin: '20px auto' }} />
+
+#### Technical Specifications and Features:
+- **Calibrated Directly in Celsius (Centigrade)**
+- **Linear +10-mV/°C Scale Factor**
+- **0.5°C Ensured Accuracy (at 25°C)**
+- **Rated for Full −55°C to 150°C Range**
+- **Suitable for Remote Applications**
+- **Low-Cost Due to Wafer-Level Trimming**
+- **Operates From 4V to 30V**
+- **Less Than 60-μA Current Drain**
+- **Low Self-Heating, 0.08°C in Still Air**
+- **Non-Linearity Only ±¼°C Typical**
+- **Low-Impedance Output, 0.1Ω for 1-mA Load**
+
+#### References:
+- [LM35 Datasheet](@site/static/datasheets/lm35.pdf)
+
+### Actuator: LED
+
+LEDs, or Light Emitting Diodes, are semiconductor devices that emit light when an electric current is applied. Known for their energy efficiency, compact size, and long life, LEDs are extensively used across various applications including electronic devices, display panels, indicators, and general lighting. Their ability to be manufactured in various colors and sizes makes LEDs exceptionally versatile for design and functional purposes in numerous projects.
+
+<img src={redLED} 
+      alt="Red LED" 
+      style={{ 
+        width: '25%', 
+        display: 'block', 
+        margin: '20px auto'  }} />
+
+#### Technical Specifications and Features
+- **Dice Material**: Gallium Arsenide Phosphide on Gallium Phosphide (GaAsP on GaP/GaP).
+- **Emitted Colors**: Available in Green and Red.
+- **Lens Color**: Green Diffused and Red Diffused.
+- **Peak Wavelength**:
+  - Green: 568 nm
+  - Red: 587 nm
+- **Viewing Angle**: 45 degrees, offering focused illumination.
+- **Luminous Intensity (IV)**:
+  - Green: 15 mcd
+  - Red: 14 mcd
+
+#### References
+- [Red LED Datasheet](@site/static/datasheets/Red_LED.pdf)
+
+### Actuator: Relay
+
+<img src={relay} 
+    alt="Relay" 
+    style={{ 
+        width: '60%', 
+        display: 'block', 
+        margin: '20px auto'  }} />
+
+The 3V relay module is an electronic switch that operates at a low voltage of 3 volts, making it suitable for use in low-power circuits and microcontroller-based projects. It typically consists of a relay, driver circuitry, and input/output connectors. The relay serves as an electromechanical switch, capable of controlling higher voltage and current loads with a low-voltage signal. This module is commonly used to interface microcontrollers, Arduino boards, or other digital devices with appliances, lights, or other electrical loads. It simplifies the process of controlling high-power devices by allowing you to use a low-voltage signal to open or close the relay contacts, thereby turning the connected load on or off. The 3V relay module finds applications in home automation, robotics, and various electronic projects where remote or automated control of electrical devices is needed.
+
+#### Technical Specifications and Features
+- **Operate Voltage**: 3.3V-5V
+- **Input Current**: 100mA
+- **Rated Load**: 5A@250VAC, 5A@30VDC
+- **Contact Resistance**: 50mΩ @6VDC 1A
+- **Insulation Resistance**: 100MΩ 10ms Max.
+- **Operation Time**: 10ms Max.
+- **Release Time**: 5ms Max.
+- **Input Interface**: Digital
+- **Dimensions**: 42mm x 24mm x 18.5mm
+- **Weight**: G.W 19g
+
+#### References
+- [Relay Datasheet](@site/static/datasheets/Relay.pdf)
+
+### Actuator: DC Fan
+
+A 5V DC fan is a compact and efficient cooling device powered by a 5-volt direct current (DC) source. It typically features a brushless motor design for quiet operation and longevity. These fans come in various sizes, including common dimensions like 80mm and 120mm, and are equipped with blades that circulate air to dissipate heat from electronic components or provide ventilation in various applications. Due to their low voltage requirements, 5V DC fans are often used in small electronics, such as laptops, Raspberry Pi projects, and electronic enclosures, to prevent overheating and maintain proper thermal management. They are also favored in portable and low-power setups, where they help maintain optimal operating temperatures without draining excessive power.
+
+<img src={fan} 
+alt="DC Fan" 
+style={{ 
+    width: '50%', 
+    display: 'block', 
+    margin: '20px auto' }} />
+
+#### Technical Specifications and Features:
+- **Operating Voltage:** 5V
+- **Current:** 0.2 A
+- **Type:** Brushless DC fan
+- **Fan Dimensions:** 30mm x 30mm x 8mm
+- **Wire Length:** 3.25" / 80mm
+- **Weight:** 6.2g / 0.22oz
+- **Mounting Screws & Nuts Included**
+
+#### References:
+- [DC Cooling Fan Datasheet](@site/static/datasheets/Cooling_Fan.pdf)
+
+## Communication Protocols
+
+### Controller Communication
+
+The communication between the Arduino Nano 33 IoT controller and the ThingsBoard server involves two key protocols: Wi-Fi and MQTT.
+
+#### Wi-Fi Connection:
+The Arduino Nano 33 IoT connects to a local Wi-Fi network, enabling it to access the internet. This connection provides the foundation for communication with external services like the ThingsBoard server.
+
+#### MQTT Protocol:
+The Message Queuing Telemetry Transport (MQTT) protocol is employed for transmitting data between the controller and the ThingsBoard server. MQTT is a lightweight and efficient protocol designed for remote devices with limited resources. It facilitates the publication of data (such as access events) from the controller to the server, as well as the subscription to commands or acknowledgements from the server. MQTT ensures secure and reliable communication, making it ideal for real-time data visualization and monitoring on the ThingsBoard dashboard. The controller publishes messages related to access events, which are then visualized on the dashboard, offering insights into the system's performance and access patterns.
+
+### Sensor Communication
+
+The primary sensor used in this node is the LM35 temperature sensor, which communicates with the Arduino Nano 33 IoT controller through analog data.
+
+#### Analog Data Communication (LM35 Temperature Sensor):
+The LM35 temperature sensor employs analog data communication to relay precise temperature measurements to the Arduino Nano 33 IoT controller. The sensor generates an analog voltage signal that is directly proportional to the ambient temperature. The controller, equipped with analog-to-digital conversion capabilities, reads this analog signal and interprets it as temperature data. This communication method allows for high precision in temperature measurement and control. When the temperature exceeds predefined thresholds, the controller triggers the relay to activate or deactivate the connected fan, thereby maintaining the desired environmental conditions.
+
+## Pin Connections
+This section provides details about the pin connections between the components used in the node and the Arduino Nano 33 IoT controller.
+
+### LM35 Temperature Sensor Pin Connections
+
+<PinConnectionsTable
+  data={[
+    ["LM35 Temperature Sensor", "", "Arduino Nano 33 IoT"],
+    ["VCC", <span className="wire"><span className="wire-red"></span></span>, "3.3V"],
+    ["GND", <span className="wire"><span className="wire-black"></span></span>, "GND"],
+    ["Signal Out", <span className="wire"><span className="wire-blue"></span></span>, "A1"]
+  ]}
+/>
+
+### Red LED Pin Connections
+
+<PinConnectionsTable
+  data={[
+    ["Red LED", "", "Arduino Nano 33 IoT"],
+    ["Anode (+)", <span className="wire"><span className="wire-blue"></span></span>, "7"],
+    ["Cathode (-)", <span className="wire"><span className="wire-black"></span></span>, "GND"]
+  ]}
+/>
+
+### Fan Relay Module Pin Connections
+
+<PinConnectionsTable
+  data={[
+    ["Fan Relay", "", "ESP32 Dev Board"],
+    ["VCC", <span className="wire"><span className="wire-red"></span></span>, "3.3V"],
+    ["GND", <span className="wire"><span className="wire-black"></span></span>, "GND"],
+    ["Signal In", <span className="wire"><span className="wire-blue"></span></span>, "8"]
+  ]}
+/>
+
+## Circuit Diagram
+<img src={circuitDiagram} 
+alt="Circuit Diagram" 
+style={{ 
+    //maxWidth: '700px', 
+    display: 'block', 
+    margin: '20px auto' }} />
+
+## Link to Code Explanation and Tutorial
+
+For a comprehensive guide on programming this node, including detailed code explanations and step-by-step tutorials, please refer to the following link. This resource provides all necessary information to understand the functioning of the node, enabling users to effectively program and customize it according to their specific requirements.
+
+[Visit the Node Programming Guide and Code Explanation](/docs/tutorial/node_code_explained.mdx)

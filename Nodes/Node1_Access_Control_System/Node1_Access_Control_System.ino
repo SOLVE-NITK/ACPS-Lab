@@ -4,9 +4,6 @@
 #include <SPI.h>
 #include <Servo.h>
 
-// constexpr char WIFI_SSID[] = "NITK-NET";
-// constexpr char WIFI_PASSWORD[] = "2K16NITK";
-
 constexpr char WIFI_SSID[] = "CSD";
 constexpr char WIFI_PASSWORD[] = "csd@NITK2014";
 

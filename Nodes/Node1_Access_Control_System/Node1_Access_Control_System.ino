@@ -25,7 +25,6 @@ constexpr const char GREEN_LED_KEY[] = "green";         // Define the attribute 
 constexpr const char RPC_SERVO_METHOD[] = "servo";             // Define the RPC method for setting switch state
 constexpr const char RPC_SERVO_RESPONSE_KEY[] = "servo_response";  // Define the key for RPC response
 
-
 WiFiClient espClient;
 ThingsBoard tb(espClient, MAX_MESSAGE_SIZE);
 
@@ -33,7 +32,6 @@ uint8_t status = WL_IDLE_STATUS;  // the Wifi radio's status
 bool requestedShared = false;
 bool subscribed = false;
 int msg = 0;
-
 
 char *BASE_URL = "/api/v1";   // Define base URL for API requests
 char *ENDPOINT = "firmware";  // Define endpoint for firmware updates
@@ -87,8 +85,6 @@ int pos = 0;  // Declare variable for servo motor position
 int switch_state = 0;
 bool buzzerState = false;  // Initialize buzzer state
 
-// @brief Initalizes WiFi connection,
-// will endlessly delay until a connection has been successfully established
 void InitWiFi() {
   while (status != WL_CONNECTED) {
     Serial.print("Attempting to connect to network: ");
@@ -99,8 +95,6 @@ void InitWiFi() {
   Serial.println("Connected to AP");
 }
 
-/// @brief Reconnects the WiFi uses InitWiFi if the connection has been removed
-/// @return Returns true as soon as a connection has been established again
 bool reconnect() {
   // Check to ensure we aren't connected yet
   status = WiFi.status();

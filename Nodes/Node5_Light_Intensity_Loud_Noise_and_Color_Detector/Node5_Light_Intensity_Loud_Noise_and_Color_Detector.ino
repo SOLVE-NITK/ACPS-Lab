@@ -4,20 +4,12 @@
 constexpr char WIFI_SSID[] = "CSD";
 constexpr char WIFI_PASSWORD[] = "csd@NITK2014";
 
-constexpr char TOKEN[] = "L9dOkkknZXgittW0WAIh";
+constexpr char TOKEN[] = "ZVPqqBwnUAtwQINzcqa4";
 
-constexpr char THINGSBOARD_SERVER[] = "10.100.80.26";
+constexpr char THINGSBOARD_SERVER[] = "10.14.0.205";
 constexpr uint16_t THINGSBOARD_PORT = 1883U;
 constexpr uint32_t MAX_MESSAGE_SIZE = 128U;
 constexpr uint32_t SERIAL_DEBUG_BAUD = 115200U;
-
-IPAddress localIP(10, 100, 80, 40);
-IPAddress gateway(10, 100, 80, 1);
-IPAddress subnet(255, 255, 252, 0);
-IPAddress dns(0, 0, 0, 0);
-
-IPAddress dns1(10, 20, 1, 22);
-IPAddress dns2(10, 3, 0, 101);
 
 constexpr char LOUD_NOISE_KEY[] = "loudNoise";
 constexpr char LIGHT_INTENSITY_KEY[] = "lightIntensity";
@@ -33,6 +25,8 @@ constexpr const char RPC_LIGHT_DETECT_KEY[] = "light";
 constexpr const char RPC_COLOR_KEY[] = "color";
 constexpr const char RPC_SWITCH_KEY[] PROGMEM = "switch";
 constexpr const char RPC_RESPONSE_KEY[] = "example_response";
+
+constexpr const char RPC_LDR_DATA[] = "lightDetected";
 
 #define SOUND_SENSOR_PIN A2
 #define LDR_PIN A1
@@ -53,8 +47,8 @@ constexpr const char RPC_RESPONSE_KEY[] = "example_response";
 
 #define WIFI_STATUS_LED LED_BUILTIN
 
-#define LIGHT_THRESHOLD 25
-#define SOUND_THRESHOLD 85
+#define LIGHT_THRESHOLD 80
+#define SOUND_THRESHOLD 60
 
 WiFiClient espClient;
 ThingsBoard tb(espClient, MAX_MESSAGE_SIZE);
@@ -78,20 +72,23 @@ const long BLINK_INTERVAL = 500;   // Blinking interval in milliseconds (1 secon
 /// @brief Initalizes WiFi connection,
 // will endlessly delay until a connection has been successfully established
 void InitWiFi() {
-
-  // Configure static IP and DNS server
-  WiFi.config(localIP, dns, gateway, subnet);
-  WiFi.setDNS(dns1, dns2);
-
-  while (status != WL_CONNECTED) {
-    Serial.print("Attempting to connect to network: ");
+  Serial.begin(115200);
+  int attempts = 0;
+  while (WiFi.status() != WL_CONNECTED) {
+    Serial.print("Attempting to connect to SSID: ");
     Serial.println(WIFI_SSID);
-    status = WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
-    delay(5000);
+    WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+    delay(5000);  // Wait for 5 seconds before checking connection status
+    if (attempts >= 10) {
+      Serial.println("Connection failed after 10 attempts.");
+      return;  // Exit the function if connection fails after 10 attempts
+    }
+    attempts++;
   }
-  Serial.println("Connected to AP");
+  Serial.println("Connected to WiFi");
+  Serial.print("IP Address: ");
+  Serial.println(WiFi.localIP());
 }
-
 /// @brief Reconnects the WiFi uses InitWiFi if the connection has been removed
 /// @return Returns true as soon as a connection has been established again
 bool reconnect() {
@@ -100,7 +97,6 @@ bool reconnect() {
   if (status == WL_CONNECTED) {
     return true;
   }
-
   // If we aren't establish a new connection to the given WiFi network
   InitWiFi();
   return true;
@@ -122,7 +118,7 @@ RPC_Response processSoundDetectEnable(const RPC_Data &data) {
 
   // Just an response example
   StaticJsonDocument<JSON_OBJECT_SIZE(1)> doc;
-  doc[RPC_RESPONSE_KEY] = 42;
+  doc[RPC_RESPONSE_KEY] = 22.02;
   return RPC_Response(doc);
 }
 
@@ -229,6 +225,8 @@ void setup() {
 
 void loop() {
 
+  delay(500);
+
   if (!reconnect()) {
     return;
   }
@@ -263,6 +261,8 @@ void loop() {
 
     subscribed = true;
   }
+
+   lightDetected = analogRead(LDR_PIN);
 
   //Loud Sound Detector
   if (loudNoiseDetectorEnable) {
@@ -309,11 +309,11 @@ void loop() {
     if (lightDetected <= LIGHT_THRESHOLD) {
       Serial.println("Light not Detected");
       digitalWrite(LIGHT_LED, HIGH);
-      soundStatus = 1;
+      // soundStatus = 1;
       tb.sendTelemetryString(LIGHT_INTENSITY_KEY, "Light Intensity Reduced!");
     } else {
       digitalWrite(LIGHT_LED, LOW);
-      soundStatus = 0;
+      // soundStatus = 0;
       tb.sendTelemetryString(LIGHT_INTENSITY_KEY, "Normal");
     }
   } else {
@@ -341,10 +341,23 @@ void loop() {
     analogWrite(LED_R, 0);
     analogWrite(LED_G, 0);
     analogWrite(LED_B, 0);
+  } 
+
+  tb.sendTelemetryData(RPC_LDR_DATA, lightDetected);
+
+  if (lightIntensityDetectorEnable == 40) {
+    lightIntensityDetectorEnable = 0;
+    Serial.println("Light not Detected");
+    digitalWrite(LIGHT_LED, HIGH);
+    tb.sendTelemetryString(LIGHT_INTENSITY_KEY, "Light Intensity Reduced!");
+  } else {
+    digitalWrite(LIGHT_LED, LOW);
+    tb.sendTelemetryString(LIGHT_INTENSITY_KEY, "Normal");
   }
 
   // Uploads new telemetry to ThingsBoard using MQTT.
   // Serial.println("Sending data...");
+  // Serial.println(lightDetected);
 
   tb.loop();
 }

@@ -37,7 +37,7 @@ char *BASE_URL = "/api/v1";   // Define base URL for API requests
 char *ENDPOINT = "firmware";  // Define endpoint for firmware updates
 char PATH[256];               // Define array to store the path for firmware updates
 
-constexpr const char FW_TITLE_KEY[] = "FW_TITLE";
+constexpr const char FW_TITLE_KEY[] = "fw_title";
 constexpr const char FW_VER_KEY[] = "fw_version";
 
 char CURRENT_VERSION[] = "1.0.0";

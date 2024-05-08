@@ -45,16 +45,16 @@ char *BASE_URL = "/api/v1";   // Define base URL for API requests
 char *ENDPOINT = "firmware";  // Define endpoint for firmware updates
 char PATH[256];               // Define array to store the path for firmware updates
 
-constexpr const char FW_TITLE_KEY[] = "FW_TITLE";
-constexpr const char FW_VER_KEY[] = "fw_version";
+constexpr const char FW_TITLE_KEY[] PROGMEM = "fw_title";
+constexpr const char FW_VER_KEY[] PROGMEM = "fw_version";
 
 char CURRENT_VERSION[] = "1.0.0";
 constexpr int FIRMWARE_SIZE = 20;           // Adjust the size according to your requirements
 char NEW_VERSION[FIRMWARE_SIZE] = "1.0.0";  // Declare NEW_VERSION array
 
-char FW_TITLE[] = "RPi";
+char FW_TITLE[] = "ESP32";
 constexpr int TITLE_SIZE = 20;       // Adjust the size according to your requirements
-char FWW_TITLE[TITLE_SIZE] = "RPi";  // Declare NEW_VERSION array
+char FWW_TITLE[TITLE_SIZE] = "ESP32";  // Declare NEW_VERSION array
 
 // Shared attributes we want to request from the server
 constexpr std::array<const char *, 2U> REQUESTED_SHARED_ATTRIBUTES = {
@@ -443,7 +443,7 @@ void loop() {
       }
     }
   }
-  
+
   shuntvoltage = ina219.getShuntVoltage_mV();
   busvoltage = ina219.getBusVoltage_V();
   current_mA = ina219.getCurrent_mA();

@@ -10,7 +10,7 @@
 constexpr char WIFI_SSID[] = "CSD";               // Define WiFi SSID
 constexpr char WIFI_PASSWORD[] = "csd@NITK2014";  // Define WiFi password
 
-constexpr char TOKEN[] = "Prl5gJ8FQ5C1pmPPaVAU";
+constexpr char TOKEN[] = "m7YJB0Xce8pqoC5vQf5W";
 
 constexpr char THINGSBOARD_SERVER[] = "10.14.0.205";  // Define ThingsBoard server IP address
 constexpr uint16_t THINGSBOARD_PORT = 1883U;          // Define ThingsBoard server port

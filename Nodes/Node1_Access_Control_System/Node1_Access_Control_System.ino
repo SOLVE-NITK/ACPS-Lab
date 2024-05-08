@@ -244,7 +244,7 @@ RPC_Response setServoSwitchState(RPC_Data &data) {
   Serial.println("Received Servo State");
   switch_state = data;
   Serial.println("Servo State Change:");
-  Serial.print(switch_state);
+  Serial.println(switch_state);
   return RPC_Response(RPC_SERVO_RESPONSE_KEY, switch_state);
 }
 

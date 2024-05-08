@@ -10,7 +10,7 @@
 constexpr char WIFI_SSID[] = "CSD";               // Define WiFi SSID
 constexpr char WIFI_PASSWORD[] = "csd@NITK2014";  // Define WiFi password
 
-constexpr const char TOKEN[] = "Prl5gJ8FQ5C1pmPPaVAU";
+constexpr char TOKEN[] = "Prl5gJ8FQ5C1pmPPaVAU";
 
 constexpr char THINGSBOARD_SERVER[] = "10.14.0.205";  // Define ThingsBoard server IP address
 constexpr uint16_t THINGSBOARD_PORT = 1883U;          // Define ThingsBoard server port
@@ -19,17 +19,14 @@ constexpr uint32_t SERIAL_DEBUG_BAUD = 115200U;
 
 char charArray[15];
 
-constexpr char RFID_KEY[] PROGMEM = "charArray";  // Define test key
-constexpr char RED_LED_KEY[] = "red";             // Define the attribute key for the red LED
-constexpr char GREEN_LED_KEY[] = "green";         // Define the attribute key for the green LED
+constexpr const char RFID_KEY[]  = "charArray";
+constexpr const char RFID_AUTH_STATUS[] = "access";
+constexpr const char RED_LED_KEY[] = "red";             // Define the attribute key for the red LED
+constexpr const char GREEN_LED_KEY[] = "green";         // Define the attribute key for the green LED
 
-constexpr const char RPC_SWITCH_METHOD[] = "RFID";             // Define the RPC method for setting switch state
-constexpr const char RPC_SWITCH_KEY[] PROGMEM = "switch";      // Define the key for switch state in RPC data
-constexpr const char RPC_RESPONSE_KEY[] = "example_response";  // Define the key for RPC response
+constexpr const char RPC_SERVO_METHOD[] = "servo";             // Define the RPC method for setting switch state
+constexpr const char RPC_SERVO_RESPONSE_KEY[] = "servo_response";  // Define the key for RPC response
 
-constexpr char ACTUATOR_KEY1[] PROGMEM = "actuator1";
-constexpr char ACTUATOR_KEY2[] PROGMEM = "actuator2";
-constexpr const char AUTHORIZE_TELEMETRY[] PROGMEM = "access";
 
 WiFiClient espClient;
 ThingsBoard tb(espClient, MAX_MESSAGE_SIZE);
@@ -44,17 +41,16 @@ char *BASE_URL = "/api/v1";   // Define base URL for API requests
 char *ENDPOINT = "firmware";  // Define endpoint for firmware updates
 char PATH[256];               // Define array to store the path for firmware updates
 
-constexpr const char FW_TITLE_KEY[] PROGMEM = "fw_title";
-constexpr const char FW_VER_KEY[] PROGMEM = "fw_version";
+constexpr const char FW_TITLE_KEY[] = "FW_TITLE";
+constexpr const char FW_VER_KEY[] = "fw_version";
 
-char CURRENT_version[] = "1.0.0";
-char FW_title[] = "MKR";
+char CURRENT_VERSION[] = "1.0.0";
+constexpr int FIRMWARE_SIZE = 20;           // Adjust the size according to your requirements
+char NEW_version[FIRMWARE_SIZE] = "1.0.0";  // Declare NEW_version array
 
-constexpr int FIRMWARE_size = 20;           // Adjust the size according to your requirements
-char NEW_version[FIRMWARE_size] = "1.0.0";  // Declare NEW_version array
-
-constexpr int title_size = 20;       // Adjust the size according to your requirements
-char FWW_title[title_size] = "MKR";  // Declare NEW_version array
+char FW_TITLE[] = "RPi";
+constexpr int TITLE_SIZE = 20;       // Adjust the size according to your requirements
+char FWW_title[TITLE_SIZE] = "RPi";  // Declare NEW_version array
 
 // Shared attributes we want to request from the server
 constexpr std::array<const char *, 2U> REQUESTED_SHARED_ATTRIBUTES = {
@@ -122,22 +118,22 @@ void processSharedAttributeRequest(const Shared_Attribute_Data &data) {
     // Shared attributes have to be parsed by their type.
     Serial.println(it->value().as<const char *>());
     if (strcmp_P(it->key().c_str(), FW_VER_KEY) == 0) {
-      // If the key is "CURRENT_version", print its value
+      // If the key is "CURRENT_VERSION", print its value
       Serial.print("NEW_version: ");
       // Copy the value to NEW_version array
-      strncpy(NEW_version, it->value().as<const char *>(), FIRMWARE_size - 1);
+      strncpy(NEW_version, it->value().as<const char *>(), FIRMWARE_SIZE - 1);
       // Ensure null termination
-      NEW_version[FIRMWARE_size - 1] = '\0';
+      NEW_version[FIRMWARE_SIZE - 1] = '\0';
       // Print the value
       Serial.println(NEW_version);
     }
     if (strcmp_P(it->key().c_str(), FW_TITLE_KEY) == 0) {
-      // If the key is "CURRENT_version", print its value
+      // If the key is "CURRENT_VERSION", print its value
       Serial.print("FWW_title: ");
       // Copy the value to NEW_version array
-      strncpy(FWW_title, it->value().as<const char *>(), title_size - 1);
+      strncpy(FWW_title, it->value().as<const char *>(), TITLE_SIZE - 1);
       // Ensure null termination
-      FWW_title[title_size - 1] = '\0';
+      FWW_title[TITLE_SIZE - 1] = '\0';
       // Print the value
       Serial.println(FWW_title);
     }
@@ -151,8 +147,8 @@ void processSharedAttributeRequest(const Shared_Attribute_Data &data) {
 
 const Attribute_Request_Callback sharedCallback(REQUESTED_SHARED_ATTRIBUTES.cbegin(), REQUESTED_SHARED_ATTRIBUTES.cend(), &processSharedAttributeRequest);
 
-void handleSketchDownload(const char *token, char *title, char *current_version) {
-  sprintf(PATH, "%s/%s/%s?title=%s&version=%s", BASE_URL, token, ENDPOINT, title, current_version);
+void handleSketchDownload(const char *token, char *title, char *CURRENT_VERSION) {
+  sprintf(PATH, "%s/%s/%s?title=%s&version=%s", BASE_URL, token, ENDPOINT, title, CURRENT_VERSION);
   // const char* THINGSBOARD_SERVER = "10.100.80.25";  // Set your correct hostname
   const unsigned short SERVER_PORT = 8090U;                       // Commonly 80 (HTTP) | 443 (HTTPS)
   HttpClient client(espClient, THINGSBOARD_SERVER, SERVER_PORT);  // HTTP
@@ -250,37 +246,16 @@ void actuate() {
   analogWrite(BUZZER_PIN, 0);
 }
 
-// RPC_Response processSwitchChange(const RPC_Data &data) {
-//   Serial.println("Received the set switch method");  // Print a message indicating that the switch method was received
-
-//   // Process data
-//   switch_state = data;  // Extract the switch state from the RPC data
-
-//   Serial.print("Example switch state: ");  // Print a message indicating the switch state
-//   Serial.println(switch_state);            // Print the switch state
-
-//   // Just an response example
-//   StaticJsonDocument<JSON_OBJECT_SIZE(1)> doc;  // Create a JSON document for the response
-//   doc[RPC_RESPONSE_KEY] = 22.02;                // Set the response value
-//   return RPC_Response(doc);                     // Return the response
-// }
-
-// const std::array<RPC_Callback, 1U> callbacks = {
-//   // Define an array of RPC callbacks with one element
-//   RPC_Callback{ RPC_SWITCH_METHOD, processSwitchChange }  // The element specifies the method and the function to handle it
-// };
-
 RPC_Response setServoSwitchState(RPC_Data &data) {
-  Serial.println("RECIEVED SWITCH STATE");
+  Serial.println("Received Servo State");
   switch_state = data;
-  Serial.println("SWITCH STATE CHANGE:");
+  Serial.println("Servo State Change:");
   Serial.print(switch_state);
-  return RPC_Response("setServoSwitchValue", switch_state);
+  return RPC_Response(RPC_SERVO_RESPONSE_KEY, switch_state);
 }
 
-const std::array<RPC_Callback, 2U> callbacks = {
-  RPC_Callback{ "setServoSwitchValue", setServoSwitchState },
-  RPC_Callback{ RPC_SWITCH_METHOD, setServoSwitchState }
+const std::array<RPC_Callback, 1U> callbacks = {
+  RPC_Callback{ RPC_SERVO_METHOD, setServoSwitchState }
 };
 
 void setup() {
@@ -344,7 +319,6 @@ void loop() {
     subscribed = true;                    // Update the subscription status to true
   }
 
-
   // Look for new cards
   if (mfrc522.PICC_IsNewCardPresent()) {  // Check if a new RFID card is present
     //Select one of the cards
@@ -369,14 +343,13 @@ void loop() {
       Serial.println(charArray);
 
       tb.sendTelemetryString(RFID_KEY, charArray);
-      delay(1000);
     }
   }
 
   if (switch_state == 40) {  //change here the UID of the card/cards that you want to give access
     switch_state = 0;
-    tb.sendTelemetryString(AUTHORIZE_TELEMETRY, "Authorized access");
-    tb.sendAttributeBool(ACTUATOR_KEY1, true);
+    tb.sendTelemetryString(RFID_AUTH_STATUS, "Authorized access");
+    tb.sendAttributeBool(GREEN_LED_KEY, true);
     Serial.println("Authorized access");  // Print "Authorized access" message to serial monitor
     Serial.println();                     // Print an empty line for formatting
     // tb.sendAttributeBool(GREEN_LED_KEY, true);         // Send attribute to turn on the green LED indicator
@@ -388,8 +361,8 @@ void loop() {
     // switch_state = 0;
   } else if (switch_state == 30) {
     switch_state = 0;
-    tb.sendTelemetryString(AUTHORIZE_TELEMETRY, "Access denied");
-    tb.sendAttributeBool(ACTUATOR_KEY2, true);
+    tb.sendTelemetryString(RFID_AUTH_STATUS, "Access denied");
+    tb.sendAttributeBool(RED_LED_KEY, true);
     Serial.println("Access denied");  // Print "Access denied" message to serial monitor
     // digitalWrite(RED_LED, HIGH);
     // delay(1000);
@@ -397,14 +370,11 @@ void loop() {
     actuate();  // Call the actuate function to perform additional actions for access denial
   } else {
     switch_state = 0;
-    tb.sendAttributeBool(ACTUATOR_KEY1, false);
-    tb.sendAttributeBool(ACTUATOR_KEY2, false);
-    tb.sendTelemetryString(AUTHORIZE_TELEMETRY, "Door is Close");  // Send telemetry indicating the door is closed
+    tb.sendAttributeBool(GREEN_LED_KEY, false);
+    tb.sendAttributeBool(RED_LED_KEY, false);
+    tb.sendTelemetryString(RFID_AUTH_STATUS, "Door is Close");  // Send telemetry indicating the door is closed
   }
 
-  // tb.sendTelemetryString(RFID_KEY, "Door is Close");  // Send telemetry indicating the door is closed
-  // tb.sendAttributeBool(RED_LED_KEY, false);           // Send attribute to turn off the red LED indicator
-  // tb.sendAttributeBool(GREEN_LED_KEY, false);         // Send attribute to turn off the green LED indicator
   digitalWrite(RED_LED, LOW);    // Turn off the red LED
   digitalWrite(GREEN_LED, LOW);  // Turn off the green LED
 

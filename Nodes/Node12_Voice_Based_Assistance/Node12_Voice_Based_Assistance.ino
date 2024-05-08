@@ -9,29 +9,18 @@
 #include <WiFiEsp.h>
 #include <WiFiEspUdp.h>
 
-// constexpr char WIFI_SSID[] = "NITK-NET";
-// constexpr char WIFI_PASSWORD[] = "2K16NITK";
-
 constexpr char WIFI_SSID[] = "CSD";
 constexpr char WIFI_PASSWORD[] = "csd@NITK2014";
 
-constexpr char TOKEN[] = "XbhsogGbhVLgYrHSJtB1";
+constexpr char TOKEN[] = "1FhghMw3oa1lju0XR1vQ";
 
-constexpr char THINGSBOARD_SERVER[] = "10.100.80.26";
+constexpr char THINGSBOARD_SERVER[] = "10.14.0.205";
 constexpr uint16_t THINGSBOARD_PORT = 1883U;
 constexpr uint32_t MAX_MESSAGE_SIZE = 128U;
 constexpr uint32_t SERIAL_DEBUG_BAUD = 115200U;
 constexpr uint32_t SERIAL_ESP8266_DEBUG_BAUD = 115200U;
 
-IPAddress localIP(10, 100, 80, 46);
-IPAddress gateway(10, 100, 80, 1);
-IPAddress subnet(255, 255, 252, 0);
-IPAddress dns(0, 0, 0, 0);
-
-IPAddress dns1(10, 20, 1, 22);
-IPAddress dns2(10, 3, 0, 101);
-
-IPAddress serverIP(10, 100, 80, 26);  // Server IP address
+IPAddress serverIP(10, 14, 0, 205);  // Server IP address
 unsigned int serverPort = 9876;       // Server port
 unsigned int localPort = 54321;       // Local port for UDP client
 
@@ -86,12 +75,6 @@ char responseBuffer[255];  // Adjust the buffer size as needed
 /// @brief Initalizes WiFi connection,
 // will endlessly delay until a connection has been successfully established
 void InitWiFi() {
-
-  // Configure static IP and DNS server
-  WiFi.config(localIP);
-  // WiFi.config(localIP, dns, gateway, subnet);
-  // WiFi.setDNS(dns1, dns2);
-
   while (status != WL_CONNECTED) {
     Serial.print("Attempting to connect to network: ");
     Serial.println(WIFI_SSID);
@@ -105,7 +88,7 @@ void InitWiFi() {
 /// @return Returns true as soon as a connection has been established again
 bool reconnect() {
   // Check to ensure we aren't connected yet
-  const uint8_t status = WiFi.status();
+ status = WiFi.status();
   if (status == WL_CONNECTED) {
     return true;
   }

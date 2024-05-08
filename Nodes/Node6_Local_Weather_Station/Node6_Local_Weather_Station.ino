@@ -41,9 +41,7 @@ constexpr const char RPC_SWITCH_KEY[] PROGMEM = "switch";
 constexpr const char RPC_RESPONSE_KEY[] = "example_response";
 
 WiFiClient espClient;
-WiFiUDP udp;
 ThingsBoard tb(espClient, MAX_MESSAGE_SIZE);
-NTPClient timeClient(udp, THINGSBOARD_SERVER, gmtOffsetInSeconds);
 
 uint8_t status = WL_IDLE_STATUS;  // the Wifi radio's status
 bool subscribed = false;
@@ -86,6 +84,8 @@ Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
 #define WIFI_STATUS_LED LED_BUILTIN
 
+WiFiUDP udp;
+NTPClient timeClient(udp, THINGSBOARD_SERVER, gmtOffsetInSeconds);
 Adafruit_BMP280 bmp;  // I2C
 DHT dht(DHTPIN, DHTTYPE);
 RTClib myRTC;
@@ -93,15 +93,10 @@ DS3231 myRTC2;
 
 float temp, humid, hI, pressure, alti;
 int year, month, date, day, hour, minute, second;
-const char* daysOfWeek[] = { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
-const char* monthsOfYear[] = { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" };
+const char *daysOfWeek[] = { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
+const char *monthsOfYear[] = { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" };
 
 void InitWiFi() {
-
-  // Configure static IP and DNS server
-  WiFi.config(localIP, dns, gateway, subnet);
-  WiFi.setDNS(dns1, dns2);
-
   while (status != WL_CONNECTED) {
     Serial.print("Attempting to connect to network: ");
     Serial.println(WIFI_SSID);
@@ -113,7 +108,7 @@ void InitWiFi() {
 
 bool reconnect() {
   // Check to ensure we aren't connected yet
-  const uint8_t status = WiFi.status();
+  status = WiFi.status();
   if (status == WL_CONNECTED) {
     return true;
   }
@@ -217,7 +212,7 @@ void handleSketchDownload(const char *token, char *title, char *CURRENT_VERSION)
   InternalStorage.apply();                           // this doesn't return
 }
 
-RPC_Response processTemperatureChange(const RPC_Data& data) {
+RPC_Response processTemperatureChange(const RPC_Data &data) {
   Serial.println("Received the set temperature RPC method");
 
   // Process data
@@ -232,7 +227,7 @@ RPC_Response processTemperatureChange(const RPC_Data& data) {
   return RPC_Response(doc);
 }
 
-RPC_Response processSwitchChange(const RPC_Data& data) {
+RPC_Response processSwitchChange(const RPC_Data &data) {
   Serial.println("Received the set switch method");
 
   // Process data

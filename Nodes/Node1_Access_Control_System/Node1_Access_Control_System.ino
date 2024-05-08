@@ -42,11 +42,11 @@ constexpr const char FW_VER_KEY[] = "fw_version";
 
 char CURRENT_VERSION[] = "1.0.0";
 constexpr int FIRMWARE_SIZE = 20;           // Adjust the size according to your requirements
-char NEW_version[FIRMWARE_SIZE] = "1.0.0";  // Declare NEW_version array
+char NEW_VERSION[FIRMWARE_SIZE] = "1.0.0";  // Declare NEW_VERSION array
 
 char FW_TITLE[] = "RPi";
 constexpr int TITLE_SIZE = 20;       // Adjust the size according to your requirements
-char FWW_title[TITLE_SIZE] = "RPi";  // Declare NEW_version array
+char FWW_TITLE[TITLE_SIZE] = "RPi";  // Declare NEW_VERSION array
 
 // Shared attributes we want to request from the server
 constexpr std::array<const char *, 2U> REQUESTED_SHARED_ATTRIBUTES = {
@@ -113,23 +113,23 @@ void processSharedAttributeRequest(const Shared_Attribute_Data &data) {
     Serial.println(it->value().as<const char *>());
     if (strcmp_P(it->key().c_str(), FW_VER_KEY) == 0) {
       // If the key is "CURRENT_VERSION", print its value
-      Serial.print("NEW_version: ");
-      // Copy the value to NEW_version array
-      strncpy(NEW_version, it->value().as<const char *>(), FIRMWARE_SIZE - 1);
+      Serial.print("NEW_VERSION: ");
+      // Copy the value to NEW_VERSION array
+      strncpy(NEW_VERSION, it->value().as<const char *>(), FIRMWARE_SIZE - 1);
       // Ensure null termination
-      NEW_version[FIRMWARE_SIZE - 1] = '\0';
+      NEW_VERSION[FIRMWARE_SIZE - 1] = '\0';
       // Print the value
-      Serial.println(NEW_version);
+      Serial.println(NEW_VERSION);
     }
     if (strcmp_P(it->key().c_str(), FW_TITLE_KEY) == 0) {
       // If the key is "CURRENT_VERSION", print its value
-      Serial.print("FWW_title: ");
-      // Copy the value to NEW_version array
-      strncpy(FWW_title, it->value().as<const char *>(), TITLE_SIZE - 1);
+      Serial.print("FWW_TITLE: ");
+      // Copy the value to NEW_VERSION array
+      strncpy(FWW_TITLE, it->value().as<const char *>(), TITLE_SIZE - 1);
       // Ensure null termination
-      FWW_title[TITLE_SIZE - 1] = '\0';
+      FWW_TITLE[TITLE_SIZE - 1] = '\0';
       // Print the value
-      Serial.println(FWW_title);
+      Serial.println(FWW_TITLE);
     }
   }
 
@@ -321,14 +321,14 @@ void loop() {
     }
   }
 
-  if (strcmp(FWW_title, FW_title) == 0) {
-    if (strcmp(NEW_version, CURRENT_version) != 0) {
+  if (strcmp(FWW_TITLE, FW_TITLE) == 0) {
+    if (strcmp(NEW_VERSION, CURRENT_version) != 0) {
       // Perform actions if FW_version matches the desired version
-      strcpy(CURRENT_version, NEW_version);
+      strcpy(CURRENT_version, NEW_VERSION);
       Serial.println("\n");
       Serial.println("new FW_version available.");
       Serial.println("\n");
-      handleSketchDownload(TOKEN, FW_title, CURRENT_version);
+      handleSketchDownload(TOKEN, FW_TITLE, CURRENT_version);
 
     } else {
       if (msg == 0) {

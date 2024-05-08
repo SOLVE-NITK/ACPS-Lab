@@ -64,7 +64,7 @@ constexpr std::array<const char *, 2U> REQUESTED_SHARED_ATTRIBUTES = {
 #define S1 6
 #define S2 7
 #define S3 8
-#define COLOR_lOUT 9
+#define COLOR_OUT 9
 #define COLOR_DETECTOR_LED_PIN 10
 
 #define LED_R 2  //LED pins, don't forget "pwm"

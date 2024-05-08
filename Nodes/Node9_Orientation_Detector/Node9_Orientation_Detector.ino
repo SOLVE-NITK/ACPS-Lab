@@ -1,18 +1,10 @@
 #include <ThingsBoard.h>
 #include <WiFi.h>
+#include <ArduinoOTA.h>
+#include <ArduinoHttpClient.h>
+
 #include <MPU9250.h>
 
-#define LED_PIN 19     // LED connected to digital pin D18
-#define BUZZER_PIN 18  // Buzzer connected to digital pin D5
-
-#define WIFI_STATUS_LED 2
-
-#define BUZZER_VOLUME 0  // Adjust this value to control the buzzer BUZZER_VOLUME
-
-#define DEBOUNCE_TIME 3000
-#define BLINK_INTERVAL 250
-
-int CrashState = 0, FreefallState = 0;
 
 constexpr char WIFI_SSID[] PROGMEM = "CSD";
 constexpr char WIFI_PASSWORD[] PROGMEM = "csd@NITK2014";
@@ -40,8 +32,31 @@ constexpr const char RPC_RESPONSE_KEY[] PROGMEM = "example_response";
 WiFiClient espClient;
 ThingsBoard tb(espClient, MAX_MESSAGE_SIZE);
 
-int status = WL_IDLE_STATUS;  // the Wifi radio's status
+uint8_t status = WL_IDLE_STATUS;  // the Wifi radio's status
 bool subscribed = false;
+bool requestedShared = false;
+int msg = 0;
+
+char *BASE_URL = "/api/v1";   // Define base URL for API requests
+char *ENDPOINT = "firmware";  // Define endpoint for firmware updates
+char PATH[256];               // Define array to store the path for firmware updates
+
+constexpr const char FW_TITLE_KEY[] = "fw_title";
+constexpr const char FW_VER_KEY[] = "fw_version";
+
+char CURRENT_VERSION[] = "1.0.0";
+constexpr int FIRMWARE_SIZE = 20;           // Adjust the size according to your requirements
+char NEW_VERSION[FIRMWARE_SIZE] = "1.0.0";  // Declare NEW_VERSION array
+
+char FW_TITLE[] = "RPi";
+constexpr int TITLE_SIZE = 20;       // Adjust the size according to your requirements
+char FWW_TITLE[TITLE_SIZE] = "RPi";  // Declare NEW_VERSION array
+
+// Shared attributes we want to request from the server
+constexpr std::array<const char *, 2U> REQUESTED_SHARED_ATTRIBUTES = {
+  FW_TITLE_KEY,
+  FW_VER_KEY
+};
 
 MPU9250 mpu;
 

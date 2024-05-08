@@ -45,8 +45,8 @@ char *BASE_URL = "/api/v1";   // Define base URL for API requests
 char *ENDPOINT = "firmware";  // Define endpoint for firmware updates
 char PATH[256];               // Define array to store the path for firmware updates
 
-constexpr const char FW_TITLE_KEY[] PROGMEM = "fw_title";
-constexpr const char FW_VER_KEY[] PROGMEM = "fw_version";
+constexpr char FW_TITLE_KEY2[] PROGMEM = "fw_title";
+constexpr char FW_VER_KEY2[] PROGMEM = "fw_version";
 
 char CURRENT_VERSION[] = "1.0.0";
 constexpr int FIRMWARE_SIZE = 20;           // Adjust the size according to your requirements
@@ -58,8 +58,8 @@ char FWW_TITLE[TITLE_SIZE] = "ESP32";  // Declare NEW_VERSION array
 
 // Shared attributes we want to request from the server
 constexpr std::array<const char *, 2U> REQUESTED_SHARED_ATTRIBUTES = {
-  FW_TITLE_KEY,
-  FW_VER_KEY
+  FW_TITLE_KEY2,
+  FW_VER_KEY2
 };
 
 #define HEATER_SWITCH 12
@@ -139,7 +139,7 @@ void processSharedAttributeRequest(const Shared_Attribute_Data &data) {
     Serial.println(it->key().c_str());
     // Shared attributes have to be parsed by their type.
     Serial.println(it->value().as<const char *>());
-    if (strcmp_P(it->key().c_str(), FW_VER_KEY) == 0) {
+    if (strcmp_P(it->key().c_str(), FW_VER_KEY2) == 0) {
       // If the key is "CURRENT_VERSION", print its value
       Serial.print("NEW_VERSION: ");
       // Copy the value to NEW_VERSION array
@@ -149,7 +149,7 @@ void processSharedAttributeRequest(const Shared_Attribute_Data &data) {
       // Print the value
       Serial.println(NEW_VERSION);
     }
-    if (strcmp_P(it->key().c_str(), FW_TITLE_KEY) == 0) {
+    if (strcmp_P(it->key().c_str(), FW_TITLE_KEY2) == 0) {
       // If the key is "CURRENT_VERSION", print its value
       Serial.print("FWW_TITLE: ");
       // Copy the value to NEW_VERSION array

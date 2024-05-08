@@ -5,7 +5,6 @@
 
 #include <MPU9250.h>
 
-
 constexpr char WIFI_SSID[] PROGMEM = "CSD";
 constexpr char WIFI_PASSWORD[] PROGMEM = "csd@NITK2014";
 
@@ -41,8 +40,8 @@ char *BASE_URL = "/api/v1";   // Define base URL for API requests
 char *ENDPOINT = "firmware";  // Define endpoint for firmware updates
 char PATH[256];               // Define array to store the path for firmware updates
 
-constexpr const char FW_TITLE_KEY[] = "fw_title";
-constexpr const char FW_VER_KEY[] = "fw_version";
+constexpr const char FW_TITLE_KEY2[] = "fw_title";
+constexpr const char FW_VER_KEY2[] = "fw_version";
 
 char CURRENT_VERSION[] = "1.0.0";
 constexpr int FIRMWARE_SIZE = 20;           // Adjust the size according to your requirements
@@ -54,9 +53,21 @@ char FWW_TITLE[TITLE_SIZE] = "RPi";  // Declare NEW_VERSION array
 
 // Shared attributes we want to request from the server
 constexpr std::array<const char *, 2U> REQUESTED_SHARED_ATTRIBUTES = {
-  FW_TITLE_KEY,
-  FW_VER_KEY
+  FW_TITLE_KEY2,
+  FW_VER_KEY2
 };
+
+#define LED_PIN 19     // LED connected to digital pin D18
+#define BUZZER_PIN 18  // Buzzer connected to digital pin D5
+
+#define WIFI_STATUS_LED 2
+
+#define BUZZER_VOLUME 0  // Adjust this value to control the buzzer BUZZER_VOLUME
+
+#define DEBOUNCE_TIME 3000
+#define BLINK_INTERVAL 250
+
+int CrashState = 0, FreefallState = 0;
 
 MPU9250 mpu;
 
@@ -65,8 +76,6 @@ float roll_deg, pitch_deg, yaw_deg;
 
 bool buzzerState = false;
 
-/// @brief Initalizes WiFi connection,
-// will endlessly delay until a connection has been successfully established
 void InitWiFi() {
 
   Serial.print("Attempting to connect to network: ");
@@ -83,8 +92,6 @@ void InitWiFi() {
   Serial.println("Connected to AP");
 }
 
-/// Reconnects the WiFi uses InitWiFi if the connection has been removed
-/// Returns true as soon as a connection has been established again
 bool reconnect() {
   // Check to ensure we aren't connected yet
   const wl_status_t status = WiFi.status();
@@ -95,6 +102,99 @@ bool reconnect() {
   // If we aren't establish a new connection to the given WiFi network
   InitWiFi();
   return true;
+}
+void processSharedAttributeRequest(const Shared_Attribute_Data &data) {
+  for (auto it = data.begin(); it != data.end(); ++it) {
+    Serial.println(it->key().c_str());
+    // Shared attributes have to be parsed by their type.
+    Serial.println(it->value().as<const char *>());
+    if (strcmp_P(it->key().c_str(), FW_VER_KEY2) == 0) {
+      // If the key is "CURRENT_VERSION", print its value
+      Serial.print("NEW_VERSION: ");
+      // Copy the value to NEW_VERSION array
+      strncpy(NEW_VERSION, it->value().as<const char *>(), FIRMWARE_SIZE - 1);
+      // Ensure null termination
+      NEW_VERSION[FIRMWARE_SIZE - 1] = '\0';
+      // Print the value
+      Serial.println(NEW_VERSION);
+    }
+    if (strcmp_P(it->key().c_str(), FW_TITLE_KEY2) == 0) {
+      // If the key is "CURRENT_VERSION", print its value
+      Serial.print("FWW_TITLE: ");
+      // Copy the value to NEW_VERSION array
+      strncpy(FWW_TITLE, it->value().as<const char *>(), TITLE_SIZE - 1);
+      // Ensure null termination
+      FWW_TITLE[TITLE_SIZE - 1] = '\0';
+      // Print the value
+      Serial.println(FWW_TITLE);
+    }
+  }
+
+  int jsonSize = JSON_STRING_SIZE(measureJson(data));
+  char buffer[jsonSize];
+  serializeJson(data, buffer, jsonSize);
+  Serial.println(buffer);
+}
+
+const Attribute_Request_Callback sharedCallback(REQUESTED_SHARED_ATTRIBUTES.cbegin(), REQUESTED_SHARED_ATTRIBUTES.cend(), &processSharedAttributeRequest);
+
+void handleSketchDownload(const char *token, char *title, char *CURRENT_VERSION) {
+  sprintf(PATH, "%s/%s/%s?title=%s&version=%s", BASE_URL, token, ENDPOINT, title, CURRENT_VERSION);
+  // const char* THINGSBOARD_SERVER = "10.100.80.25";  // Set your correct hostname
+  const unsigned short SERVER_PORT = 8090U;                       // Commonly 80 (HTTP) | 443 (HTTPS)
+  HttpClient client(espClient, THINGSBOARD_SERVER, SERVER_PORT);  // HTTP
+  // HttpClient client(wifiClientSSL, SERVER, SERVER_PORT);  // HTTPS
+  char buff[64];
+  snprintf(buff, sizeof(buff), PATH);      // Copy the URL path to the buffer
+  Serial.print("Check for update file ");  // Print message to indicate checking for update file with the URL path
+  Serial.println(buff);
+  // Make the GET request
+  client.get(buff);                              // Make a GET request to the server with the URL path
+  int statusCode = client.responseStatusCode();  // Retrieve the HTTP status code from the response
+  Serial.print("Update status code: ");          // Print the update status code received from the server
+  Serial.println(statusCode);
+
+  if (statusCode != 200) {  // Check if the status code indicates a successful response (HTTP 200 OK)
+    client.stop();          // If the status code is not 200, stop the client connection and return
+    return;
+  }
+
+  long length = client.contentLength();  // Retrieve the content length of the response from the server
+
+  if (length == HttpClient::kNoContentLengthHeader) {                                            // Check if the server provided a Content-Length header
+    client.stop();                                                                               // Stop the client connection
+    Serial.println("Server didn't provide Content-length header. Can't continue with update.");  // Print error message
+    return;                                                                                      // Exit the function as the update cannot proceed without content length information
+  }
+  Serial.print("Server returned update file of size ");  // Print message indicating successful response from server
+  Serial.print(length);                                  // Print the size of the update file in bytes
+  Serial.println(" bytes");                              // Print bytes
+
+  if (!InternalStorage.open(length)) {                                                             // Attempt to open InternalStorage to store the update
+    client.stop();                                                                                 // Stop the client connection
+    Serial.println("There is not enough space to store the update. Can't continue with update.");  // Print error message
+    return;                                                                                        // Exit the function as there is insufficient space for the update
+  }
+  byte b;                          // Declare a variable 'b' of type byte to store data read from the client
+  while (length > 0) {             // Start a loop to read bytes from the client until 'length' becomes zero
+    if (!client.readBytes(&b, 1))  // reading a byte with timeout
+      break;                       // If unable to read a byte within the timeout, exit the loop
+    InternalStorage.write(b);      // Write the read byte to InternalStorage
+    length--;                      // Decrement the length to keep track of bytes read
+  }
+  InternalStorage.close();  // Close the InternalStorage after writing all bytes
+
+  client.stop();                                            // Stop the client connection after the update process
+  if (length > 0) {                                         // Check if there are remaining bytes to be read
+    Serial.print("Timeout downloading update file at ");    // Print error message for timeout
+    Serial.print(length);                                   // Print the number of remaining bytes
+    Serial.println(" bytes. Can't continue with update.");  // Print error message
+    return;                                                 // Exit the function if unable to download the complete update
+  }
+
+  Serial.println("Sketch update apply and reset.");  // Print message indicating successful update
+  Serial.flush();                                    // Flush the serial buffer to ensure all data is sent
+  InternalStorage.apply();                           // this doesn't return
 }
 
 RPC_Response processCrashState(RPC_Data &data) {
@@ -201,6 +301,33 @@ void loop() {
     digitalWrite(WIFI_STATUS_LED, HIGH);
 
     subscribed = true;
+  }
+
+  if (!requestedShared) {
+    Serial.println("Requesting shared attributes...");
+    requestedShared = tb.Shared_Attributes_Request(sharedCallback);
+    if (!requestedShared) {
+      Serial.println("Failed to request shared attributes");
+    }
+  }
+
+  if (strcmp(FWW_TITLE, FW_TITLE) == 0) {
+    if (strcmp(NEW_VERSION, CURRENT_VERSION) != 0) {
+      // Perform actions if FW_version matches the desired version
+      strcpy(CURRENT_VERSION, NEW_VERSION);
+      Serial.println("\n");
+      Serial.println("new FW_version available.");
+      Serial.println("\n");
+      handleSketchDownload(TOKEN, FW_TITLE, CURRENT_VERSION);
+
+    } else {
+      if (msg == 0) {
+        Serial.println("\n");
+        Serial.println("updates NOT available...");
+        Serial.println("\n");
+        msg = 1;
+      }
+    }
   }
 
   if (mpu.update()) {

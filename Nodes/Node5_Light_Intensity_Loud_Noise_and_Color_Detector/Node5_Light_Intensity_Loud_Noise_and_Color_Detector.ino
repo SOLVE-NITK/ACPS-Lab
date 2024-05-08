@@ -93,11 +93,6 @@ unsigned long previousMillis = 0;  // Stores the last time the LED was updated
 const long BLINK_INTERVAL = 500;   // Blinking interval in milliseconds (1 second)
 
 void InitWiFi() {
-
-  // Configure static IP and DNS server
-  WiFi.config(localIP, dns, gateway, subnet);
-  WiFi.setDNS(dns1, dns2);
-
   while (status != WL_CONNECTED) {
     Serial.print("Attempting to connect to network: ");
     Serial.println(WIFI_SSID);
@@ -109,11 +104,10 @@ void InitWiFi() {
 
 bool reconnect() {
   // Check to ensure we aren't connected yet
-status = WiFi.status();
+  status = WiFi.status();
   if (status == WL_CONNECTED) {
     return true;
   }
-
   // If we aren't establish a new connection to the given WiFi network
   InitWiFi();
   return true;

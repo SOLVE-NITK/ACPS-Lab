@@ -2,25 +2,27 @@
 #include <WiFi.h>
 #include <MPU9250.h>
 
-// constexpr char WIFI_SSID[] PROGMEM = "NITK-NET";
-// constexpr char WIFI_PASSWORD[] PROGMEM = "2K16NITK";
+#define LED_PIN 19     // LED connected to digital pin D18
+#define BUZZER_PIN 18  // Buzzer connected to digital pin D5
+
+#define WIFI_STATUS_LED 2
+
+#define BUZZER_VOLUME 0  // Adjust this value to control the buzzer BUZZER_VOLUME
+
+#define DEBOUNCE_TIME 3000
+#define BLINK_INTERVAL 250
+
+int CrashState = 0, FreefallState = 0;
 
 constexpr char WIFI_SSID[] PROGMEM = "CSD";
 constexpr char WIFI_PASSWORD[] PROGMEM = "csd@NITK2014";
 
-constexpr char TOKEN[] PROGMEM = "m314FQf8U6vq6N2sE2fE";
+constexpr char TOKEN[] PROGMEM = "GiHzHre1VhdFjUggkhFj";
 
-constexpr char THINGSBOARD_SERVER[] PROGMEM = "10.100.80.26";
+constexpr char THINGSBOARD_SERVER[] PROGMEM = "10.14.0.205";
 constexpr uint16_t THINGSBOARD_PORT PROGMEM = 1883U;
 constexpr uint32_t MAX_MESSAGE_SIZE PROGMEM = 128U;
 constexpr uint32_t SERIAL_DEBUG_BAUD PROGMEM = 115200U;
-
-IPAddress localIP(10, 100, 80, 43);
-IPAddress gateway(10, 100, 80, 1);
-IPAddress subnet(255, 255, 252, 0);
-
-IPAddress dns1(10, 20, 1, 22);
-IPAddress dns2(10, 3, 0, 101);
 
 constexpr char ROLL_KEY[] PROGMEM = "roll";
 constexpr char PITCH_KEY[] PROGMEM = "pitch";
@@ -29,9 +31,9 @@ constexpr char IMPACT_KEY[] PROGMEM = "impact";
 constexpr char CRASH_KEY[] PROGMEM = "crash";
 constexpr char FALL_KEY[] PROGMEM = "fall";
 
-constexpr const char RPC_TEMPERATURE_METHOD[] PROGMEM = "example_set_temperature";
-constexpr const char RPC_SWITCH_METHOD[] PROGMEM = "example_set_switch";
-constexpr const char RPC_TEMPERATURE_KEY[] PROGMEM = "temp";
+constexpr const char RPC_SENSOR_DATA[] PROGMEM = "accelMagnitude";
+constexpr const char RPC_CRASH_METHOD[] PROGMEM = "crash";
+constexpr const char RPC_FREEFALL_METHOD[] PROGMEM = "freefall";
 constexpr const char RPC_SWITCH_KEY[] PROGMEM = "switch";
 constexpr const char RPC_RESPONSE_KEY[] PROGMEM = "example_response";
 
@@ -43,16 +45,6 @@ bool subscribed = false;
 
 MPU9250 mpu;
 
-#define LED_PIN 19     // LED connected to digital pin D18
-#define BUZZER_PIN 18  // Buzzer connected to digital pin D5
-
-#define WIFI_STATUS_LED 2
-
-#define BUZZER_VOLUME 10  // Adjust this value to control the buzzer BUZZER_VOLUME
-
-#define DEBOUNCE_TIME 3000
-#define BLINK_INTERVAL 250
-
 float accelX_g, accelY_g, accelZ_g, accelMagnitude;
 float roll_deg, pitch_deg, yaw_deg;
 
@@ -62,14 +54,17 @@ bool buzzerState = false;
 // will endlessly delay until a connection has been successfully established
 void InitWiFi() {
 
-  WiFi.config(localIP, gateway, subnet, dns1, dns2);
+  Serial.print("Attempting to connect to network: ");
+  Serial.println(WIFI_SSID);
 
-  while (status != WL_CONNECTED) {
-    Serial.print("Attempting to connect to network: ");
-    Serial.println(WIFI_SSID);
-    status = WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
-    delay(5000);
+  WiFi.mode(WIFI_STA);
+  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
   }
+
   Serial.println("Connected to AP");
 }
 
@@ -87,49 +82,25 @@ bool reconnect() {
   return true;
 }
 
-/// Processes function for RPC call "example_set_temperature"
-/// RPC_Data is a JSON variant, that can be queried using operator[]
-/// See https://arduinojson.org/v5/api/jsonvariant/subscript/ for more details
-/// "data" Data containing the rpc data that was called and its current value
-///  Response that should be sent to the cloud. Useful for getMethods
-RPC_Response processTemperatureChange(const RPC_Data &data) {
-  Serial.println(F("Received the set temperature RPC method"));
-
-  // Process data
-  const float example_temperature = data[RPC_TEMPERATURE_KEY];
-
-  Serial.print(F("Example temperature: "));
-  Serial.println(example_temperature);
-
-  // Just an response example
-  StaticJsonDocument<JSON_OBJECT_SIZE(1)> doc;
-  doc[RPC_RESPONSE_KEY] = 42;
-  return RPC_Response(doc);
+RPC_Response processCrashState(RPC_Data &data) {
+  Serial.println("RECIEVED CRASH STATE");
+  CrashState = data;
+  Serial.println("CRASH STATE CHANGE:");
+  Serial.print(CrashState);
+  return RPC_Response("actuatorState", CrashState);
 }
 
-/// @brief Processes function for RPC call "example_set_switch"
-/// RPC_Data is a JSON variant, that can be queried using operator[]
-/// See https://arduinojson.org/v5/api/jsonvariant/subscript/ for more details
-/// @param data Data containing the rpc data that was called and its current value
-/// @return Response that should be sent to the cloud. Useful for getMethods
-RPC_Response processSwitchChange(const RPC_Data &data) {
-  Serial.println(F("Received the set switch method"));
-
-  // Process data
-  const bool switch_state = data[RPC_SWITCH_KEY];
-
-  Serial.print(F("Example switch state: "));
-  Serial.println(switch_state);
-
-  // Just an response example
-  StaticJsonDocument<JSON_OBJECT_SIZE(1)> doc;
-  doc[RPC_RESPONSE_KEY] = 22.02;
-  return RPC_Response(doc);
+RPC_Response processFreefallState(RPC_Data &data) {
+  Serial.println("RECIEVED FREEFALL STATE");
+  FreefallState = data;
+  Serial.println("FREEFALL STATE CHANGE:");
+  Serial.print(FreefallState);
+  return RPC_Response("actuatorState", FreefallState);
 }
 
 const std::array<RPC_Callback, 2U> callbacks = {
-  RPC_Callback{ RPC_TEMPERATURE_METHOD, processTemperatureChange },
-  RPC_Callback{ RPC_SWITCH_METHOD, processSwitchChange }
+  RPC_Callback{ RPC_CRASH_METHOD, processCrashState },
+  RPC_Callback{ RPC_FREEFALL_METHOD, processFreefallState }
 };
 
 void actuate() {
@@ -225,20 +196,12 @@ void loop() {
     accelMagnitude = sqrt(accelX_g * accelX_g + accelY_g * accelY_g + accelZ_g * accelZ_g);
   }
 
-
-  // Print accelerometer data and orientation values
-  // Serial.print("Acceleration (g): X=");
-  // Serial.print(accelX_g);
-  // Serial.print(", Y=");
-  // Serial.print(accelY_g);
-  // Serial.print(", Z=");
-  // Serial.println(accelZ_g);
-
   // Adjust the free fall and crash threshold values based on your requirements
   float freeFallThreshold = 0.2;  // You may need to fine-tune this value
   float crashThreshold = 2.0;     // You may need to fine-tune this value
-
-  if (accelMagnitude < freeFallThreshold) {
+                                  //if (accelMagnitude < freeFallThreshold) {
+  if (FreefallState == 40) {
+    FreefallState = 0;
     Serial.println("Free fall detected!");
     tb.sendTelemetryString(FALL_KEY, "DETECTED!");
     tb.sendAttributeBool(IMPACT_KEY, true);
@@ -248,7 +211,8 @@ void loop() {
     tb.sendAttributeBool(IMPACT_KEY, false);
   }
 
-  if (accelMagnitude > crashThreshold) {
+  if (CrashState == 40) {
+    CrashState = 0;
     Serial.println("Crash detected!");
     tb.sendTelemetryString(CRASH_KEY, "DETECTED!");
     tb.sendAttributeBool(IMPACT_KEY, true);
@@ -276,8 +240,10 @@ void loop() {
     tb.sendTelemetryFloat(YAW_KEY, yaw_deg);
   }
 
+  tb.sendTelemetryData(RPC_SENSOR_DATA, accelMagnitude);
+
   // Uploads new telemetry to ThingsBoard
-  Serial.println(F("Sending data..."));
+  // Serial.println(F("Sending data..."));
 
   tb.loop();
 }

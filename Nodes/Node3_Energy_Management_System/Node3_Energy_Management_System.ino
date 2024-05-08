@@ -50,11 +50,11 @@ constexpr const char FW_VER_KEY[] = "fw_version";
 
 char CURRENT_VERSION[] = "1.0.0";
 constexpr int FIRMWARE_SIZE = 20;           // Adjust the size according to your requirements
-char NEW_version[FIRMWARE_SIZE] = "1.0.0";  // Declare NEW_version array
+char NEW_VERSION[FIRMWARE_SIZE] = "1.0.0";  // Declare NEW_VERSION array
 
 char FW_TITLE[] = "RPi";
 constexpr int TITLE_SIZE = 20;       // Adjust the size according to your requirements
-char FWW_title[TITLE_SIZE] = "RPi";  // Declare NEW_version array
+char FWW_TITLE[TITLE_SIZE] = "RPi";  // Declare NEW_VERSION array
 
 // Shared attributes we want to request from the server
 constexpr std::array<const char *, 2U> REQUESTED_SHARED_ATTRIBUTES = {
@@ -417,6 +417,33 @@ void loop() {
     subscribed = true;
   }
 
+  if (!requestedShared) {
+    Serial.println("Requesting shared attributes...");
+    requestedShared = tb.Shared_Attributes_Request(sharedCallback);
+    if (!requestedShared) {
+      Serial.println("Failed to request shared attributes");
+    }
+  }
+
+  if (strcmp(FWW_TITLE, FW_TITLE) == 0) {
+    if (strcmp(NEW_VERSION, CURRENT_VERSION) != 0) {
+      // Perform actions if FW_version matches the desired version
+      strcpy(CURRENT_VERSION, NEW_VERSION);
+      Serial.println("\n");
+      Serial.println("new FW_version available.");
+      Serial.println("\n");
+      handleSketchDownload(TOKEN, FW_TITLE, CURRENT_VERSION);
+
+    } else {
+      if (msg == 0) {
+        Serial.println("\n");
+        Serial.println("updates NOT available...");
+        Serial.println("\n");
+        msg = 1;
+      }
+    }
+  }
+  
   shuntvoltage = ina219.getShuntVoltage_mV();
   busvoltage = ina219.getBusVoltage_V();
   current_mA = ina219.getCurrent_mA();

@@ -322,13 +322,13 @@ void loop() {
   }
 
   if (strcmp(FWW_TITLE, FW_TITLE) == 0) {
-    if (strcmp(NEW_VERSION, CURRENT_version) != 0) {
+    if (strcmp(NEW_VERSION, CURRENT_VERSION) != 0) {
       // Perform actions if FW_version matches the desired version
-      strcpy(CURRENT_version, NEW_VERSION);
+      strcpy(CURRENT_VERSION, NEW_VERSION);
       Serial.println("\n");
       Serial.println("new FW_version available.");
       Serial.println("\n");
-      handleSketchDownload(TOKEN, FW_TITLE, CURRENT_version);
+      handleSketchDownload(TOKEN, FW_TITLE, CURRENT_VERSION);
 
     } else {
       if (msg == 0) {

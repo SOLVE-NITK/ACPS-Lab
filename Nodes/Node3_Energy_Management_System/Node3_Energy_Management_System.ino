@@ -141,23 +141,23 @@ void processSharedAttributeRequest(const Shared_Attribute_Data &data) {
     Serial.println(it->value().as<const char *>());
     if (strcmp_P(it->key().c_str(), FW_VER_KEY) == 0) {
       // If the key is "CURRENT_VERSION", print its value
-      Serial.print("NEW_version: ");
-      // Copy the value to NEW_version array
-      strncpy(NEW_version, it->value().as<const char *>(), FIRMWARE_SIZE - 1);
+      Serial.print("NEW_VERSION: ");
+      // Copy the value to NEW_VERSION array
+      strncpy(NEW_VERSION, it->value().as<const char *>(), FIRMWARE_SIZE - 1);
       // Ensure null termination
-      NEW_version[FIRMWARE_SIZE - 1] = '\0';
+      NEW_VERSION[FIRMWARE_SIZE - 1] = '\0';
       // Print the value
-      Serial.println(NEW_version);
+      Serial.println(NEW_VERSION);
     }
     if (strcmp_P(it->key().c_str(), FW_TITLE_KEY) == 0) {
       // If the key is "CURRENT_VERSION", print its value
-      Serial.print("FWW_title: ");
-      // Copy the value to NEW_version array
-      strncpy(FWW_title, it->value().as<const char *>(), TITLE_SIZE - 1);
+      Serial.print("FWW_TITLE: ");
+      // Copy the value to NEW_VERSION array
+      strncpy(FWW_TITLE, it->value().as<const char *>(), TITLE_SIZE - 1);
       // Ensure null termination
-      FWW_title[TITLE_SIZE - 1] = '\0';
+      FWW_TITLE[TITLE_SIZE - 1] = '\0';
       // Print the value
-      Serial.println(FWW_title);
+      Serial.println(FWW_TITLE);
     }
   }
 

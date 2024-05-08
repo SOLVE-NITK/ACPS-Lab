@@ -17,8 +17,6 @@ constexpr uint16_t THINGSBOARD_PORT = 1883U;          // Define ThingsBoard serv
 constexpr uint32_t MAX_MESSAGE_SIZE = 256U;           // Define maximum message size
 constexpr uint32_t SERIAL_DEBUG_BAUD = 115200U;
 
-char charArray[15];
-
 constexpr const char RFID_KEY[]  = "charArray";
 constexpr const char RFID_AUTH_STATUS[] = "access";
 constexpr const char RED_LED_KEY[] = "red";             // Define the attribute key for the red LED
@@ -82,6 +80,8 @@ constexpr std::array<const char *, 2U> REQUESTED_SHARED_ATTRIBUTES = {
 Servo myservo;  // Create a servo object
 
 MFRC522 mfrc522(SS_PIN, RST_PIN);  // Create MFRC522 instance.
+
+char charArray[15];
 
 int pos = 0;  // Declare variable for servo motor position
 int switch_state = 0;

@@ -14,9 +14,9 @@
 constexpr char WIFI_SSID[] = "CSD";
 constexpr char WIFI_PASSWORD[] = "csd@NITK2014";
 
-constexpr char TOKEN[] = "MexxMcLCT4RCjk9IdKO3";
+constexpr char TOKEN[] = "s3ryZWlLvKnucI32qqT7";
 
-constexpr char THINGSBOARD_SERVER[] = "10.100.80.26";
+constexpr char THINGSBOARD_SERVER[] = "10.14.0.205";
 constexpr uint16_t THINGSBOARD_PORT = 1883U;
 constexpr uint32_t MAX_MESSAGE_SIZE = 128U;
 constexpr uint32_t SERIAL_DEBUG_BAUD = 115200U;

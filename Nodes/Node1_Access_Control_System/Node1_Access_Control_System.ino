@@ -29,8 +29,8 @@ WiFiClient espClient;
 ThingsBoard tb(espClient, MAX_MESSAGE_SIZE);
 
 uint8_t status = WL_IDLE_STATUS;  // the Wifi radio's status
-bool requestedShared = false;
 bool subscribed = false;
+bool requestedShared = false;
 int msg = 0;
 
 char *BASE_URL = "/api/v1";   // Define base URL for API requests
@@ -311,6 +311,33 @@ void loop() {
     Serial.println("Subscribe done");     // Print a message indicating successful subscription
     digitalWrite(WIFI_STATUS_LED, HIGH);  // Turn on the WiFi status LED
     subscribed = true;                    // Update the subscription status to true
+  }
+
+  if (!requestedShared) {
+    Serial.println("Requesting shared attributes...");
+    requestedShared = tb.Shared_Attributes_Request(sharedCallback);
+    if (!requestedShared) {
+      Serial.println("Failed to request shared attributes");
+    }
+  }
+
+  if (strcmp(FWW_title, FW_title) == 0) {
+    if (strcmp(NEW_version, CURRENT_version) != 0) {
+      // Perform actions if FW_version matches the desired version
+      strcpy(CURRENT_version, NEW_version);
+      Serial.println("\n");
+      Serial.println("new FW_version available.");
+      Serial.println("\n");
+      handleSketchDownload(TOKEN, FW_title, CURRENT_version);
+
+    } else {
+      if (msg == 0) {
+        Serial.println("\n");
+        Serial.println("updates NOT available...");
+        Serial.println("\n");
+        msg = 1;
+      }
+    }
   }
 
   // Look for new cards

@@ -2,42 +2,7 @@
 #include <WiFi.h>
 #include <NewPing.h>
 
-// constexpr char WIFI_SSID[] PROGMEM = "NITK-NET";
-// constexpr char WIFI_PASSWORD[] PROGMEM = "2K16NITK";
-
-constexpr char WIFI_SSID[] PROGMEM = "CSD";
-constexpr char WIFI_PASSWORD[] PROGMEM = "csd@NITK2014";
-
-constexpr char TOKEN[] PROGMEM = "nOqz1O7R0S1NnLq42i7T";
-
-constexpr char THINGSBOARD_SERVER[] PROGMEM = "10.100.80.26";
-constexpr uint16_t THINGSBOARD_PORT PROGMEM = 1883U;
-constexpr uint32_t MAX_MESSAGE_SIZE PROGMEM = 128U;
-constexpr uint32_t SERIAL_DEBUG_BAUD PROGMEM = 115200U;
-
-IPAddress localIP(10, 100, 80, 42);
-IPAddress gateway(10, 100, 80, 1);
-IPAddress subnet(255, 255, 252, 0);
-
-IPAddress dns1(10, 20, 1, 22);
-IPAddress dns2(10, 3, 0, 101);
-
-constexpr char DISTANCE_KEY[] PROGMEM = "distance";
-constexpr char ACTUATOR_KEY[] PROGMEM = "actuator";
-
-constexpr const char RPC_TEMPERATURE_METHOD[] PROGMEM = "example_set_temperature";
-constexpr const char RPC_SWITCH_METHOD[] PROGMEM = "example_set_switch";
-constexpr const char RPC_TEMPERATURE_KEY[] PROGMEM = "temp";
-constexpr const char RPC_SWITCH_KEY[] PROGMEM = "switch";
-constexpr const char RPC_RESPONSE_KEY[] PROGMEM = "example_response";
-
-WiFiClient espClient;
-ThingsBoard tb(espClient, MAX_MESSAGE_SIZE);
-
-int status = WL_IDLE_STATUS;  // the Wifi radio's status
-bool subscribed = false;
-
-#define TRIG_PIN 5    // ESP32 pin GIOP26 connected to Ultrasonic Sensor's TRIG pin
+#define TRIG_PIN 5     // ESP32 pin GIOP26 connected to Ultrasonic Sensor's TRIG pin
 #define ECHO_PIN 18    // ESP32 pin GIOP25 connected to Ultrasonic Sensor's ECHO pin
 #define BUZZER_PIN 19  // Buzzer connected to digital pin D5
 #define LED_PIN 21     // ESP32 pin GIOP17 connected to LED's pin
@@ -49,9 +14,36 @@ bool subscribed = false;
 
 #define BUZZER_VOLUME 10  // Adjust this value to control the buzzer BUZZER_VOLUME
 
+constexpr char WIFI_SSID[] PROGMEM = "CSD";
+constexpr char WIFI_PASSWORD[] PROGMEM = "csd@NITK2014";
+
+constexpr char TOKEN[] PROGMEM = "Z08yHuuzMEArMDMUJVnu";
+
+constexpr char THINGSBOARD_SERVER[] PROGMEM = "10.14.0.205";
+constexpr uint16_t THINGSBOARD_PORT PROGMEM = 1883U;
+constexpr uint32_t MAX_MESSAGE_SIZE PROGMEM = 128U;
+constexpr uint32_t SERIAL_DEBUG_BAUD PROGMEM = 115200U;
+
+constexpr char DISTANCE_KEY[] PROGMEM = "distance";
+constexpr char ACTUATOR_KEY[] PROGMEM = "actuator";
+constexpr const char OBSTACLE_TELEMETRY[] PROGMEM = "detection";
+constexpr const char RPC_SWITCH_METHOD[] PROGMEM = "obstacle";
+constexpr const char RPC_TEMPERATURE_KEY[] PROGMEM = "temp";
+constexpr const char RPC_SWITCH_KEY[] PROGMEM = "obstacle";
+constexpr const char RPC_RESPONSE_KEY[] PROGMEM = "example_response";
+
+WiFiClient espClient;
+ThingsBoard tb(espClient, MAX_MESSAGE_SIZE);
+
+int status = WL_IDLE_STATUS;  // the Wifi radio's status
+bool subscribed = false;
+
+unsigned long startTime;
+bool runningCode = false;
+
 NewPing sonar(TRIG_PIN, ECHO_PIN, MAX_DISTANCE);  // NewPing setup of pins and maximum distance.
 
-int distance;
+int distance, switch_state;
 
 bool buzzerState = false;
 
@@ -59,14 +51,17 @@ bool buzzerState = false;
 // will endlessly delay until a connection has been successfully established
 void InitWiFi() {
 
-  WiFi.config(localIP, gateway, subnet, dns1, dns2);
+  Serial.print("Attempting to connect to network: ");
+  Serial.println(WIFI_SSID);
 
-  while (status != WL_CONNECTED) {
-    Serial.print("Attempting to connect to network: ");
-    Serial.println(WIFI_SSID);
-    status = WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
-    delay(5000);
+  WiFi.mode(WIFI_STA);
+  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
   }
+
   Serial.println("Connected to AP");
 }
 
@@ -109,24 +104,16 @@ RPC_Response processTemperatureChange(const RPC_Data &data) {
 /// See https://arduinojson.org/v5/api/jsonvariant/subscript/ for more details
 /// @param data Data containing the rpc data that was called and its current value
 /// @return Response that should be sent to the cloud. Useful for getMethods
-RPC_Response processSwitchChange(const RPC_Data &data) {
-  Serial.println(F("Received the set switch method"));
-
-  // Process data
-  const bool switch_state = data[RPC_SWITCH_KEY];
-
-  Serial.print(F("Example switch state: "));
-  Serial.println(switch_state);
-
-  // Just an response example
-  StaticJsonDocument<JSON_OBJECT_SIZE(1)> doc;
-  doc[RPC_RESPONSE_KEY] = 22.02;
-  return RPC_Response(doc);
+RPC_Response setServoSwitchState(RPC_Data &data) {
+  Serial.println("RECIEVED SWITCH STATE");
+  switch_state = data;
+  Serial.println("SWITCH STATE CHANGE:");
+  Serial.print(switch_state);
+  return RPC_Response("actuator", switch_state);
 }
 
-const std::array<RPC_Callback, 2U> callbacks = {
-  RPC_Callback{ RPC_TEMPERATURE_METHOD, processTemperatureChange },
-  RPC_Callback{ RPC_SWITCH_METHOD, processSwitchChange }
+const std::array<RPC_Callback, 1U> callbacks = {
+  RPC_Callback{ RPC_SWITCH_METHOD, setServoSwitchState }
 };
 
 int getDistance() {
@@ -151,7 +138,7 @@ void setup() {
 }
 
 void loop() {
-  delay(100);
+  delay(1000);
 
   if (!reconnect()) {
     return;
@@ -169,16 +156,15 @@ void loop() {
   }
 
   if (!subscribed) {
-    Serial.println(F("Subscribing for RPC..."));
-
+    Serial.println("Subscribing for RPC...");
     // Perform a subscription. All consequent data processing will happen in
     // processTemperatureChange() and processSwitchChange() functions,
     // as denoted by callbacks array.
     if (!tb.RPC_Subscribe(callbacks.cbegin(), callbacks.cend())) {
-      Serial.println(F("Failed to subscribe for RPC"));
+      Serial.println("Failed to subscribe for RPC");
       return;
     }
-    Serial.println(F("Subscribe done"));
+    Serial.println("Subscribe done");
     digitalWrite(WIFI_STATUS_LED, HIGH);
 
     subscribed = true;
@@ -191,19 +177,48 @@ void loop() {
   Serial.print("Distance = ");
   Serial.println(distance);
 
-  if (distance < DISTANCE_THRESHOLD) {
+    // Check if switch_state is 30
+  if (switch_state == 40) {
+    switch_state = 0;
+    startTime = millis();  // Record the start time
+    runningCode = true;    // Set flag to indicate code is running
+  }
+
+  // if (switch_state == 40) {
+  //   Serial.println("Obstacle Detected!");
+  //   tb.sendTelemetryString(OBSTACLE_TELEMETRY, "Obstacle Detected");
+  //   tb.sendAttributeBool(ACTUATOR_KEY, true);
+  //   digitalWrite(LED_PIN, HIGH);
+  //   analogWrite(BUZZER_PIN, BUZZER_VOLUME);
+  //   delay(500);
+  //   switch_state = 0;
+  // } 
+    // Run the code for 4 seconds if the flag is set
+  if (runningCode) {
+    // Run your code here
     Serial.println("Obstacle Detected!");
+    tb.sendTelemetryString(OBSTACLE_TELEMETRY, "Obstacle Detected");
     tb.sendAttributeBool(ACTUATOR_KEY, true);
     digitalWrite(LED_PIN, HIGH);
     analogWrite(BUZZER_PIN, BUZZER_VOLUME);
-  } else {
+
+    // Check if 4 seconds have elapsed
+    if (millis() - startTime >= 4000) {
+      // Reset the flag and turn off the LED and Fan after 4 seconds
+      runningCode = false;
+    digitalWrite(LED_PIN, LOW);
+    analogWrite(BUZZER_PIN, 0);  // Turn off the Fan
+    }
+  }
+  else {
+    tb.sendTelemetryString(OBSTACLE_TELEMETRY, "Obstacle Not Detected");
     tb.sendAttributeBool(ACTUATOR_KEY, false);
     digitalWrite(LED_PIN, LOW);
     analogWrite(BUZZER_PIN, 0);
   }
 
   // Uploads new telemetry to ThingsBoard
-  Serial.println(F("Sending data..."));
+  // Serial.println(F("Sending data..."));
 
   tb.loop();
 }

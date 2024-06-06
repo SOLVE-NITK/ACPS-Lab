@@ -1,9 +1,18 @@
 #include <ThingsBoard.h>
 #include <WiFi.h>
+#include <NewPing.h>
+
 #include <ArduinoOTA.h>
 #include <ArduinoHttpClient.h>
 
-#include <NewPing.h>
+#define TRIG_PIN 5     // ESP32 pin GIOP26 connected to Ultrasonic Sensor's TRIG pin
+#define ECHO_PIN 18    // ESP32 pin GIOP25 connected to Ultrasonic Sensor's ECHO pin
+#define BUZZER_PIN 19  // Buzzer connected to digital pin D5
+#define LED_PIN 21     // ESP32 pin GIOP17 connected to LED's pin
+#define WIFI_STATUS_LED 2
+#define MAX_DISTANCE 400
+#define DISTANCE_THRESHOLD 10  // centimeters
+#define BUZZER_VOLUME 10       // Adjust this value to control the buzzer BUZZER_VOLUME
 
 constexpr char WIFI_SSID[] PROGMEM = "CSD";
 constexpr char WIFI_PASSWORD[] PROGMEM = "csd@NITK2014";
@@ -19,15 +28,12 @@ constexpr char DISTANCE_KEY[] PROGMEM = "distance";
 constexpr char ACTUATOR_KEY[] PROGMEM = "actuator";
 constexpr const char OBSTACLE_TELEMETRY[] PROGMEM = "detection";
 constexpr const char RPC_SWITCH_METHOD[] PROGMEM = "obstacle";
-constexpr const char RPC_TEMPERATURE_KEY[] PROGMEM = "temp";
-constexpr const char RPC_SWITCH_KEY[] PROGMEM = "obstacle";
-constexpr const char RPC_RESPONSE_KEY[] PROGMEM = "example_response";
 
-WiFiClient espClient;
-ThingsBoard tb(espClient, MAX_MESSAGE_SIZE);
-
-uint8_t status = WL_IDLE_STATUS;  // the Wifi radio's status
+int status = WL_IDLE_STATUS;  // the Wifi radio's status
 bool subscribed = false;
+int distance, switch_state = 0;
+bool buzzerState = false;
+
 bool requestedShared = false;
 int msg = 0;
 
@@ -35,16 +41,16 @@ char *BASE_URL = "/api/v1";   // Define base URL for API requests
 char *ENDPOINT = "firmware";  // Define endpoint for firmware updates
 char PATH[256];               // Define array to store the path for firmware updates
 
-constexpr const char FW_TITLE_KEY2[] = "fw_title";
-constexpr const char FW_VER_KEY2[] = "fw_version";
+constexpr char FW_TITLE_KEY2[] PROGMEM = "fw_title";
+constexpr char FW_VER_KEY2[] PROGMEM = "fw_version";
 
 char CURRENT_VERSION[] = "1.0.0";
 constexpr int FIRMWARE_SIZE = 20;           // Adjust the size according to your requirements
 char NEW_VERSION[FIRMWARE_SIZE] = "1.0.0";  // Declare NEW_VERSION array
 
-char FW_TITLE[] = "RPi";
-constexpr int TITLE_SIZE = 20;       // Adjust the size according to your requirements
-char FWW_TITLE[TITLE_SIZE] = "RPi";  // Declare NEW_VERSION array
+char FW_TITLE[] = "ESPOD";
+constexpr int TITLE_SIZE = 20;         // Adjust the size according to your requirements
+char FWW_TITLE[TITLE_SIZE] = "ESPOD";  // Declare NEW_VERSION array
 
 // Shared attributes we want to request from the server
 constexpr std::array<const char *, 2U> REQUESTED_SHARED_ATTRIBUTES = {
@@ -52,28 +58,14 @@ constexpr std::array<const char *, 2U> REQUESTED_SHARED_ATTRIBUTES = {
   FW_VER_KEY2
 };
 
-#define TRIG_PIN 5     // ESP32 pin GIOP26 connected to Ultrasonic Sensor's TRIG pin
-#define ECHO_PIN 18    // ESP32 pin GIOP25 connected to Ultrasonic Sensor's ECHO pin
-#define BUZZER_PIN 19  // Buzzer connected to digital pin D5
-#define LED_PIN 21     // ESP32 pin GIOP17 connected to LED's pin
-
-#define WIFI_STATUS_LED 2
-
-#define MAX_DISTANCE 400
-#define DISTANCE_THRESHOLD 10  // centimeters
-
-#define BUZZER_VOLUME 10  // Adjust this value to control the buzzer BUZZER_VOLUME
-
-unsigned long startTime;
-bool runningCode = false;
-
 NewPing sonar(TRIG_PIN, ECHO_PIN, MAX_DISTANCE);  // NewPing setup of pins and maximum distance.
+WiFiClient espClient;
+ThingsBoard tb(espClient, MAX_MESSAGE_SIZE);
 
-int distance, switch_state;
-
-bool buzzerState = false;
-
+/// @brief Initalizes WiFi connection,
+// will endlessly delay until a connection has been successfully established
 void InitWiFi() {
+
   Serial.print("Attempting to connect to network: ");
   Serial.println(WIFI_SSID);
 
@@ -88,6 +80,8 @@ void InitWiFi() {
   Serial.println("Connected to AP");
 }
 
+/// Reconnects the WiFi uses InitWiFi if the connection has been removed
+/// Returns true as soon as a connection has been established again
 bool reconnect() {
   // Check to ensure we aren't connected yet
   const wl_status_t status = WiFi.status();
@@ -194,27 +188,12 @@ void handleSketchDownload(const char *token, char *title, char *CURRENT_VERSION)
   InternalStorage.apply();                           // this doesn't return
 }
 
-RPC_Response processTemperatureChange(const RPC_Data &data) {
-  Serial.println(F("Received the set temperature RPC method"));
-
-  // Process data
-  const float example_temperature = data[RPC_TEMPERATURE_KEY];
-
-  Serial.print(F("Example temperature: "));
-  Serial.println(example_temperature);
-
-  // Just an response example
-  StaticJsonDocument<JSON_OBJECT_SIZE(1)> doc;
-  doc[RPC_RESPONSE_KEY] = 42;
-  return RPC_Response(doc);
-}
-
 RPC_Response setServoSwitchState(RPC_Data &data) {
   Serial.println("RECIEVED SWITCH STATE");
   switch_state = data;
-  Serial.println("SWITCH STATE CHANGE:");
-  Serial.print(switch_state);
-  return RPC_Response("actuator", switch_state);
+  // Serial.println("SWITCH STATE CHANGE:");
+  // Serial.print(switch_state);
+  return RPC_Response("actuator", 0);
 }
 
 const std::array<RPC_Callback, 1U> callbacks = {
@@ -309,48 +288,21 @@ void loop() {
   Serial.print("Distance = ");
   Serial.println(distance);
 
-    // Check if switch_state is 30
   if (switch_state == 40) {
-    switch_state = 0;
-    startTime = millis();  // Record the start time
-    runningCode = true;    // Set flag to indicate code is running
-  }
 
-  // if (switch_state == 40) {
-  //   Serial.println("Obstacle Detected!");
-  //   tb.sendTelemetryString(OBSTACLE_TELEMETRY, "Obstacle Detected");
-  //   tb.sendAttributeBool(ACTUATOR_KEY, true);
-  //   digitalWrite(LED_PIN, HIGH);
-  //   analogWrite(BUZZER_PIN, BUZZER_VOLUME);
-  //   delay(500);
-  //   switch_state = 0;
-  // } 
-    // Run the code for 4 seconds if the flag is set
-  if (runningCode) {
-    // Run your code here
+    switch_state = 0;
     Serial.println("Obstacle Detected!");
     tb.sendTelemetryString(OBSTACLE_TELEMETRY, "Obstacle Detected");
     tb.sendAttributeBool(ACTUATOR_KEY, true);
     digitalWrite(LED_PIN, HIGH);
     analogWrite(BUZZER_PIN, BUZZER_VOLUME);
-
-    // Check if 4 seconds have elapsed
-    if (millis() - startTime >= 4000) {
-      // Reset the flag and turn off the LED and Fan after 4 seconds
-      runningCode = false;
-    digitalWrite(LED_PIN, LOW);
-    analogWrite(BUZZER_PIN, 0);  // Turn off the Fan
-    }
-  }
-  else {
+    delay(500);
+  } else {
     tb.sendTelemetryString(OBSTACLE_TELEMETRY, "Obstacle Not Detected");
     tb.sendAttributeBool(ACTUATOR_KEY, false);
     digitalWrite(LED_PIN, LOW);
     analogWrite(BUZZER_PIN, 0);
   }
-
-  // Uploads new telemetry to ThingsBoard
-  // Serial.println(F("Sending data..."));
 
   tb.loop();
 }

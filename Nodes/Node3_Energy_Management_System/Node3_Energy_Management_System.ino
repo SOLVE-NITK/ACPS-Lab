@@ -1,17 +1,27 @@
 #include <ThingsBoard.h>
 #include <WiFi.h>
-#include <ArduinoOTA.h>
-#include <ArduinoHttpClient.h>
-
 #include <Wire.h>
 #include <Adafruit_INA219.h>
 #include <CytronMotorDriver.h>
 #include <LiquidCrystal_I2C.h>
 
+#include <ArduinoOTA.h>
+#include <ArduinoHttpClient.h>
+
+#define HEATER_SWITCH 12
+#define LIGHT_SWITCH 13
+#define FAN_SWITCH 19
+#define FAN_SPEED_KNOB 33
+#define MOTOR_DIR 5
+#define MOTOR_PWM 18
+#define LIGHT_RELAY 2
+#define HEATER_RELAY 4
+#define WIFI_STATUS_LED 2
+
 constexpr char WIFI_SSID[] PROGMEM = "CSD";
 constexpr char WIFI_PASSWORD[] PROGMEM = "csd@NITK2014";
 
-constexpr char TOKEN[] PROGMEM = "x3xPlF8GT9v1sckO1r1Q";
+constexpr char TOKEN[] PROGMEM = "msnB0XQszM8rinjuHw55";
 
 constexpr char THINGSBOARD_SERVER[] PROGMEM = "10.14.0.205";
 constexpr uint16_t THINGSBOARD_PORT PROGMEM = 1883U;
@@ -24,62 +34,23 @@ constexpr const char RPC_VOLTAGE_DATA[] PROGMEM = "voltage";
 constexpr const char RPC_LOAD_VOLTAGE_DATA[] PROGMEM = "load voltage";
 
 constexpr const char RPC_CRITICAL_METHOD[] PROGMEM = "critical";
+constexpr const char RPC_FAN_METHOD[] PROGMEM = "FanOn";
+constexpr const char RPC_HEATER_METHOD[] PROGMEM = "HeaterOn";
+constexpr const char RPC_LIGHT_METHOD[] PROGMEM = "LightOn";
 
 constexpr char LIGHT_KEY[] PROGMEM = "light";
 constexpr char FAN_KEY[] PROGMEM = "fan";
 constexpr char HEATER_KEY[] PROGMEM = "heater";
 
-constexpr const char FAN_TELEMETRY[] PROGMEM = "Fan_ON";
-constexpr const char LIGHT_TELEMETRY[] PROGMEM = "Light_ON";
-constexpr const char HEATER_TELEMETRY[] PROGMEM = "Heater_ON";
+constexpr const char FAN_TELEMETRY[] PROGMEM = "Fan_status";
+constexpr const char LIGHT_TELEMETRY[] PROGMEM = "Light_status";
+constexpr const char HEATER_TELEMETRY[] PROGMEM = "Heater_status";
+constexpr const char EMERGENCY[] PROGMEM = "ALERT";
 
-WiFiClient espClient;
-ThingsBoard tb(espClient, MAX_MESSAGE_SIZE);
-
-uint8_t status = WL_IDLE_STATUS;  // the Wifi radio's status
-bool subscribed = false;
-bool requestedShared = false;
-int msg = 0;
-
-char *BASE_URL = "/api/v1";   // Define base URL for API requests
-char *ENDPOINT = "firmware";  // Define endpoint for firmware updates
-char PATH[256];               // Define array to store the path for firmware updates
-
-constexpr char FW_TITLE_KEY2[] PROGMEM = "fw_title";
-constexpr char FW_VER_KEY2[] PROGMEM = "fw_version";
-
-char CURRENT_VERSION[] = "1.0.0";
-constexpr int FIRMWARE_SIZE = 20;           // Adjust the size according to your requirements
-char NEW_VERSION[FIRMWARE_SIZE] = "1.0.0";  // Declare NEW_VERSION array
-
-char FW_TITLE[] = "ESP32";
-constexpr int TITLE_SIZE = 20;       // Adjust the size according to your requirements
-char FWW_TITLE[TITLE_SIZE] = "ESP32";  // Declare NEW_VERSION array
-
-// Shared attributes we want to request from the server
-constexpr std::array<const char *, 2U> REQUESTED_SHARED_ATTRIBUTES = {
-  FW_TITLE_KEY2,
-  FW_VER_KEY2
-};
-
-#define HEATER_SWITCH 12
-#define LIGHT_SWITCH 13
-#define FAN_SWITCH 19
-#define FAN_SPEED_KNOB 33
-
-#define MOTOR_DIR 5
-#define MOTOR_PWM 18
-
-#define LIGHT_RELAY 2
-#define HEATER_RELAY 4
-
-#define WIFI_STATUS_LED 2
-
-Adafruit_INA219 ina219;
-
-LiquidCrystal_I2C lcd(0x3F, 16, 2);
-
-CytronMD motor(PWM_DIR, MOTOR_PWM, MOTOR_DIR);
+int critical_state = 0;
+int fan_state = 0;
+int light_state = 0;
+int heater_state = 0;
 
 float shuntvoltage = 0;
 float busvoltage = 0;
@@ -103,9 +74,41 @@ const unsigned long lcdUpdateInterval1 = 3000;
 unsigned long lcdUpdateTimer = 0;
 const unsigned long lcdUpdateInterval = 2000;  // Update every 2 seconds
 bool displayingVoltageCurrent = true;          // Display voltage and current initially
+/**/ int status = WL_IDLE_STATUS;              // the Wifi radio's status
+bool subscribed = false;
 
-int critical_state = 0;
+bool requestedShared = false;
+int msg = 0;
 
+char *BASE_URL = "/api/v1";   // Define base URL for API requests
+char *ENDPOINT = "firmware";  // Define endpoint for firmware updates
+char PATH[256];               // Define array to store the path for firmware updates
+
+constexpr char FW_TITLE_KEY2[] PROGMEM = "fw_title";
+constexpr char FW_VER_KEY2[] PROGMEM = "fw_version";
+
+char CURRENT_VERSION[] = "1.0.0";
+constexpr int FIRMWARE_SIZE = 20;           // Adjust the size according to your requirements
+char NEW_VERSION[FIRMWARE_SIZE] = "1.0.0";  // Declare NEW_VERSION array
+
+char FW_TITLE[] = "ESPEM";
+constexpr int TITLE_SIZE = 20;         // Adjust the size according to your requirements
+char FWW_TITLE[TITLE_SIZE] = "ESPEM";  // Declare NEW_VERSION array
+
+// Shared attributes we want to request from the server
+constexpr std::array<const char *, 2U> REQUESTED_SHARED_ATTRIBUTES = {
+  FW_TITLE_KEY2,
+  FW_VER_KEY2
+};
+
+Adafruit_INA219 ina219;
+LiquidCrystal_I2C lcd(0x3F, 16, 2);
+CytronMD motor(PWM_DIR, MOTOR_PWM, MOTOR_DIR);
+WiFiClient espClient;
+ThingsBoard tb(espClient, MAX_MESSAGE_SIZE);
+
+/// @brief Initalizes WiFi connection,
+// will endlessly delay until a connection has been successfully established
 void InitWiFi() {
 
   Serial.print("Attempting to connect to network: ");
@@ -122,14 +125,14 @@ void InitWiFi() {
   Serial.println("Connected to AP");
 }
 
+/// Reconnects the WiFi uses InitWiFi if the connection has been removed
+/// Returns true as soon as a connection has been established again
 bool reconnect() {
   // Check to ensure we aren't connected yet
-  status = WiFi.status();
+  const wl_status_t status = WiFi.status();
   if (status == WL_CONNECTED) {
     return true;
   }
-
-  // If we aren't establish a new connection to the given WiFi network
   InitWiFi();
   return true;
 }
@@ -229,15 +232,42 @@ void handleSketchDownload(const char *token, char *title, char *CURRENT_VERSION)
 }
 
 RPC_Response processcritical_state(RPC_Data &data) {
-  Serial.println("RECIEVED FREEFALL STATE");
+  Serial.println("RECIEVED CRITICAL STATE");
   critical_state = data;
-  Serial.println("FREEFALL STATE CHANGE:");
+  Serial.println("CRITICAL STATE CHANGE:");
   Serial.print(critical_state);
-  return RPC_Response("actuatorState", critical_state);
+  return RPC_Response("actuatorState", 0);
 }
 
-const std::array<RPC_Callback, 2U> callbacks = {
-  RPC_Callback{ RPC_CRITICAL_METHOD, processcritical_state }
+RPC_Response processFan_state(RPC_Data &data) {
+  Serial.println("RECIEVED FAN STATE");
+  fan_state = data;
+  Serial.println("FAN STATE CHANGE:");
+  Serial.print(fan_state);
+  return RPC_Response("actuatorState", 0);
+}
+
+RPC_Response processHeater_state(RPC_Data &data) {
+  Serial.println("RECIEVED HEATER STATE");
+  heater_state = data;
+  Serial.println("HEATER STATE CHANGE:");
+  Serial.print(heater_state);
+  return RPC_Response("actuatorState", 0);
+}
+
+RPC_Response processLight_state(RPC_Data &data) {
+  Serial.println("RECIEVED LIGHT STATE");
+  light_state = data;
+  Serial.println("LIGHT STATE CHANGE:");
+  Serial.print(light_state);
+  return RPC_Response("actuatorState", 0);
+}
+
+const std::array<RPC_Callback, 4U> callbacks = {
+  RPC_Callback{ RPC_CRITICAL_METHOD, processcritical_state },
+  RPC_Callback{ RPC_FAN_METHOD, processFan_state },
+  RPC_Callback{ RPC_HEATER_METHOD, processHeater_state },
+  RPC_Callback{ RPC_LIGHT_METHOD, processLight_state }
 };
 
 
@@ -294,6 +324,10 @@ void turnOnFan() {
   tb.sendTelemetryString(FAN_TELEMETRY, "Fan is On");
   tb.sendAttributeBool(FAN_KEY, true);
   motor.setSpeed(map(fanSpeed, 0, 4095, 30, 70));
+  Serial.print(analogRead(FAN_SPEED_KNOB));
+  Serial.print("\t");
+  Serial.print(map(analogRead(FAN_SPEED_KNOB), 0, 4095, 0, 255));
+  Serial.println();
 }
 
 void turnOffFan() {
@@ -310,11 +344,8 @@ void updateLCD_display() {
     lcdUpdateTimer1 = currentMillis;  // Reset the timer
 
     lcd.clear();  // Clear the display
-
-    if (displayingVoltageCurrent) {
-      lcd.setCursor(0, 0);
-      lcd.print("EMERGENCY ALERT");
-    }
+    lcd.setCursor(0, 0);
+    lcd.print("EMERGENCY ALERT");
   }
 }
 
@@ -350,9 +381,8 @@ void updateLCD(float voltage, int current, float power) {
 void setup() {
   // Initalize serial connection for debugging
   Serial.begin(SERIAL_DEBUG_BAUD);
-
   Wire.begin();
-
+  delay(1000);
   InitWiFi();
 
   pinMode(WIFI_STATUS_LED, OUTPUT);
@@ -384,7 +414,7 @@ void setup() {
 }
 
 void loop() {
-  delay(100);
+  delay(500);
 
   if (!reconnect()) {
     return;
@@ -456,37 +486,30 @@ void loop() {
     turnOffFan();
     turnOffHeater();
     turnOffLight();
+    tb.sendTelemetryString(EMERGENCY, "Emergency Alert");
     delay(1000);
-  } else if (critical_state == 30) {
-    critical_state = 0;
+  } else if (fan_state == 30) {
+    fan_state = 0;
     turnOnFan();
     turnOffHeater();
     turnOffLight();
-    delay(1000);
-  } else if (critical_state == 20) {
-    critical_state = 0;
+    updateLCD(busvoltage, current_mA, power_mW);
+  } else if (heater_state == 20) {
+    heater_state = 0;
     turnOnHeater();
     turnOffFan();
     turnOffLight();
-    delay(1000);
-  } else if (critical_state == 10) {
-    critical_state = 0;
+    updateLCD(busvoltage, current_mA, power_mW);
+  } else if (light_state == 10) {
+    light_state = 0;
     turnOnLight();
     turnOffFan();
     turnOffHeater();
-    delay(1000);
-  }
-
-  else {
     updateLCD(busvoltage, current_mA, power_mW);
-
-    Serial.print(analogRead(FAN_SPEED_KNOB));
-    Serial.print("\t");
-    Serial.print(map(analogRead(FAN_SPEED_KNOB), 0, 4095, 0, 255));
-    Serial.println();
+  } else {
 
     if (fanSwitchPressed) {
-      // Serial.println("Fan is Turned On");
+      Serial.println("Fan is Turned On");
       turnOnFan();
     } else {
       // Serial.println("Fan is Turned Off");
@@ -494,7 +517,7 @@ void loop() {
     }
 
     if (lightSwitchPressed) {
-      // Serial.println("Light is Turned On");
+      Serial.println("Light is Turned On");
       turnOnLight();
     } else {
       // Serial.println("Light is Turned Off");
@@ -502,28 +525,25 @@ void loop() {
     }
 
     if (heaterSwitchPressed) {
-      // Serial.println("Heater is Turned On");
+      Serial.println("Heater is Turned On");
       turnOnHeater();
     } else {
       // Serial.println("Heater is Turned Off");
       turnOffHeater();
     }
+    updateLCD(busvoltage, current_mA, power_mW);
+    tb.sendTelemetryString(EMERGENCY, "...........");
   }
 
-  // tb.sendTelemetryData(RPC_IMPACT_METHOD, power_mW);
-  Serial.println("\n");
+  // Serial.println("\n");
+  Serial.print("Power: ");
   Serial.println(power_mW);
-  Serial.println("\n");
 
-
+  // Uploads new telemetry to ThingsBoard
   tb.sendTelemetryData(RPC_POWER_DATA, power_mW);
   tb.sendTelemetryData(RPC_CURRENT_DATA, current_mA);
   tb.sendTelemetryData(RPC_VOLTAGE_DATA, busvoltage);
   tb.sendTelemetryData(RPC_LOAD_VOLTAGE_DATA, loadvoltage);
-  // Uploads new telemetry to ThingsBoard
-  // Serial.println(F("Sending data..."));
-
-  // delay(1000);
 
   tb.loop();
 }

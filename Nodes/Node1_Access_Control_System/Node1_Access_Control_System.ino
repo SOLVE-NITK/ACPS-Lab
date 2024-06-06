@@ -2,57 +2,9 @@
 #include <WiFi.h>
 #include <ArduinoOTA.h>
 #include <ArduinoHttpClient.h>
-
 #include <MFRC522.h>
 #include <SPI.h>
 #include <Servo.h>
-
-constexpr char WIFI_SSID[] = "CSD";               // Define WiFi SSID
-constexpr char WIFI_PASSWORD[] = "csd@NITK2014";  // Define WiFi password
-
-constexpr char TOKEN[] = "m7YJB0Xce8pqoC5vQf5W";
-
-constexpr char THINGSBOARD_SERVER[] = "10.14.0.205";  // Define ThingsBoard server IP address
-constexpr uint16_t THINGSBOARD_PORT = 1883U;          // Define ThingsBoard server port
-constexpr uint32_t MAX_MESSAGE_SIZE = 256U;           // Define maximum message size
-constexpr uint32_t SERIAL_DEBUG_BAUD = 115200U;
-
-constexpr const char RFID_KEY[]  = "charArray";
-constexpr const char RFID_AUTH_STATUS[] = "access";
-constexpr const char RED_LED_KEY[] = "red";             // Define the attribute key for the red LED
-constexpr const char GREEN_LED_KEY[] = "green";         // Define the attribute key for the green LED
-
-constexpr const char RPC_SERVO_METHOD[] = "servo";             // Define the RPC method for setting switch state
-constexpr const char RPC_SERVO_RESPONSE_KEY[] = "servo_response";  // Define the key for RPC response
-
-WiFiClient espClient;
-ThingsBoard tb(espClient, MAX_MESSAGE_SIZE);
-
-uint8_t status = WL_IDLE_STATUS;  // the Wifi radio's status
-bool subscribed = false;
-bool requestedShared = false;
-int msg = 0;
-
-char *BASE_URL = "/api/v1";   // Define base URL for API requests
-char *ENDPOINT = "firmware";  // Define endpoint for firmware updates
-char PATH[256];               // Define array to store the path for firmware updates
-
-constexpr const char FW_TITLE_KEY[] = "fw_title";
-constexpr const char FW_VER_KEY[] = "fw_version";
-
-char CURRENT_VERSION[] = "1.0.0";
-constexpr int FIRMWARE_SIZE = 20;           // Adjust the size according to your requirements
-char NEW_VERSION[FIRMWARE_SIZE] = "1.0.0";  // Declare NEW_VERSION array
-
-char FW_TITLE[] = "RPi";
-constexpr int TITLE_SIZE = 20;       // Adjust the size according to your requirements
-char FWW_TITLE[TITLE_SIZE] = "RPi";  // Declare NEW_VERSION array
-
-// Shared attributes we want to request from the server
-constexpr std::array<const char *, 2U> REQUESTED_SHARED_ATTRIBUTES = {
-  FW_TITLE_KEY,
-  FW_VER_KEY
-};
 
 #define SS_PIN 17   // Define the slave select pin for MFRC522
 #define RST_PIN 10  // Define the reset pin for MFRC522
@@ -64,7 +16,7 @@ constexpr std::array<const char *, 2U> REQUESTED_SHARED_ATTRIBUTES = {
 #define BUZZER_PIN 8  // Define the pin for the buzzer
 #define SERVO_PIN 9   // Define the pin for the servo motor
 
-#define BUZZER_VOLUME 10  // Adjust this value to control the buzzer BUZZER_VOLUME
+#define BUZZER_VOLUME 30  // Adjust this value to control the buzzer BUZZER_VOLUME
 
 #define CLOSE_POS 180  // Define the closed position of the servo motor
 #define OPEN_POS 40    // Define the open position of the servo motor
@@ -75,15 +27,68 @@ constexpr std::array<const char *, 2U> REQUESTED_SHARED_ATTRIBUTES = {
 #define CARD1 "23 CB 66 0E"  // Define the UID of the first authorized card
 #define CARD2 "A3 EF 6C A6"  // 33 25 06 80  Define the UID of the second authorized card
 
-Servo myservo;  // Create a servo object
+constexpr char WIFI_SSID[] = "CSD";                       // Define WiFi SSID
+constexpr char WIFI_PASSWORD[] = "csd@NITK2014";          // Define WiFi password
+constexpr char TOKEN[] PROGMEM = "qLkKK69IJUzVtLoSysgK";  // Define ThingsBoard token
+constexpr char THINGSBOARD_SERVER[] = "10.14.0.205";      // Define ThingsBoard server IP address
+constexpr uint16_t THINGSBOARD_PORT = 1883U;              // Define ThingsBoard server port
+constexpr uint32_t MAX_MESSAGE_SIZE = 256U;               // Define maximum message size
+constexpr uint32_t SERIAL_DEBUG_BAUD = 115200U;
 
-MFRC522 mfrc522(SS_PIN, RST_PIN);  // Create MFRC522 instance.
+constexpr char RFID_KEY[] = "Door status";  // Define the telemetry key for RFID data
+
+constexpr const char RPC_RFID1_METHOD[] = "RFID1";  // Define the RPC method
+constexpr const char RPC_RFID2_METHOD[] = "RFID2";  // Define the RPC method
+constexpr const char RPC_ALERT_METHOD[] = "ALERT";
+
+constexpr char ACTUATOR_KEY1[] PROGMEM = "actuator1";
+constexpr char ACTUATOR_KEY2[] PROGMEM = "actuator2";
+constexpr char ACTUATOR[] PROGMEM = "emergency";
+constexpr const char AUTHORIZE_TELEMETRY[] PROGMEM = "Status";
+constexpr const char RFID_ACCESS_KEY[] PROGMEM = "charArray";  // Define test key
+
+uint8_t status = WL_IDLE_STATUS;
+bool subscribed = false;
+
+bool requestedShared = false;
+int msg = 0;
+
+char *BASE_URL = "/api/v1";   // Define base URL for API requests
+char *ENDPOINT = "firmware";  // Define endpoint for firmware updates
+char PATH[256];               // Define array to store the path for firmware updates
+
+constexpr const char FW_TITLE_KEY[] = "fw_title";
+constexpr const char FW_VER_KEY[] = "fw_version";
+
+char CURRENT_VERSION[] = "1.0.1";
+constexpr int FIRMWARE_SIZE = 20;           // Adjust the size according to your requirements
+char NEW_VERSION[FIRMWARE_SIZE] = "1.0.1";  // Declare NEW_VERSION array
+
+char FW_TITLE[] = "RPi";
+constexpr int TITLE_SIZE = 20;       // Adjust the size according to your requirements
+char FWW_TITLE[TITLE_SIZE] = "RPi";  // Declare NEW_VERSION array
 
 char charArray[15];
 
 int pos = 0;  // Declare variable for servo motor position
-int switch_state = 0;
+int access1_state = 0;
+int access2_state = 0;
+int emergency = 0;
+
 bool buzzerState = false;  // Initialize buzzer state
+
+// Shared attributes we want to request from the server
+constexpr std::array<const char *, 2U> REQUESTED_SHARED_ATTRIBUTES = {
+  FW_TITLE_KEY,
+  FW_VER_KEY
+};
+
+WiFiClient espClient;
+ThingsBoard tb(espClient, MAX_MESSAGE_SIZE);
+
+Servo myservo;  // Create a servo object
+
+MFRC522 mfrc522(SS_PIN, RST_PIN);  // Create MFRC522 instance.
 
 void InitWiFi() {
   while (status != WL_CONNECTED) {
@@ -201,16 +206,20 @@ void handleSketchDownload(const char *token, char *title, char *CURRENT_VERSION)
 }
 
 void openDoor() {
-  for (pos = CLOSE_POS; pos >= OPEN_POS; pos -= 10) {
-    myservo.write(pos);
-    delay(1);
+  if (myservo.read() != OPEN_POS) {
+    for (pos = CLOSE_POS; pos >= OPEN_POS; pos -= 10) {
+      myservo.write(pos);
+      delay(1);
+    }
   }
 }
 
 void closeDoor() {
-  for (pos = OPEN_POS; pos <= CLOSE_POS; pos += 10) {
-    myservo.write(pos);
-    delay(1);
+  if (myservo.read() != CLOSE_POS) {
+    for (pos = OPEN_POS; pos <= CLOSE_POS; pos += 10) {
+      myservo.write(pos);
+      delay(1);
+    }
   }
 }
 
@@ -240,16 +249,34 @@ void actuate() {
   analogWrite(BUZZER_PIN, 0);
 }
 
-RPC_Response setServoSwitchState(RPC_Data &data) {
-  Serial.println("Received Servo State");
-  switch_state = data;
-  Serial.println("Servo State Change:");
-  Serial.println(switch_state);
-  return RPC_Response(RPC_SERVO_RESPONSE_KEY, switch_state);
+RPC_Response emergencyAlertState(RPC_Data &data) {
+  Serial.println("RECIEVED ACCESS CARD STATE");
+  emergency = data;
+  Serial.println("ACCESS CARD STATE CHANGE:");
+  Serial.print(emergency);
+  return RPC_Response("Value", 0);
 }
 
-const std::array<RPC_Callback, 1U> callbacks = {
-  RPC_Callback{ RPC_SERVO_METHOD, setServoSwitchState }
+RPC_Response authorizedAccessState(RPC_Data &data) {
+  Serial.println("RECIEVED ACCESS CARD STATE");
+  access1_state = data;
+  Serial.println("ACCESS CARD STATE CHANGE:");
+  Serial.print(access1_state);
+  return RPC_Response("SwitchValue", 0);
+}
+
+RPC_Response unAuthorizedAccessState(RPC_Data &data) {
+  Serial.println("RECIEVED ACCESS CARD STATE");
+  access2_state = data;
+  Serial.println("ACCESS CARD STATE CHANGE:");
+  Serial.print(access2_state);
+  return RPC_Response("setValue", 0);
+}
+
+const std::array<RPC_Callback, 3U> callbacks = {
+  RPC_Callback{ RPC_ALERT_METHOD, emergencyAlertState },
+  RPC_Callback{ RPC_RFID1_METHOD, authorizedAccessState },
+  RPC_Callback{ RPC_RFID2_METHOD, unAuthorizedAccessState }
 };
 
 void setup() {
@@ -363,41 +390,63 @@ void loop() {
       content.toCharArray(charArray, sizeof(charArray));
       Serial.println(charArray);
 
-      tb.sendTelemetryString(RFID_KEY, charArray);
+      tb.sendTelemetryString(RFID_ACCESS_KEY, charArray);
+      delay(1000);
     }
   }
 
-  if (switch_state == 40) {  //change here the UID of the card/cards that you want to give access
-    switch_state = 0;
-    tb.sendTelemetryString(RFID_AUTH_STATUS, "Authorized access");
-    tb.sendAttributeBool(GREEN_LED_KEY, true);
-    Serial.println("Authorized access");  // Print "Authorized access" message to serial monitor
-    Serial.println();                     // Print an empty line for formatting
-    // tb.sendAttributeBool(GREEN_LED_KEY, true);         // Send attribute to turn on the green LED indicator
-    // tb.sendTelemetryString(RFID_KEY, "Door is Open");  // Send telemetry indicating that the door is open
-    digitalWrite(GREEN_LED, HIGH);  // Turn on the green LED
-    openDoor();                     // Call the function to open the door
-    delay(3000);                    // Delay for 3 seconds
-    closeDoor();                    // Call the function to close the door
-    // switch_state = 0;
-  } else if (switch_state == 30) {
-    switch_state = 0;
-    tb.sendTelemetryString(RFID_AUTH_STATUS, "Access denied");
-    tb.sendAttributeBool(RED_LED_KEY, true);
-    Serial.println("Access denied");  // Print "Access denied" message to serial monitor
-    // digitalWrite(RED_LED, HIGH);
-    // delay(1000);
-    // digitalWrite(RED_LED, LOW);
-    actuate();  // Call the actuate function to perform additional actions for access denial
-  } else {
-    switch_state = 0;
-    tb.sendAttributeBool(GREEN_LED_KEY, false);
-    tb.sendAttributeBool(RED_LED_KEY, false);
-    tb.sendTelemetryString(RFID_AUTH_STATUS, "Door is Close");  // Send telemetry indicating the door is closed
+
+  if (access1_state == 40) {  //change here the UID of the card/cards that you want to give access
+
+    access1_state = 0;
+    tb.sendTelemetryString(AUTHORIZE_TELEMETRY, "Authorized access");
+    tb.sendAttributeBool(ACTUATOR_KEY1, true);
+    Serial.println("Authorized access");                 // Print "Authorized access" message to serial monitor
+    Serial.println();                                    // Print an empty line for formatting
+    tb.sendTelemetryString(RFID_KEY, "Door is Open");    // Send telemetry indicating that the door is open
+    digitalWrite(GREEN_LED, HIGH);                       // Turn on the green LED
+    openDoor();                                          // Call the function to open the door
+    delay(3000);                                         // Delay for 3 seconds
+    closeDoor();                                         // Call the function to close the door
+    tb.sendTelemetryString(RFID_KEY, "Door is Closed");  // Send telemetry indicating that the door is open
   }
 
-  digitalWrite(RED_LED, LOW);    // Turn off the red LED
-  digitalWrite(GREEN_LED, LOW);  // Turn off the green LED
+  else if (access2_state == 42) {
+
+    access2_state = 0;
+    tb.sendTelemetryString(AUTHORIZE_TELEMETRY, "Access denied");
+    tb.sendAttributeBool(ACTUATOR_KEY2, true);
+    Serial.println("Access denied");  // Print "Access denied" message to serial monitor
+    digitalWrite(RED_LED, HIGH);
+    delay(1000);
+    digitalWrite(RED_LED, LOW);
+    tb.sendTelemetryString(RFID_KEY, "Door is Closed");  // Send telemetry indicating access denial
+    actuate();                                           // Call the actuate function to perform additional actions for access denial
+  }
+
+  else if (emergency == 101) {  //change here the UID of the card/cards that you want to give access
+
+    emergency = 0;
+    tb.sendTelemetryString(AUTHORIZE_TELEMETRY, "EMERGENCY ALERT!!!!");
+    tb.sendAttributeBool(ACTUATOR, true);
+    Serial.println("Emergenct Alert");                 // Print "Authorized access" message to serial monitor
+    Serial.println();                                  // Print an empty line for formatting
+    tb.sendTelemetryString(RFID_KEY, "Door is Open");  // Send telemetry indicating that the door is open
+    digitalWrite(GREEN_LED, HIGH);                     // Turn on the green LED
+    openDoor();                                        // Call the function to open the door
+    delay(4000);                                       // Delay for 3 seconds
+  }
+
+  else {
+    tb.sendAttributeBool(ACTUATOR_KEY1, false);
+    tb.sendAttributeBool(ACTUATOR_KEY2, false);
+    tb.sendAttributeBool(ACTUATOR, false);
+    tb.sendTelemetryString(AUTHORIZE_TELEMETRY, "............");
+    digitalWrite(RED_LED, LOW);                          // Turn off the red LED
+    digitalWrite(GREEN_LED, LOW);                        // Turn off the green LED
+    closeDoor();                                         // Call the function to close the door
+    tb.sendTelemetryString(RFID_KEY, "Door is Closed");  // Send telemetry indicating that the door is open
+  }
 
   tb.loop();
 }

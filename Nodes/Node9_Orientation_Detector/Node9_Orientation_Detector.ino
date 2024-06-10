@@ -1,9 +1,16 @@
 #include <ThingsBoard.h>
 #include <WiFi.h>
+#include <MPU9250.h>
+
 #include <ArduinoOTA.h>
 #include <ArduinoHttpClient.h>
 
-#include <MPU9250.h>
+#define LED_PIN 19     // LED connected to digital pin D18
+#define BUZZER_PIN 18  // Buzzer connected to digital pin D5
+#define WIFI_STATUS_LED 2
+#define BUZZER_VOLUME 0  // Adjust this value to control the buzzer BUZZER_VOLUME
+#define DEBOUNCE_TIME 3000
+#define BLINK_INTERVAL 250
 
 constexpr char WIFI_SSID[] PROGMEM = "CSD";
 constexpr char WIFI_PASSWORD[] PROGMEM = "csd@NITK2014";
@@ -25,14 +32,15 @@ constexpr char FALL_KEY[] PROGMEM = "fall";
 constexpr const char RPC_SENSOR_DATA[] PROGMEM = "accelMagnitude";
 constexpr const char RPC_CRASH_METHOD[] PROGMEM = "crash";
 constexpr const char RPC_FREEFALL_METHOD[] PROGMEM = "freefall";
-constexpr const char RPC_SWITCH_KEY[] PROGMEM = "switch";
-constexpr const char RPC_RESPONSE_KEY[] PROGMEM = "example_response";
 
-WiFiClient espClient;
-ThingsBoard tb(espClient, MAX_MESSAGE_SIZE);
+float accelX_g, accelY_g, accelZ_g, accelMagnitude;
+float roll_deg, pitch_deg, yaw_deg;
 
-uint8_t status = WL_IDLE_STATUS;  // the Wifi radio's status
+int status = WL_IDLE_STATUS;  // the Wifi radio's status
 bool subscribed = false;
+int CrashState = 0, FreefallState = 0;
+bool buzzerState = false;
+
 bool requestedShared = false;
 int msg = 0;
 
@@ -40,16 +48,16 @@ char *BASE_URL = "/api/v1";   // Define base URL for API requests
 char *ENDPOINT = "firmware";  // Define endpoint for firmware updates
 char PATH[256];               // Define array to store the path for firmware updates
 
-constexpr const char FW_TITLE_KEY2[] = "fw_title";
-constexpr const char FW_VER_KEY2[] = "fw_version";
+constexpr char FW_TITLE_KEY2[] PROGMEM = "fw_title";
+constexpr char FW_VER_KEY2[] PROGMEM = "fw_version";
 
 char CURRENT_VERSION[] = "1.0.0";
 constexpr int FIRMWARE_SIZE = 20;           // Adjust the size according to your requirements
 char NEW_VERSION[FIRMWARE_SIZE] = "1.0.0";  // Declare NEW_VERSION array
 
-char FW_TITLE[] = "RPi";
-constexpr int TITLE_SIZE = 20;       // Adjust the size according to your requirements
-char FWW_TITLE[TITLE_SIZE] = "RPi";  // Declare NEW_VERSION array
+char FW_TITLE[] = "ESPFFD";
+constexpr int TITLE_SIZE = 20;          // Adjust the size according to your requirements
+char FWW_TITLE[TITLE_SIZE] = "ESPFFD";  // Declare NEW_VERSION array
 
 // Shared attributes we want to request from the server
 constexpr std::array<const char *, 2U> REQUESTED_SHARED_ATTRIBUTES = {
@@ -57,25 +65,12 @@ constexpr std::array<const char *, 2U> REQUESTED_SHARED_ATTRIBUTES = {
   FW_VER_KEY2
 };
 
-#define LED_PIN 19     // LED connected to digital pin D18
-#define BUZZER_PIN 18  // Buzzer connected to digital pin D5
-
-#define WIFI_STATUS_LED 2
-
-#define BUZZER_VOLUME 0  // Adjust this value to control the buzzer BUZZER_VOLUME
-
-#define DEBOUNCE_TIME 3000
-#define BLINK_INTERVAL 250
-
-int CrashState = 0, FreefallState = 0;
-
 MPU9250 mpu;
+WiFiClient espClient;
+ThingsBoard tb(espClient, MAX_MESSAGE_SIZE);
 
-float accelX_g, accelY_g, accelZ_g, accelMagnitude;
-float roll_deg, pitch_deg, yaw_deg;
-
-bool buzzerState = false;
-
+/// @brief Initalizes WiFi connection,
+// will endlessly delay until a connection has been successfully established
 void InitWiFi() {
 
   Serial.print("Attempting to connect to network: ");
@@ -92,6 +87,8 @@ void InitWiFi() {
   Serial.println("Connected to AP");
 }
 
+/// Reconnects the WiFi uses InitWiFi if the connection has been removed
+/// Returns true as soon as a connection has been established again
 bool reconnect() {
   // Check to ensure we aren't connected yet
   const wl_status_t status = WiFi.status();
@@ -103,6 +100,7 @@ bool reconnect() {
   InitWiFi();
   return true;
 }
+
 void processSharedAttributeRequest(const Shared_Attribute_Data &data) {
   for (auto it = data.begin(); it != data.end(); ++it) {
     Serial.println(it->key().c_str());
@@ -144,7 +142,7 @@ void handleSketchDownload(const char *token, char *title, char *CURRENT_VERSION)
   const unsigned short SERVER_PORT = 8090U;                       // Commonly 80 (HTTP) | 443 (HTTPS)
   HttpClient client(espClient, THINGSBOARD_SERVER, SERVER_PORT);  // HTTP
   // HttpClient client(wifiClientSSL, SERVER, SERVER_PORT);  // HTTPS
-  char buff[64];
+  char buff[66];
   snprintf(buff, sizeof(buff), PATH);      // Copy the URL path to the buffer
   Serial.print("Check for update file ");  // Print message to indicate checking for update file with the URL path
   Serial.println(buff);
@@ -202,7 +200,7 @@ RPC_Response processCrashState(RPC_Data &data) {
   CrashState = data;
   Serial.println("CRASH STATE CHANGE:");
   Serial.print(CrashState);
-  return RPC_Response("actuatorState", CrashState);
+  return RPC_Response("actuatorState", 0);
 }
 
 RPC_Response processFreefallState(RPC_Data &data) {
@@ -210,7 +208,7 @@ RPC_Response processFreefallState(RPC_Data &data) {
   FreefallState = data;
   Serial.println("FREEFALL STATE CHANGE:");
   Serial.print(FreefallState);
-  return RPC_Response("actuatorState", FreefallState);
+  return RPC_Response("actuatorState", 0);
 }
 
 const std::array<RPC_Callback, 2U> callbacks = {
@@ -269,7 +267,7 @@ void setup() {
 }
 
 void loop() {
-  delay(100);
+  delay(1000);
 
   if (!reconnect()) {
     return;
@@ -338,10 +336,30 @@ void loop() {
     accelMagnitude = sqrt(accelX_g * accelX_g + accelY_g * accelY_g + accelZ_g * accelZ_g);
   }
 
+  tb.sendTelemetryData(RPC_SENSOR_DATA, accelMagnitude);
+
+  if (mpu.update()) {
+    // Read orientation values
+    roll_deg = mpu.getRoll();
+    pitch_deg = mpu.getPitch();
+    yaw_deg = mpu.getYaw();
+
+    // Serial.print("Orientation (degrees): Roll=");
+    // Serial.print(roll_deg);
+    // Serial.print(", Pitch=");
+    // Serial.print(pitch_deg);
+    // Serial.print(", Yaw=");
+    // Serial.println(yaw_deg);
+
+    tb.sendTelemetryFloat(ROLL_KEY, roll_deg);
+    tb.sendTelemetryFloat(PITCH_KEY, pitch_deg);
+    tb.sendTelemetryFloat(YAW_KEY, yaw_deg);
+  }
+
   // Adjust the free fall and crash threshold values based on your requirements
-  float freeFallThreshold = 0.2;  // You may need to fine-tune this value
-  float crashThreshold = 2.0;     // You may need to fine-tune this value
-                                  //if (accelMagnitude < freeFallThreshold) {
+  // float freeFallThreshold = 0.2;  // You may need to fine-tune this value
+  // float crashThreshold = 2.0;     // You may need to fine-tune this value
+  //if (accelMagnitude < freeFallThreshold) {
   if (FreefallState == 40) {
     FreefallState = 0;
     Serial.println("Free fall detected!");
@@ -359,33 +377,11 @@ void loop() {
     tb.sendTelemetryString(CRASH_KEY, "DETECTED!");
     tb.sendAttributeBool(IMPACT_KEY, true);
     actuate();
-  } else {
+  } 
+  else {
     tb.sendTelemetryString(CRASH_KEY, "NORMAL :)");
     tb.sendAttributeBool(IMPACT_KEY, false);
   }
-
-  if (mpu.update()) {
-    // Read orientation values
-    roll_deg = mpu.getRoll();
-    pitch_deg = mpu.getPitch();
-    yaw_deg = mpu.getYaw();
-
-    Serial.print("Orientation (degrees): Roll=");
-    Serial.print(roll_deg);
-    Serial.print(", Pitch=");
-    Serial.print(pitch_deg);
-    Serial.print(", Yaw=");
-    Serial.println(yaw_deg);
-
-    tb.sendTelemetryFloat(ROLL_KEY, roll_deg);
-    tb.sendTelemetryFloat(PITCH_KEY, pitch_deg);
-    tb.sendTelemetryFloat(YAW_KEY, yaw_deg);
-  }
-
-  tb.sendTelemetryData(RPC_SENSOR_DATA, accelMagnitude);
-
-  // Uploads new telemetry to ThingsBoard
-  // Serial.println(F("Sending data..."));
 
   tb.loop();
 }

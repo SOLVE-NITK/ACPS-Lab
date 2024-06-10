@@ -3,57 +3,10 @@
 #define THINGSBOARD_ENABLE_PROGMEM 0
 #endif  // ESP8266
 #include <ThingsBoard.h>
-#include <ArduinoOTA.h>
-#include <ArduinoHttpClient.h>
-
 #include <Servo.h>
 
-constexpr char WIFI_SSID[] = "CSD";
-constexpr char WIFI_PASSWORD[] = "csd@NITK2014";
-
-constexpr char TOKEN[] = "Ct0199UNxnMBtfUeSpLE";
-
-constexpr char THINGSBOARD_SERVER[] = "10.14.0.205";
-constexpr uint16_t THINGSBOARD_PORT = 1883U;
-constexpr uint32_t MAX_MESSAGE_SIZE = 128U;
-constexpr uint32_t SERIAL_DEBUG_BAUD = 115200U;
-
-constexpr char MOTION_KEY[] = "motion";
-constexpr char ACTUATOR_KEY[] = "actuator";
-constexpr const char MOTION_TELEMETRY[] = "telemetry_data";
-constexpr const char RPC_SWITCH_METHOD[] = "openDoor";
-constexpr const char RPC_TEMPERATURE_KEY[] = "temp";
-constexpr const char RPC_SWITCH_KEY[] = "openDoor";
-constexpr const char RPC_RESPONSE_KEY[] = "example_response";
-
-WiFiClient espClient;
-ThingsBoard tb(espClient, MAX_MESSAGE_SIZE);
-
-uint8_t status = WL_IDLE_STATUS;  // the Wifi radio's status
-bool subscribed = false;
-bool requestedShared = false;
-int msg = 0;
-
-char *BASE_URL = "/api/v1";   // Define base URL for API requests
-char *ENDPOINT = "firmware";  // Define endpoint for firmware updates
-char PATH[256];               // Define array to store the path for firmware updates
-
-constexpr const char FW_TITLE_KEY2[] = "fw_title";
-constexpr const char FW_VER_KEY2[] = "fw_version";
-
-char CURRENT_VERSION[] = "1.0.0";
-constexpr int FIRMWARE_SIZE = 20;           // Adjust the size according to your requirements
-char NEW_VERSION[FIRMWARE_SIZE] = "1.0.0";  // Declare NEW_VERSION array
-
-char FW_TITLE[] = "RPi";
-constexpr int TITLE_SIZE = 20;       // Adjust the size according to your requirements
-char FWW_TITLE[TITLE_SIZE] = "RPi";  // Declare NEW_VERSION array
-
-// Shared attributes we want to request from the server
-constexpr std::array<const char *, 2U> REQUESTED_SHARED_ATTRIBUTES = {
-  FW_TITLE_KEY2,
-  FW_VER_KEY2
-};
+#include <ArduinoOTA.h>
+#include <ArduinoHttpClient.h>
 
 #define LED_PIN 12
 #define PIR_PIN 14
@@ -63,25 +16,58 @@ constexpr std::array<const char *, 2U> REQUESTED_SHARED_ATTRIBUTES = {
 #define OPEN_POS 40
 #define DEBOUNCE_TIME 6000
 
+constexpr char WIFI_SSID[] = "CSD";
+constexpr char WIFI_PASSWORD[] = "csd@NITK2014";
+constexpr char TOKEN[] = "Ct0199UNxnMBtfUeSpLE";
+constexpr char THINGSBOARD_SERVER[] = "10.14.0.205";
+constexpr uint16_t THINGSBOARD_PORT = 1883U;
+constexpr uint32_t MAX_MESSAGE_SIZE = 128U;
+constexpr uint32_t SERIAL_DEBUG_BAUD = 115200U;
+
+constexpr char MOTION_KEY[] = "motion";
+constexpr char ACTUATOR_KEY[] = "actuator";
+constexpr const char MOTION_TELEMETRY[] = "telemetry_data";
+constexpr const char RPC_SWITCH_METHOD[] = "openDoor";
+int status = WL_IDLE_STATUS;  // the Wifi radio's status
+bool subscribed = false;
 //variables to keep track of the timing of recent interrupts
 unsigned long button_time = 0;
 unsigned long last_button_time = 0;
 bool motionDetected = false;
 int pos = 0;
 int actuatorState = 0;
-
 int switch_state;
 
-unsigned long switchTimer = 0;
-const int switchDuration = 7000;  // 5 seconds in milliseconds
+bool requestedShared = false;
+int msg = 0;
 
-unsigned long previousMillis = 0;  // will store last time LED was updated
+char *BASE_URL = "/api/v1";   // Define base URL for API requests
+char *ENDPOINT = "firmware";  // Define endpoint for firmware updates
+char PATH[256];               // Define array to store the path for firmware updates
 
-// constants won't change:
-const long interval = 2000;  // interval at which to blink (milliseconds)
+// constexpr const char FW_TITLE_KEY[] = "fw_title";
+// constexpr const char FW_VER_KEY[] = "fw_version";
+
+char CURRENT_VERSION[] = "1.0.1";
+constexpr int FIRMWARE_SIZE = 20;           // Adjust the size according to your requirements
+char NEW_VERSION[FIRMWARE_SIZE] = "1.0.1";  // Declare NEW_VERSION array
+
+char FW_TITLE[] = "NODE12";
+constexpr int TITLE_SIZE = 20;       // Adjust the size according to your requirements
+char FWW_TITLE[TITLE_SIZE] = "NODE12";  // Declare NEW_VERSION array
+
+constexpr std::array<const char *, 2U> REQUESTED_SHARED_ATTRIBUTES = {
+  FW_TITLE_KEY,
+  FW_VER_KEY
+};
 
 Servo myservo;  //object  created for servo
 
+WiFiClient espClient;
+ThingsBoard tb(espClient, MAX_MESSAGE_SIZE);
+
+/// @brief Initalizes WiFi connection,
+// will endlessly delay until a connection has been successfully established
 void InitWiFi() {
 
   Serial.print("Attempting to connect to network: ");
@@ -98,9 +84,11 @@ void InitWiFi() {
   Serial.println("Connected to AP");
 }
 
+/// @brief Reconnects the WiFi uses InitWiFi if the connection has been removed
+/// @return Returns true as soon as a connection has been established again
 bool reconnect() {
   // Check to ensure we aren't connected yet
- status = WiFi.status();
+  const wl_status_t status = WiFi.status();
   if (status == WL_CONNECTED) {
     return true;
   }
@@ -114,7 +102,7 @@ void processSharedAttributeRequest(const Shared_Attribute_Data &data) {
     Serial.println(it->key().c_str());
     // Shared attributes have to be parsed by their type.
     Serial.println(it->value().as<const char *>());
-    if (strcmp_P(it->key().c_str(), FW_VER_KEY2) == 0) {
+    if (strcmp_P(it->key().c_str(), FW_VER_KEY) == 0) {
       // If the key is "CURRENT_VERSION", print its value
       Serial.print("NEW_VERSION: ");
       // Copy the value to NEW_VERSION array
@@ -124,7 +112,7 @@ void processSharedAttributeRequest(const Shared_Attribute_Data &data) {
       // Print the value
       Serial.println(NEW_VERSION);
     }
-    if (strcmp_P(it->key().c_str(), FW_TITLE_KEY2) == 0) {
+    if (strcmp_P(it->key().c_str(), FW_TITLE_KEY) == 0) {
       // If the key is "CURRENT_VERSION", print its value
       Serial.print("FWW_TITLE: ");
       // Copy the value to NEW_VERSION array
@@ -150,7 +138,7 @@ void handleSketchDownload(const char *token, char *title, char *CURRENT_VERSION)
   const unsigned short SERVER_PORT = 8090U;                       // Commonly 80 (HTTP) | 443 (HTTPS)
   HttpClient client(espClient, THINGSBOARD_SERVER, SERVER_PORT);  // HTTP
   // HttpClient client(wifiClientSSL, SERVER, SERVER_PORT);  // HTTPS
-  char buff[64];
+  char buff[66];
   snprintf(buff, sizeof(buff), PATH);      // Copy the URL path to the buffer
   Serial.print("Check for update file ");  // Print message to indicate checking for update file with the URL path
   Serial.println(buff);
@@ -203,30 +191,16 @@ void handleSketchDownload(const char *token, char *title, char *CURRENT_VERSION)
   InternalStorage.apply();                           // this doesn't return
 }
 
-RPC_Response processTemperatureChange(const RPC_Data &data) {
-  Serial.println("Received the set temperature RPC method");
-
-  // Process data
-  const float example_temperature = data[RPC_TEMPERATURE_KEY];
-
-  Serial.print("Example temperature: ");
-  Serial.println(example_temperature);
-  // Just an response example
-  StaticJsonDocument<JSON_OBJECT_SIZE(1)> doc;
-  doc[RPC_RESPONSE_KEY] = 42;
-  return RPC_Response(doc);
-}
-
+/// Response that should be sent to the cloud. Useful for getMethods
 RPC_Response setServoSwitchState(RPC_Data &data) {
   Serial.println("RECIEVED SWITCH STATE");
   switch_state = data;
   Serial.println("SWITCH STATE CHANGE:");
   Serial.print(switch_state);
-  return RPC_Response("setServoSwitchValue", switch_state);
+  return RPC_Response("setServoSwitchValue", 0);
 }
 
-const std::array<RPC_Callback, 2U> callbacks = {
-  RPC_Callback{ "setServoSwitchValue", setServoSwitchState },
+const std::array<RPC_Callback, 1U> callbacks = {
   RPC_Callback{ RPC_SWITCH_METHOD, setServoSwitchState }
 };
 
@@ -280,7 +254,6 @@ void setup() {
 
 void loop() {
 
-  unsigned long currentMillis = millis();
   delay(1000);
 
   if (!reconnect()) {
@@ -341,24 +314,21 @@ void loop() {
     }
   }
 
-  tb.sendTelemetryBool(MOTION_KEY, motionDetected);
-
   Serial.println();
   Serial.print(motionDetected);
   Serial.print("\t");
   Serial.println(digitalRead(PIR_PIN));
 
+  tb.sendTelemetryBool(MOTION_KEY, motionDetected);
+
   // Check if switch_state is 40
   if (switch_state == 40) {
-    // Check if the switch timer is not running
-    if (switchTimer == 0) {
-      digitalWrite(LED_PIN, HIGH);  // Turn on the LED
-      tb.sendTelemetryString(MOTION_TELEMETRY, "Door is open");
-      tb.sendAttributeBool(ACTUATOR_KEY, true);
-      openDoor();  // Open the door
-      // Start the timer
-      switchTimer = millis();  // Record the current time
-    }
+
+    switch_state = 0;
+    digitalWrite(LED_PIN, HIGH);  // Turn on the LED
+    tb.sendTelemetryString(MOTION_TELEMETRY, "Door is open");
+    tb.sendAttributeBool(ACTUATOR_KEY, true);
+    openDoor();  // Open the door
   } else {
     digitalWrite(LED_PIN, LOW);  // Turn off the LED
     tb.sendTelemetryString(MOTION_TELEMETRY, "Door is closed");
@@ -366,14 +336,7 @@ void loop() {
     closeDoor();  // Close the door
   }
 
-  // Reset motionDetected flag
   motionDetected = false;
 
-  // Check if 5 seconds have passed since the switch was activated
-  if (switchTimer != 0 && millis() - switchTimer >= switchDuration) {
-    // Reset switch state and timer
-    switch_state = 0;  // Reset switch state
-    switchTimer = 0;   // Reset the switch timer
-  }
   tb.loop();
 }

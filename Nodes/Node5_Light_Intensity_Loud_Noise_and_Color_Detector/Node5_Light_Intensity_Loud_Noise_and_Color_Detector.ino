@@ -1,16 +1,37 @@
 #include <ThingsBoard.h>
 #include <WiFiNINA.h>
+#include <WiFi.h>
+
 #include <ArduinoOTA.h>
 #include <ArduinoHttpClient.h>
+
+#define SOUND_SENSOR_PIN A2
+#define LDR_PIN A1
+#define S0 5  //Module pins wiring
+#define S1 6
+#define S2 7
+#define S3 8
+#define COLOR_OUT 9
+#define COLOR_DETECTOR_LED_PIN 10
+#define LED_R 2  //LED pins, don't forget "pwm"
+#define LED_G 3
+#define LED_B 4
+#define SOUND_LED 0
+#define LIGHT_LED 1
+
+#define WIFI_STATUS_LED LED_BUILTIN
+
+#define LIGHT_THRESHOLD 80
+#define SOUND_THRESHOLD 60
 
 constexpr char WIFI_SSID[] = "CSD";
 constexpr char WIFI_PASSWORD[] = "csd@NITK2014";
 
-constexpr char TOKEN[] = "ZVPqqBwnUAtwQINzcqa4";
+constexpr char TOKEN[] = "OntKQ1Crl0Zt3FvX0AeV";
 
 constexpr char THINGSBOARD_SERVER[] = "10.14.0.205";
 constexpr uint16_t THINGSBOARD_PORT = 1883U;
-constexpr uint32_t MAX_MESSAGE_SIZE = 128U;
+constexpr uint32_t MAX_MESSAGE_SIZE = 256U;
 constexpr uint32_t SERIAL_DEBUG_BAUD = 115200U;
 
 constexpr char LOUD_NOISE_KEY[] = "loudNoise";
@@ -23,62 +44,15 @@ constexpr char ACTUATOR2_KEY[] = "actuator2";
 constexpr char ACTUATOR3_KEY[] = "actuator3";
 
 constexpr const char RPC_SOUND_DETECT_KEY[] = "sound";
-constexpr const char RPC_LIGHT_DETECT_KEY[] = "light";
+constexpr const char RPC_LIGHT_DETECT_KEY[] = "lightIntensity";
 constexpr const char RPC_COLOR_KEY[] = "color";
-constexpr const char RPC_SWITCH_KEY[] PROGMEM = "switch";
 constexpr const char RPC_RESPONSE_KEY[] = "example_response";
 constexpr const char RPC_LDR_DATA[] = "lightDetected";
 
-WiFiClient espClient;
-ThingsBoard tb(espClient, MAX_MESSAGE_SIZE);
-
-uint8_t status = WL_IDLE_STATUS;  // the Wifi radio's status
+unsigned long startTime = 0;
+bool shouldRun = false;
+int status = WL_IDLE_STATUS;  // the Wifi radio's status
 bool subscribed = false;
-bool requestedShared = false;
-int msg = 0;
-
-char *BASE_URL = "/api/v1";   // Define base URL for API requests
-char *ENDPOINT = "firmware";  // Define endpoint for firmware updates
-char PATH[256];               // Define array to store the path for firmware updates
-
-constexpr const char FW_TITLE_KEY[] = "fw_title";
-constexpr const char FW_VER_KEY[] = "fw_version";
-
-char CURRENT_VERSION[] = "1.0.0";
-constexpr int FIRMWARE_SIZE = 20;           // Adjust the size according to your requirements
-char NEW_VERSION[FIRMWARE_SIZE] = "1.0.0";  // Declare NEW_VERSION array
-
-char FW_TITLE[] = "RPi";
-constexpr int TITLE_SIZE = 20;       // Adjust the size according to your requirements
-char FWW_TITLE[TITLE_SIZE] = "RPi";  // Declare NEW_VERSION array
-
-// Shared attributes we want to request from the server
-constexpr std::array<const char *, 2U> REQUESTED_SHARED_ATTRIBUTES = {
-  FW_TITLE_KEY,
-  FW_VER_KEY
-};
-
-#define SOUND_SENSOR_PIN A2
-#define LDR_PIN A1
-
-#define S0 5  //Module pins wiring
-#define S1 6
-#define S2 7
-#define S3 8
-#define COLOR_OUT 9
-#define COLOR_DETECTOR_LED_PIN 10
-
-#define LED_R 2  //LED pins, don't forget "pwm"
-#define LED_G 3
-#define LED_B 4
-
-#define SOUND_LED 0
-#define LIGHT_LED 1
-
-#define WIFI_STATUS_LED LED_BUILTIN
-
-#define LIGHT_THRESHOLD 80
-#define SOUND_THRESHOLD 60
 
 int soundDetected, lightDetected;
 int soundStatus, lightStatus;
@@ -89,29 +63,70 @@ int loudNoiseDetectorEnable = 0, lightIntensityDetectorEnable = 0, colorDetector
 
 const int sampleWindow = 50;  // Sample window width in mS (50 mS = 20Hz)
 unsigned int sample;
-
 unsigned long previousMillis = 0;  // Stores the last time the LED was updated
 const long BLINK_INTERVAL = 500;   // Blinking interval in milliseconds (1 second)
 
-void InitWiFi() {
-  // attempt to connect to WiFi network:
-  while (status != WL_CONNECTED) {
-    Serial.print("Attempting to connect to network: ");
-    Serial.println(WIFI_SSID);
-    // Connect to WPA/WPA2 network:
-    status = WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
-    // wait 10 seconds for connection:
-    delay(1000);
-  }
+bool requestedShared = false;
+int msg = 0;
 
+char *BASE_URL = "/api/v1";   // Define base URL for API requests
+char *ENDPOINT = "firmware";  // Define endpoint for firmware updates
+char PATH[256];               // Define array to store the path for firmware updates
+
+constexpr const char TEST_KEY[] PROGMEM = "test";
+constexpr const char FW_TAG_KEY[] PROGMEM = "target_fw_ts";
+constexpr const char FW_CHKS_KEY[] PROGMEM = "fw_checksum";
+constexpr const char FW_CHKS_ALGO_KEY[] PROGMEM = "fw_checksum_algorithm";
+constexpr const char FW_SIZE_KEY[] PROGMEM = "fw_tag";
+constexpr const char FW_TITLE_KEY[] PROGMEM = "fw_title";
+constexpr const char FW_VER_KEY[] PROGMEM = "fw_version";
+
+char CURRENT_VERSION[] = "1.0.1";
+constexpr int FIRMWARE_SIZE = 20;           // Adjust the size according to your requirements
+char NEW_VERSION[FIRMWARE_SIZE] = "1.0.1";  // Declare NEW_VERSION array
+
+char FW_TITLE[] = "MKRLI";
+constexpr int TITLE_SIZE = 20;          // Adjust the size according to your requirements
+char FWW_TITLE[TITLE_SIZE] = "MKRLI";  // Declare NEW_VERSION array
+
+// Shared attributes we want to request from the server
+constexpr std::array<const char *, 6U> REQUESTED_SHARED_ATTRIBUTES = {
+  FW_CHKS_KEY,
+  FW_CHKS_ALGO_KEY,
+  FW_SIZE_KEY,
+  FW_TAG_KEY,
+  FW_TITLE_KEY,
+  FW_VER_KEY
+};
+
+WiFiClient wifiClient;
+ThingsBoard tb(wifiClient, MAX_MESSAGE_SIZE);
+
+/// @brief Initalizes WiFi connection,
+// will endlessly delay until a connection has been successfully established
+void InitWiFi() {
+  Serial.begin(115200);
+  int attempts = 0;
+  while (WiFi.status() != WL_CONNECTED) {
+    Serial.print("Attempting to connect to SSID: ");
+    Serial.println(WIFI_SSID);
+    WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+    delay(5000);  // Wait for 5 seconds before checking connection status
+    if (attempts >= 10) {
+      Serial.println("Connection failed after 10 attempts.");
+      return;  // Exit the function if connection fails after 10 attempts
+    }
+    attempts++;
+  }
   Serial.println("Connected to WiFi");
   Serial.print("IP Address: ");
   Serial.println(WiFi.localIP());
 }
-
+/// @brief Reconnects the WiFi uses InitWiFi if the connection has been removed
+/// @return Returns true as soon as a connection has been established again
 bool reconnect() {
   // Check to ensure we aren't connected yet
-  status = WiFi.status();
+  const uint8_t status = WiFi.status();
   if (status == WL_CONNECTED) {
     return true;
   }
@@ -158,10 +173,10 @@ const Attribute_Request_Callback sharedCallback(REQUESTED_SHARED_ATTRIBUTES.cbeg
 void handleSketchDownload(const char *token, char *title, char *CURRENT_VERSION) {
   sprintf(PATH, "%s/%s/%s?title=%s&version=%s", BASE_URL, token, ENDPOINT, title, CURRENT_VERSION);
   // const char* THINGSBOARD_SERVER = "10.100.80.25";  // Set your correct hostname
-  const unsigned short SERVER_PORT = 8090U;                       // Commonly 80 (HTTP) | 443 (HTTPS)
-  HttpClient client(espClient, THINGSBOARD_SERVER, SERVER_PORT);  // HTTP
+  const unsigned short SERVER_PORT = 8090U;                        // Commonly 80 (HTTP) | 443 (HTTPS)
+  HttpClient client(wifiClient, THINGSBOARD_SERVER, SERVER_PORT);  // HTTP
   // HttpClient client(wifiClientSSL, SERVER, SERVER_PORT);  // HTTPS
-  char buff[64];
+  char buff[66];                           //enough size should be given to the buffer otherwise it won't get updated
   snprintf(buff, sizeof(buff), PATH);      // Copy the URL path to the buffer
   Serial.print("Check for update file ");  // Print message to indicate checking for update file with the URL path
   Serial.println(buff);
@@ -214,6 +229,11 @@ void handleSketchDownload(const char *token, char *title, char *CURRENT_VERSION)
   InternalStorage.apply();                           // this doesn't return
 }
 
+/// Processes function for RPC call "example_set_temperature"
+/// RPC_Data is a JSON variant, that can be queried using operator[]
+/// See https://arduinojson.org/v5/api/jsonvariant/subscript/ for more details
+/// "data" Data containing the rpc data that was called and its current value
+///  Response that should be sent to the cloud. Useful for getMethods
 RPC_Response processSoundDetectEnable(const RPC_Data &data) {
   Serial.println("Received the set temperature RPC method");
 
@@ -229,6 +249,11 @@ RPC_Response processSoundDetectEnable(const RPC_Data &data) {
   return RPC_Response(doc);
 }
 
+/// Processes function for RPC call "example_set_switch"
+/// RPC_Data is a JSON variant, that can be queried using operator[]
+/// See https://arduinojson.org/v5/api/jsonvariant/subscript/ for more details
+/// "data" Data containing the rpc data that was called and its current value
+/// Response that should be sent to the cloud. Useful for getMethods
 RPC_Response processLightDetectEnable(const RPC_Data &data) {
   Serial.println("Received the set switch method");
 
@@ -294,6 +319,32 @@ void blinkLED(int duration) {
   digitalWrite(SOUND_LED, LOW);
 }
 
+void reconnectToThingsBoard() {
+  // Check if the device is already connected to ThingsBoard
+  if (!tb.connected()) {
+    // Attempt to reconnect to the ThingsBoard server
+    Serial.print("Connecting to ThingsBoard server: ");
+    Serial.print(THINGSBOARD_SERVER);
+    Serial.print(" on port ");
+    Serial.println(THINGSBOARD_PORT);
+
+    // Attempt to connect to ThingsBoard
+    if (!tb.connect(THINGSBOARD_SERVER, TOKEN, THINGSBOARD_PORT)) {
+      // Failed to connect to ThingsBoard
+      Serial.println("Failed to connect to ThingsBoard. Retrying in 5 seconds...");
+      // Wait for 5 seconds before attempting to reconnect
+      delay(5000);
+    } else {
+      // Successfully connected to ThingsBoard
+      Serial.println("Connected to ThingsBoard.");
+    }
+  } else {
+    // Device is already connected to ThingsBoard
+    Serial.println("Device is already connected to ThingsBoard.");
+  }
+}
+
+
 void setup() {
   // Initalize serial connection for debugging
   Serial.begin(SERIAL_DEBUG_BAUD);
@@ -327,7 +378,7 @@ void setup() {
 
 void loop() {
 
-  delay(500);
+  delay(1000);
 
   if (!reconnect()) {
     return;
@@ -347,6 +398,8 @@ void loop() {
     }
   }
 
+  // reconnectToThingsBoard();
+
   if (!subscribed) {
     Serial.println("Subscribing for RPC...");
 
@@ -364,7 +417,7 @@ void loop() {
     subscribed = true;
   }
 
-  if (!requestedShared) {
+    if (!requestedShared) {
     Serial.println("Requesting shared attributes...");
     requestedShared = tb.Shared_Attributes_Request(sharedCallback);
     if (!requestedShared) {
@@ -431,23 +484,23 @@ void loop() {
     digitalWrite(SOUND_LED, LOW);
   }
 
-  //Light Intensity Detector
-  if (lightIntensityDetectorEnable) {
-    lightDetected = analogRead(LDR_PIN);
+  //Light Intensity Detector, enable this manually you can control the sensor and actuator
+  // if (lightIntensityDetectorEnable) {
+  //   lightDetected = analogRead(LDR_PIN);
 
-    if (lightDetected <= LIGHT_THRESHOLD) {
-      Serial.println("Light not Detected");
-      digitalWrite(LIGHT_LED, HIGH);
-      // soundStatus = 1;
-      tb.sendTelemetryString(LIGHT_INTENSITY_KEY, "Light Intensity Reduced!");
-    } else {
-      digitalWrite(LIGHT_LED, LOW);
-      // soundStatus = 0;
-      tb.sendTelemetryString(LIGHT_INTENSITY_KEY, "Normal");
-    }
-  } else {
-    digitalWrite(LIGHT_LED, LOW);
-  }
+  //   if (lightDetected <= LIGHT_THRESHOLD) {
+  //     Serial.println("Light not Detected");
+  //     digitalWrite(LIGHT_LED, HIGH);
+  //     // soundStatus = 1;
+  //     tb.sendTelemetryString(LIGHT_INTENSITY_KEY, "Light Intensity Reduced!");
+  //   } else {
+  //     digitalWrite(LIGHT_LED, LOW);
+  //     // soundStatus = 0;
+  //     tb.sendTelemetryString(LIGHT_INTENSITY_KEY, "Normal");
+  //   }
+  // } else {
+  //   digitalWrite(LIGHT_LED, LOW);
+  // }
 
   //Color Detector
   if (colorDetectorEnable) {
@@ -465,7 +518,9 @@ void loop() {
     tb.sendTelemetryInt(RED_COLOR_KEY, rValue);
     tb.sendTelemetryInt(GREEN_COLOR_KEY, gValue);
     tb.sendTelemetryInt(BLUE_COLOR_KEY, bValue);
-  } else {
+  }
+
+  else {
     digitalWrite(COLOR_DETECTOR_LED_PIN, LOW);
     analogWrite(LED_R, 0);
     analogWrite(LED_G, 0);
@@ -474,18 +529,25 @@ void loop() {
 
   tb.sendTelemetryData(RPC_LDR_DATA, lightDetected);
 
+
+
   if (lightIntensityDetectorEnable == 40) {
+    
     lightIntensityDetectorEnable = 0;
     Serial.println("Light not Detected");
     digitalWrite(LIGHT_LED, HIGH);
     tb.sendTelemetryString(LIGHT_INTENSITY_KEY, "Light Intensity Reduced!");
-  } else {
+  }
+
+
+  else {
     digitalWrite(LIGHT_LED, LOW);
     tb.sendTelemetryString(LIGHT_INTENSITY_KEY, "Normal");
   }
 
   // Uploads new telemetry to ThingsBoard using MQTT.
   // Serial.println("Sending data...");
+  // Serial.print("Light Intensity: ");
   // Serial.println(lightDetected);
 
   tb.loop();
